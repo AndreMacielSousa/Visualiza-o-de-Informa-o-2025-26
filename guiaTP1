@@ -1,0 +1,37 @@
+A) Em vez de dividir o trabalho por distritos, optámos por dividir por tipo de visualização, explorando a variedade de técnicas permitidas pelo RAWGraphs:
+
+1. Mapa coroplético
+
+2. Treemap espacialmente consciente
+
+3. Heatmap temporal
+
+4. Fluxos ou linhas temporais distorcidas
+
+5. Small multiples comparativos
+
+Esta estratégia permite cumprir o espírito do Trabalho 1: experimentar, comparar e errar, testando hipóteses sobre a eficácia visual de cada método (Munzner enfatiza que diferentes idioms respondem a diferentes tipos de tarefas e atributos) .
+
+B) Pertinência para o estudo da Habitação e para a UC
+
+1. A evolução dos alojamentos ao longo de mais de 80 anos permite explorar:
+
+2. crescimento urbano,
+
+3. assimetrias regionais,
+
+4. impacto de ciclos demográficos e económicos,
+
+5. possíveis fenómenos de interior vs. litoral.
+
+C) Estes padrões oferecem terreno fértil para experimentar hipóteses visuais, como recomenda o Trabalho 1:
+
+1. identificar tendências,
+
+2. testar diferentes encodings,
+
+3. aprender com erros de mapeamento,
+
+4. observar limitações do dataset.
+
+A reflexão crítica será integrada no relatório final, conforme solicitado na avaliação do trabalho.
