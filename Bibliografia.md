@@ -19,3 +19,6 @@ WU, Yang et al. Automated Data Visualization from Natural Language via Large Lan
 
 INE – Instituto Nacional de Estatística. Portal oficial. Disponível em: http://www.ine.pt
 . Acesso em: 22 nov. 2025.
+
+WIKIPÉDIA. Distritos de Portugal. Disponível em: https://pt.wikipedia.org/wiki/Distritos_de_Portugal
+. Acesso em: 28 nov. 2025.

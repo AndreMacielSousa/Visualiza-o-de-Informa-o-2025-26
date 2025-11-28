@@ -34,3 +34,31 @@ Durante o processo de recolha e validação dos dados, constatou-se uma limitaç
 Face a estas limitações, e para assegurar a integridade metodológica do trabalho, foi decidido excluir os valores relativos ao ano de 1970 do dataset normalizado. Esta decisão evita a incorporação de dados potencialmente incorretos e garante que as visualizações produzidas se baseiam apenas em fontes verificáveis e consistentes.
 
 Apesar desta ausência, a análise exploratória não fica comprometida, uma vez que a continuidade temporal e a coerência dos restantes anos fornecem uma base sólida para comparação visual. Ainda assim, a limitação é registada de forma explícita, servindo como alerta para futuras fases de validação cruzada ou eventual recolha manual certificada, caso seja necessária uma série histórica completa.
+
+## Distritos
+
+A preparação dos dados para a construção dos mapas coropléticos exige a correspondência rigorosa entre as unidades administrativas representadas no ficheiro estatístico e as unidades geográficas presentes no ficheiro cartográfico. No caso português, esta correspondência tem uma particularidade relevante: enquanto o continente é tradicionalmente organizado em 18 distritos, as Regiões Autónomas dos Açores e da Madeira apresentam uma estrutura distinta.
+
+De acordo com a organização administrativa descrita em Distritos de Portugal (Wikipédia, s.d.), Portugal compreende:
+
+- 18 distritos no território continental (Aveiro, Beja, Braga, Bragança, Castelo Branco, Coimbra, Évora, Faro, Guarda, Leiria, Lisboa, Portalegre, Porto, Santarém, Setúbal, Viana do Castelo, Vila Real e Viseu);
+
+- nenhum distrito nas Regiões Autónomas, onde a divisão administrativa se faz por concelhos e ilhas, e não pela estrutura distrital existente no continente.
+
+Em termos cartográficos, os ficheiros geográficos modernos — incluindo o ficheiro utilizado neste trabalho (georef-portugal-distrito-millesime.geojson) — representam as duas regiões autónomas como entidades agregadas:
+
+- Açores (um único polígono que representa o conjunto do arquipélago),
+
+- Madeira (incluindo a ilha da Madeira e a ilha de Porto Santo).
+
+Por contraste, o dataset estatístico do INE relativo ao número de habitações apresenta os arquipélagos desagregados por ilhas individuais, como Ilha de São Miguel, Ilha Terceira, Ilha do Pico, Ilha da Graciosa, Ilha do Faial, Ilha das Flores, Ilha do Corvo, Ilha de Santa Maria, Ilha da Madeira e Ilha de Porto Santo.
+
+Esta divergência tornaria impossível a união entre dados estatísticos e dados geográficos sem transformação prévia. Por esta razão:
+
+1. os valores das ilhas dos Açores foram agregados numa única categoria (“Açores”), somando-se os valores de todas as ilhas por ano;
+
+2. os valores das ilhas da Madeira e Porto Santo foram agregados numa única categoria (“Madeira”);
+
+3. os 18 distritos continentais foram mantidos inalterados, correspondendo diretamente à camada geográfica.
+
+Este processo assegura a harmonização entre ambos os conjuntos de dados, permitindo a criação correta dos mapas coropléticos com distribuição espacial coerente. A decisão alinha-se com boas práticas de preparação de dados para visualização, tal como descrito por Munzner (2014) e Card (2008), garantindo integridade analítica e compatibilidade com o ficheiro geográfico.
