@@ -22,3 +22,6 @@ INE – Instituto Nacional de Estatística. Portal oficial. Disponível em: http
 
 WIKIPÉDIA. Distritos de Portugal. Disponível em: https://pt.wikipedia.org/wiki/Distritos_de_Portugal
 . Acesso em: 28 nov. 2025.
+
+OPEN DATASOFT. georef-portugal-distrito-millesime — Limites administrativos de Portugal (distritos). Disponível em: https://public.opendatasoft.com/explore/assets/georef-portugal-distrito-millesime/export/
+. Acesso em: 25 nov. 2025.

@@ -62,3 +62,7 @@ Esta divergência tornaria impossível a união entre dados estatísticos e dado
 3. os 18 distritos continentais foram mantidos inalterados, correspondendo diretamente à camada geográfica.
 
 Este processo assegura a harmonização entre ambos os conjuntos de dados, permitindo a criação correta dos mapas coropléticos com distribuição espacial coerente. A decisão alinha-se com boas práticas de preparação de dados para visualização, tal como descrito por Munzner (2014) e Card (2008), garantindo integridade analítica e compatibilidade com o ficheiro geográfico.
+
+# Notas de execução
+
+cruzar com demografia, i.é. densidade poplucional como futuro poderá dar indicadores difrenciados na compara, para trabalhos futuros...
