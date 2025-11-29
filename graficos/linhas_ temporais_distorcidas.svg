@@ -71,39 +71,39 @@
 <path class="domain" stroke="currentColor" d="M0,0H785" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
 <g class="tick" opacity="1" transform="translate(0,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1,940</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1940</text>
 </g>
 <g class="tick" opacity="1" transform="translate(96.91358024691357,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1,950</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1950</text>
 </g>
 <g class="tick" opacity="1" transform="translate(193.82716049382714,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1,960</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1960</text>
 </g>
 <g class="tick" opacity="1" transform="translate(290.7407407407407,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1,970</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1970</text>
 </g>
 <g class="tick" opacity="1" transform="translate(387.6543209876543,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1,980</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1980</text>
 </g>
 <g class="tick" opacity="1" transform="translate(484.5679012345679,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1,990</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">1990</text>
 </g>
 <g class="tick" opacity="1" transform="translate(581.4814814814814,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">2,000</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">2000</text>
 </g>
 <g class="tick" opacity="1" transform="translate(678.395061728395,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">2,010</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">2010</text>
 </g>
 <g class="tick" opacity="1" transform="translate(775.3086419753085,0)">
 <line stroke="currentColor" y2="6" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"/>
-<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">2,020</text>
+<text fill="currentColor" y="9" dy="0.71em" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;">2020</text>
 </g>
 </g>
 <g id="yAxis" fill="none" font-size="10" font-family="sans-serif" text-anchor="end">
@@ -366,3 +366,4 @@
 </g>
 </g>
 </svg>
+
