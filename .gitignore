@@ -1,0 +1,6 @@
+# Ignorar diretórios internos do Git
+.git/
+.github/
+
+# Ignorar ficheiros de workflow locais (se existirem)
+gitignore
