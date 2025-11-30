@@ -28,3 +28,11 @@ OPEN DATASOFT. georef-portugal-distrito-millesime — Limites administrativos de
 
 AGAFONKIN, Vladimir. Leaflet – Mobile-friendly interactive maps. Disponível em: https://leafletjs.com/index.html
 . Acesso em: 25 nov. 2025.
+
+CIVIL PROTECTION SERVICE OF AZORES. Relatório Técnico do Sismo de 1 de Janeiro de 1980. Angra do Heroísmo: Proteção Civil dos Açores, 1981.
+
+DIREÇÃO REGIONAL DE ESTATÍSTICA DA MADEIRA. Estatísticas Demográficas da Região Autónoma da Madeira 1950–2019. Funchal: DREM, 2020.
+
+ENCICLOPÉDIA AÇORIANA. Emigração Açoriana: Século XX. Ponta Delgada: Instituto Cultural de Ponta Delgada, 2004.
+
+MORAIS, Rita. O “Azorean Refugee Act” e a Emigração Açoriana para os EUA (1958–1980). Lisboa: Universidade Nova de Lisboa, 2018.

@@ -63,8 +63,16 @@ Esta divergência tornaria impossível a união entre dados estatísticos e dado
 
 Este processo assegura a harmonização entre ambos os conjuntos de dados, permitindo a criação correta dos mapas coropléticos com distribuição espacial coerente. A decisão alinha-se com boas práticas de preparação de dados para visualização, tal como descrito por Munzner (2014) e Card (2008), garantindo integridade analítica e compatibilidade com o ficheiro geográfico.
 
+
+# variação entre 1960 e 1981 "anormal"
+
+aparantemente existe aqui uma variação negativa de 1960 para 1981 (ja vimos que os dados da decada de 70 não são legiveis ou confiaveis) com maior expressão nos açores e na madeira nos açores e na madeira que necessita de ser investigada...
+A quebra observada no número de habitações entre 1960 e 1981 não é exclusiva dos arquipélagos, mas é substancialmente mais acentuada na Madeira e nos Açores, onde se registam reduções de –72 022 alojamentos no período. Embora vários distritos do continente também apresentem quebras relevantes — Beja (–21 118), Bragança (–41 451), Castelo Branco (–75 231), Coimbra (–46 386), Guarda (–77 475), Santarém (–64 948), Vila Real (–49 364) e Viseu (–83 406) — o padrão insular destaca-se pela conjugação de três fatores estruturais: (1) êxodo migratório intenso, amplamente documentado na Madeira e nos Açores durante as décadas de 1960 e 1970, motivado pela pobreza estrutural, pelas assimetrias económicas e pela fuga ao recrutamento militar (ENCICLOPÉDIA AÇORIANA, 2004; DREM, 2020); (2) impacto de eventos naturais destrutivos, como a erupção dos Capelinhos (1957–58) e o sismo de 1 de janeiro de 1980, que eliminaram milhares de habitações e deslocaram populações inteiras (MORAIS, 2018; CIVIL PROTECTION SERVICE OF AZORES, 1981); e (3) ausência de políticas habitacionais eficazes antes da autonomia regional, que impediu a reposição do parque habitacional perdido. Assim, embora o declínio também atinja alguns distritos do continente, a profundidade e concentração das quebras nos arquipélagos tornam a Madeira e os Açores os casos mais extremos e estruturalmente explicáveis no território português.
+
+
 # Notas de execução futura
 
 cruzar com demografia, i.é. densidade poplucional como futuro poderá dar indicadores difrenciados na comparacao, para trabalhos futuros...
 
-aparantemente existe aqui uma variação nos açores e na madeira que necessita de ser investigada
+
+
