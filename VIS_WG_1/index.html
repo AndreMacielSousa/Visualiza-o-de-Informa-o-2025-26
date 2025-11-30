@@ -7,30 +7,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    :root {
+      --bg: #f5f5f5;
+      --text: #222;
+      --card-bg: #ffffff;
+      --header-bg: #003366;
+      --header-text: #ffffff;
+      --card-shadow: rgba(0,0,0,0.08);
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #e3e3e3;
+      --card-bg: #1f1f1f;
+      --header-bg: #000000;
+      --header-text: #e3e3e3;
+      --card-shadow: rgba(255,255,255,0.05);
+    }
+
     body {
       margin: 0;
       padding: 0;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: #f5f5f5;
-      color: #222;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
     }
 
     header {
-      background: #003366;
-      color: white;
-      padding: 25px 15px;
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 20px 15px 30px 15px;
       text-align: center;
+      position: relative;
+    }
+
+    header img.logo {
+      height: 50px;
+      margin: 0 10px;
+      vertical-align: middle;
+    }
+
+    header img.capa {
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-top: 15px;
     }
 
     header h1 {
-      margin: 0;
       font-size: 26px;
+      margin: 10px 0 0 0;
     }
 
     header p {
-      margin: 8px 0 0 0;
+      margin: 6px 0 0 0;
       font-size: 14px;
       opacity: 0.9;
+    }
+
+    .dark-toggle {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      padding: 6px 10px;
+      font-size: 13px;
+      background: var(--card-bg);
+      color: var(--text);
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--card-shadow);
+      border: none;
     }
 
     main {
@@ -52,11 +100,11 @@
     }
 
     .card {
-      background: white;
+      background: var(--card-bg);
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      transition: transform 0.1s;
+      box-shadow: 0 2px 8px var(--card-shadow);
+      transition: transform 0.1s, background 0.3s;
     }
 
     .card:hover {
@@ -69,10 +117,14 @@
       color: #003366;
     }
 
+    body.dark .card h3 {
+      color: #7ab5ff;
+    }
+
     .card p {
       margin: 0 0 10px 0;
       font-size: 14px;
-      color: #555;
+      opacity: 0.85;
     }
 
     .card a {
@@ -89,18 +141,45 @@
       padding: 20px;
       margin-top: 40px;
       font-size: 12px;
-      color: #666;
+      opacity: 0.7;
+    }
+
+    .autores {
+      margin-top: 25px;
+      font-size: 15px;
+      line-height: 1.6;
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--card-shadow);
     }
   </style>
 </head>
 <body>
 
 <header>
+  <button class="dark-toggle" onclick="toggleDark()">🌙 Modo escuro</button>
+
+  <img src="imagens/uab.png" class="logo" alt="Universidade Aberta">
+  <img src="imagens/utad.png" class="logo" alt="UTAD">
+
   <h1>Trabalho de Grupo · Visualização de Informação</h1>
-  <p>Universidade Aberta – Mestrado em Engenharia Informática e Tecnologia Web</p>
+
+  <p>Mestrado em Engenharia Informática e Tecnologia Web (MEIW) –  
+     Universidade Aberta & Universidade de Trás-os-Montes e Alto Douro</p>
+
+  <img src="imagens/capa.png" class="capa" alt="Capa do trabalho">
 </header>
 
 <main>
+
+  <div class="autores">
+    <strong>👥 Autores</strong><br>
+    Pedro Pereira — 1102837<br>
+    Miguel Correia — 1103691<br>
+    André Maciel — 1300012
+  </div>
+
   <h2>Visualizações desenvolvidas</h2>
 
   <div class="grid">
@@ -108,32 +187,32 @@
     <!-- CARD 1 – Coroplético -->
     <div class="card">
       <h3>Mapa Coroplético</h3>
-      <p>Visualização geográfica multidimensional, com seletor de ano e paletas de cor dinâmicas.</p>
+      <p>Visualização geográfica interativa com seleção de ano e paleta de cores.</p>
       <a href="coropletico.html">Ver Visualização</a>
     </div>
 
-    <!-- CARD 2 – Outro gráfico -->
+    <!-- CARD 2 -->
     <div class="card">
       <h3>Gráfico 2</h3>
       <p>Descrição breve (a atualizar).</p>
       <a href="#">Disponível em breve</a>
     </div>
 
-    <!-- CARD 3 – Outro gráfico -->
+    <!-- CARD 3 -->
     <div class="card">
       <h3>Gráfico 3</h3>
       <p>Descrição breve (a atualizar).</p>
       <a href="#">Disponível em breve</a>
     </div>
 
-    <!-- CARD 4 – Outro gráfico -->
+    <!-- CARD 4 -->
     <div class="card">
       <h3>Gráfico 4</h3>
       <p>Descrição breve (a atualizar).</p>
       <a href="#">Disponível em breve</a>
     </div>
 
-    <!-- CARD 5 – Outro gráfico -->
+    <!-- CARD 5 -->
     <div class="card">
       <h3>Gráfico 5</h3>
       <p>Descrição breve (a atualizar).</p>
@@ -144,10 +223,14 @@
 </main>
 
 <footer>
-  © VIS · Trabalho de Grupo – 2025 · Universidade Aberta
+  © VIS · Trabalho de Grupo – 2025 · Universidade Aberta & UTAD
 </footer>
+
+<script>
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+  }
+</script>
 
 </body>
 </html>
-
-
