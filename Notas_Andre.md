@@ -63,6 +63,8 @@ Esta divergência tornaria impossível a união entre dados estatísticos e dado
 
 Este processo assegura a harmonização entre ambos os conjuntos de dados, permitindo a criação correta dos mapas coropléticos com distribuição espacial coerente. A decisão alinha-se com boas práticas de preparação de dados para visualização, tal como descrito por Munzner (2014) e Card (2008), garantindo integridade analítica e compatibilidade com o ficheiro geográfico.
 
-# Notas de execução
+# Notas de execução futura
 
-cruzar com demografia, i.é. densidade poplucional como futuro poderá dar indicadores difrenciados na compara, para trabalhos futuros...
+cruzar com demografia, i.é. densidade poplucional como futuro poderá dar indicadores difrenciados na comparacao, para trabalhos futuros...
+
+aparantemente existe aqui uma variação nos açores e na madeira que necessita de ser investigada

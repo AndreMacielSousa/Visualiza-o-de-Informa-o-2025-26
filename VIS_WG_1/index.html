@@ -7,22 +7,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    /* Paleta inspirada no branding UAb (azul) + UTAD (roxo) */
     :root {
       --bg: #f5f5f5;
-      --text: #222;
+      --text: #222222;
       --card-bg: #ffffff;
-      --header-bg: #003366;
+      --header-bg: linear-gradient(135deg, #005b96, #5a2a82);
       --header-text: #ffffff;
       --card-shadow: rgba(0,0,0,0.08);
+      --accent: #005b96;
+      --accent-soft: #e0ecf7;
     }
 
     body.dark {
       --bg: #121212;
       --text: #e3e3e3;
       --card-bg: #1f1f1f;
-      --header-bg: #000000;
+      --header-bg: linear-gradient(135deg, #000000, #3a1757);
       --header-text: #e3e3e3;
       --card-shadow: rgba(255,255,255,0.05);
+      --accent: #7ab5ff;
+      --accent-soft: #27293a;
     }
 
     body {
@@ -37,17 +42,13 @@
     header {
       background: var(--header-bg);
       color: var(--header-text);
-      padding: 20px 15px 30px 15px;
+      padding: 20px 15px 24px 15px;
       text-align: center;
       position: relative;
     }
 
-    header img.capa {
-      width: 100%;
-      max-height: 260px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 20px;
+    header .logos {
+      margin-bottom: 10px;
     }
 
     header img.logo {
@@ -58,11 +59,11 @@
 
     header h1 {
       font-size: 26px;
-      margin: 10px 0 0 0;
+      margin: 5px 0 0 0;
     }
 
     header p {
-      margin: 6px 0 0 0;
+      margin: 4px 0 0 0;
       font-size: 14px;
       opacity: 0.9;
     }
@@ -82,21 +83,41 @@
     }
 
     main {
-      max-width: 900px;
-      margin: 30px auto;
+      max-width: 960px;
+      margin: 25px auto 40px auto;
       padding: 0 20px;
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      margin-bottom: 15px;
+      color: #555;
+    }
+
+    body.dark .breadcrumb {
+      color: #cccccc;
+    }
+
+    .breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .breadcrumb span {
+      opacity: 0.7;
     }
 
     h2 {
       font-size: 22px;
-      margin-bottom: 12px;
+      margin-top: 25px;
+      margin-bottom: 10px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 20px;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     .card {
@@ -114,21 +135,17 @@
     .card h3 {
       margin: 0 0 8px 0;
       font-size: 18px;
-      color: #003366;
-    }
-
-    body.dark .card h3 {
-      color: #7ab5ff;
+      color: var(--accent);
     }
 
     .card p {
       margin: 0 0 10px 0;
       font-size: 14px;
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
     .card a {
-      background: #003366;
+      background: var(--accent);
       color: white;
       padding: 6px 10px;
       border-radius: 4px;
@@ -137,7 +154,7 @@
     }
 
     .autores {
-      margin-top: 25px;
+      margin-top: 20px;
       font-size: 15px;
       line-height: 1.6;
       background: var(--card-bg);
@@ -146,10 +163,45 @@
       box-shadow: 0 2px 8px var(--card-shadow);
     }
 
+    .autores a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .autores a:hover {
+      text-decoration: underline;
+    }
+
+    section {
+      margin-top: 25px;
+      background: var(--card-bg);
+      padding: 18px 18px 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--card-shadow);
+      font-size: 14px;
+    }
+
+    section h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    section p {
+      margin-top: 0;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    section ul {
+      margin-top: 4px;
+      padding-left: 18px;
+    }
+
     footer {
       text-align: center;
-      padding: 20px;
-      margin-top: 40px;
+      padding: 18px;
       font-size: 12px;
       opacity: 0.7;
     }
@@ -160,28 +212,36 @@
 <header>
   <button class="dark-toggle" onclick="toggleDark()">🌙 Modo escuro</button>
 
-  <!-- CAPA EM CIMA -->
-  <img src="imagens/capa.png" class="capa" alt="Capa do trabalho">
-
-  <!-- LOGOS POR BAIXO -->
-  <div>
+  <div class="logos">
     <img src="imagens/uab.png" class="logo" alt="Universidade Aberta">
     <img src="imagens/utad.png" class="logo" alt="UTAD">
   </div>
 
   <h1>Trabalho de Grupo · Visualização de Informação</h1>
 
-  <p>Mestrado em Engenharia Informática e Tecnologia Web (MEIW) –  
-     Universidade Aberta & Universidade de Trás-os-Montes e Alto Douro</p>
+  <p>Mestrado em Engenharia Informática e Tecnologia Web (MEIW) –<br>
+     Universidade Aberta &amp; Universidade de Trás-os-Montes e Alto Douro</p>
 </header>
 
 <main>
+
+  <!-- Breadcrumb de navegação -->
+  <nav class="breadcrumb">
+    <span>Início</span> ·
+    <a href="coropletico.html">Mapa Coroplético</a> ·
+    <span>Gráfico 2</span> ·
+    <span>Gráfico 3</span> ·
+    <span>Gráfico 4</span> ·
+    <span>Gráfico 5</span>
+  </nav>
 
   <div class="autores">
     <strong>👥 Autores</strong><br>
     Pedro Pereira — 1102837<br>
     Miguel Correia — 1103691<br>
-    André Maciel — 1300012
+    <a href="https://www.cienciavitae.pt/portal/6012-D3B5-F967" target="_blank" rel="noopener noreferrer">
+      André Maciel — 1300012
+    </a>
   </div>
 
   <h2>Visualizações desenvolvidas</h2>
@@ -191,32 +251,32 @@
     <!-- CARD 1 – Coroplético -->
     <div class="card">
       <h3>Mapa Coroplético</h3>
-      <p>Visualização geográfica interativa com seleção de ano e paleta de cores.</p>
+      <p>Mapa interativo por distrito, com seleção de ano (1940–2021) e escolha de paleta cromática sequencial.</p>
       <a href="coropletico.html">Ver Visualização</a>
     </div>
 
-    <!-- CARD 2 -->
+    <!-- CARD 2 – placeholder -->
     <div class="card">
       <h3>Gráfico 2</h3>
-      <p>Descrição breve (a atualizar).</p>
+      <p>Descrição breve (a atualizar com o tipo de visualização e objetivo analítico).</p>
       <a href="#">Disponível em breve</a>
     </div>
 
-    <!-- CARD 3 -->
+    <!-- CARD 3 – placeholder -->
     <div class="card">
       <h3>Gráfico 3</h3>
       <p>Descrição breve (a atualizar).</p>
       <a href="#">Disponível em breve</a>
     </div>
 
-    <!-- CARD 4 -->
+    <!-- CARD 4 – placeholder -->
     <div class="card">
       <h3>Gráfico 4</h3>
       <p>Descrição breve (a atualizar).</p>
       <a href="#">Disponível em breve</a>
     </div>
 
-    <!-- CARD 5 -->
+    <!-- CARD 5 – placeholder -->
     <div class="card">
       <h3>Gráfico 5</h3>
       <p>Descrição breve (a atualizar).</p>
@@ -224,10 +284,102 @@
     </div>
 
   </div>
+
+  <!-- Secção Metodologia -->
+  <section id="metodologia">
+    <h3>Metodologia</h3>
+    <p>
+      O trabalho partiu da seleção de um indicador estável ao longo de várias décadas —
+      o número de alojamentos familiares clássicos por distrito — e da normalização dos dados
+      estatísticos para compatibilização com os limites administrativos atuais.
+    </p>
+    <p>
+      De acordo com Munzner (2014), a escolha do tipo de visualização deve considerar o tipo de tarefa
+      (comparação, identificação de tendências, análise espacial) e a natureza dos dados.
+      Neste contexto, o mapa coroplético foi utilizado para enfatizar a distribuição espacial e a sua
+      evolução temporal, respeitando o princípio de consistência visual: mesma geometria, mesma escala
+      e mesma variável ao longo dos anos.
+    </p>
+    <p>
+      Seguindo o modelo de referência de Card (2008), o processo foi estruturado em:
+    </p>
+    <ul>
+      <li><strong>Transformação de dados</strong>: limpeza, agregação das Regiões Autónomas (Açores e Madeira) e normalização por distrito e ano;</li>
+      <li><strong>Transformação visual</strong>: mapeamento da variável “Habitações” para um canal cromático sequencial;</li>
+      <li><strong>Interação</strong>: implementação de seletores de ano e paleta de cores, permitindo ao utilizador explorar o espaço de soluções.</li>
+    </ul>
+    <p>
+      A interface interativa foi desenvolvida com Leaflet, garantindo um mapa responsivo, com <em>tooltip</em>,
+      realce de distrito em foco e legenda dinâmica, em linha com as recomendações de Healey (2004)
+      sobre gestão de contraste e saliência visual em mapas temáticos.
+    </p>
+  </section>
+
+  <!-- Secção Datasets -->
+  <section id="datasets">
+    <h3>Datasets</h3>
+    <p>
+      Foram utilizadas duas fontes principais de dados:
+    </p>
+    <ul>
+      <li>
+        <strong>Dados estatísticos</strong>: número de alojamentos familiares clássicos por distrito e ano,
+        obtidos a partir dos Censos do Instituto Nacional de Estatística (INE). Os valores foram
+        extraídos em formato tabular, validados entre anos consecutivos e harmonizados para um conjunto
+        fixo de oito momentos censitários (1940, 1950, 1960, 1981, 1991, 2001, 2011 e 2021).
+      </li>
+      <li>
+        <strong>Dados geográficos</strong>: limites administrativos dos distritos de Portugal continental
+        e Regiões Autónomas, em formato GeoJSON, obtidos através da plataforma OpenDataSoft
+        (<em>georef-portugal-distrito-millesime</em>), garantindo compatibilidade com ferramentas
+        de visualização web.
+      </li>
+    </ul>
+    <p>
+      Para as Regiões Autónomas, os valores das ilhas dos Açores e da Madeira foram agregados em duas
+      entidades (“Açores” e “Madeira”), de forma a coincidir com a estrutura do ficheiro geográfico,
+      de acordo com a organização administrativa descrita em “Distritos de Portugal” (Wikipédia).
+    </p>
+  </section>
+
+  <!-- Secção Referências ABNT -->
+  <section id="referencias">
+    <h3>Referências (ABNT)</h3>
+    <p>
+      MUNZNER, Tamara. <strong>Visualization Analysis and Design</strong>. Boca Raton: CRC Press, 2014.
+    </p>
+    <p>
+      CARD, Stuart. Information Visualization. In: JACKO, Julie A. (ed.).
+      <strong>The Human-Computer Interaction Handbook</strong>. 2. ed. Mahwah: Lawrence Erlbaum, 2008.
+    </p>
+    <p>
+      HEALEY, Christopher G. <strong>Perception in Visualization</strong>. North Carolina State University, 2004.
+      Disponível em: &lt;https://www.csc2.ncsu.edu/faculty/healey/PP/&gt;. Acesso em: 28 nov. 2025.
+    </p>
+    <p>
+      INE – Instituto Nacional de Estatística. <strong>Alojamentos familiares clássicos à data dos Censos</strong>.
+      Lisboa: INE. Dados extraídos em 22 nov. 2025, às 17:57:22, a partir de: &lt;http://www.ine.pt&gt;.
+      Acesso em: 22 nov. 2025.
+    </p>
+    <p>
+      OPEN DATASOFT. <strong>georef-portugal-distrito-millesime</strong> — Limites administrativos de Portugal (distritos).
+      Disponível em: &lt;https://public.opendatasoft.com/explore/assets/georef-portugal-distrito-millesime/export/&gt;.
+      Acesso em: 25 nov. 2025.
+    </p>
+    <p>
+      AGAFONKIN, Vladimir. <strong>Leaflet – Mobile-friendly interactive maps</strong>. Disponível em:
+      &lt;https://leafletjs.com/index.html&gt;. Acesso em: 25 nov. 2025.
+    </p>
+    <p>
+      WIKIPÉDIA. <strong>Distritos de Portugal</strong>. Disponível em:
+      &lt;https://pt.wikipedia.org/wiki/Distritos_de_Portugal&gt;. Acesso em: 28 nov. 2025.
+    </p>
+  </section>
+
 </main>
 
 <footer>
-  © VIS · Trabalho de Grupo – 2025 · Universidade Aberta & UTAD
+  © VIS · Trabalho de Grupo – 2025 · Universidade Aberta &amp; UTAD
 </footer>
 
 <script>
