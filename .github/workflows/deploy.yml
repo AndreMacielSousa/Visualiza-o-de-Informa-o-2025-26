@@ -1,0 +1,29 @@
+name: Deploy VIS_WG_1 para andremaciel.pt
+
+on:
+  push:
+    branches:
+      - main    # se o branch principal for 'main'
+      # - master  # use esta linha em vez da de cima se o seu branch for 'master'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Deploy via SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.3
+        with:
+          server: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USER }}
+          privateKey: ${{ secrets.SFTP_KEY }}
+          protocol: "sftp"
+          port: ${{ secrets.SFTP_PORT }}
+          local-dir: "VIS_WG_1"
+          server-dir: "public_html/VIS_WG_1"
+          exclude: |
+            **/.git*
+            **/.github*
