@@ -3,8 +3,7 @@ name: Deploy VIS_WG_1 para andremaciel.pt
 on:
   push:
     branches:
-      - main    # se o branch principal for 'main'
-      # - master  # use esta linha em vez da de cima se o seu branch for 'master'
+      - main   # troque para 'master' se o seu branch principal se chamar 'master'
 
 jobs:
   deploy:
@@ -14,16 +13,16 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.3
+      - name: Deploy via SFTP com chave SSH
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
-          server: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USER }}
-          privateKey: ${{ secrets.SFTP_KEY }}
-          protocol: "sftp"
+          server: ${{ secrets.SFTP_HOST }}
           port: ${{ secrets.SFTP_PORT }}
-          local-dir: "VIS_WG_1"
-          server-dir: "public_html/VIS_WG_1"
-          exclude: |
-            **/.git*
-            **/.github*
+          ssh_private_key: ${{ secrets.SFTP_KEY }}
+          # pasta local (no repositório)
+          local_path: './VIS_WG_1/*'
+          # pasta remota (no servidor) – relativa ao seu home no cPanel
+          remote_path: 'public_html/VIS_WG_1'
+          sftp_only: true
+          rsyncArgs: '--exclude=.git --exclude=.github'
