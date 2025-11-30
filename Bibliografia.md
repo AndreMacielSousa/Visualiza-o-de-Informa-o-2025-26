@@ -25,3 +25,6 @@ WIKIPÉDIA. Distritos de Portugal. Disponível em: https://pt.wikipedia.org/wiki
 
 OPEN DATASOFT. georef-portugal-distrito-millesime — Limites administrativos de Portugal (distritos). Disponível em: https://public.opendatasoft.com/explore/assets/georef-portugal-distrito-millesime/export/
 . Acesso em: 25 nov. 2025.
+
+AGAFONKIN, Vladimir. Leaflet – Mobile-friendly interactive maps. Disponível em: https://leafletjs.com/index.html
+. Acesso em: 25 nov. 2025.

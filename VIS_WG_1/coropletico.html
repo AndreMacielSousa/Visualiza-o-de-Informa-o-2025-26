@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <title>Mapa coroplético – Habitações por distrito (1940–2021)</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+    }
+
+    #map {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .top-bar {
+      position: absolute;
+      z-index: 1000;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.95);
+      padding: 6px 12px;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+
+    .top-bar strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .top-bar select {
+      padding: 2px 6px;
+      font-size: 13px;
+    }
+
+    .info {
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .info h4 {
+      margin: 0 0 5px;
+      font-size: 14px;
+    }
+
+    .legend {
+      line-height: 18px;
+      color: #555;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .legend i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 6px;
+      opacity: 0.8;
+    }
+
+    .source-box {
+      position: absolute;
+      z-index: 1000;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 4px 8px;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      font-size: 11px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <strong>Habitações por distrito</strong>
+    Mapa coroplético interativo – 1940–2021
+  </div>
+  <div>
+    Ano:
+    <select id="year-select">
+      <option value="1940">1940</option>
+      <option value="1950">1950</option>
+      <option value="1960">1960</option>
+      <option value="1981">1981</option>
+      <option value="1991">1991</option>
+      <option value="2001">2001</option>
+      <option value="2011">2011</option>
+      <option value="2021" selected>2021</option>
+    </select>
+  </div>
+  <div>
+    Cor:
+    <select id="color-select">
+      <option value="Blues" selected>Blues</option>
+      <option value="Greens">Greens</option>
+      <option value="Reds">Reds</option>
+      <option value="Purples">Purples</option>
+      <option value="Oranges">Oranges</option>
+      <option value="Gray">Escala de cinzentos</option>
+    </select>
+  </div>
+</div>
+
+<div class="source-box">
+  Fonte: INE – Alojamentos familiares clássicos à data dos Censos (dados normalizados pelo autor).<br>
+  Limites distritais: OpenDataSoft – georef-portugal-distrito-millesime.
+</div>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin="">
+</script>
+
+<script>
+  let hab = null;              // JSON com todos os anos
+  let currentYear = "2021";
+  let currentPalette = "Blues";
+  let geojsonLayer = null;
+  let map, info, legend;
+
+  // Paletas de cores (sequenciais + cinzentos)
+  function getColor(d) {
+    const palettes = {
+      "Blues": [
+        '#deebf7', '#c6dbef', '#9ecae1',
+        '#6baed6', '#4292c6', '#2171b5', '#084594'
+      ],
+      "Greens": [
+        '#e5f5e0', '#c7e9c0', '#a1d99b',
+        '#74c476', '#41ab5d', '#238b45', '#005a32'
+      ],
+      "Reds": [
+        '#fee5d9', '#fcbba1', '#fc9272',
+        '#fb6a4a', '#ef3b2c', '#cb181d', '#99000d'
+      ],
+      "Purples": [
+        '#efedf5', '#dadaeb', '#bcbddc',
+        '#9e9ac8', '#807dba', '#6a51a3', '#4a1486'
+      ],
+      "Oranges": [
+        '#feedde', '#fdd0a2', '#fdae6b',
+        '#fd8d3c', '#f16913', '#d94801', '#8c2d04'
+      ],
+      "Gray": [
+        '#f7f7f7', '#d9d9d9', '#bdbdbd',
+        '#969696', '#737373', '#525252', '#252525'
+      ]
+    };
+
+    const c = palettes[currentPalette] || palettes["Blues"];
+
+    return d > 350000 ? c[6] :
+           d > 250000 ? c[5] :
+           d > 180000 ? c[4] :
+           d > 120000 ? c[3] :
+           d > 90000  ? c[2] :
+           d > 70000  ? c[1] :
+                        c[0];
+  }
+
+  function style(feature) {
+    if (!hab) {
+      return {
+        fillColor: '#cccccc',
+        weight: 1,
+        opacity: 1,
+        color: '#ffffff',
+        fillOpacity: 0.7
+      };
+    }
+
+    const dist = feature.properties.dis_name;
+    const value = hab[currentYear] && hab[currentYear][dist] ? hab[currentYear][dist] : 0;
+
+    return {
+      fillColor: getColor(value),
+      weight: 1,
+      opacity: 1,
+      color: '#ffffff',
+      fillOpacity: 0.9
+    };
+  }
+
+  function initMap() {
+    map = L.map('map', {
+      zoomSnap: 0.25
+    });
+
+    map.setView([39.5, -8.0], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Painel info
+    info = L.control();
+    info.onAdd = function () {
+      this._div = L.DomUtil.create('div', 'info');
+      this.update();
+      return this._div;
+    };
+    info.update = function (props) {
+      if (!props || !hab) {
+        this._div.innerHTML = '<h4>Habitações por distrito</h4>Passe o rato sobre um distrito.';
+        return;
+      }
+      const dist = props.dis_name;
+      const val = hab[currentYear][dist];
+      this._div.innerHTML =
+        '<h4>Habitações (' + currentYear + ')</h4>' +
+        '<b>' + dist + '</b><br/>' +
+        (val ? val.toLocaleString('pt-PT') + ' habitações' : 'Sem dados');
+    };
+    info.addTo(map);
+
+    // Legenda
+    legend = L.control({position: 'bottomright'});
+    legend.onAdd = function () {
+      const div = L.DomUtil.create('div', 'legend');
+      const grades = [70000, 90000, 120000, 180000, 250000, 350000];
+
+      div.innerHTML += '<strong>Habitações (' + currentYear + ')</strong><br>';
+
+      for (let i = 0; i < grades.length; i++) {
+        const from = grades[i];
+        const to = grades[i + 1];
+
+        div.innerHTML +=
+          '<i style="background:' + getColor(from + 1) + '"></i> ' +
+          from.toLocaleString('pt-PT') +
+          (to ? ' – ' + to.toLocaleString('pt-PT') + '<br>' : '+');
+      }
+
+      return div;
+    };
+    legend.addTo(map);
+
+    // Carregar GeoJSON
+    fetch('georef-portugal-distrito-millesime.geojson')
+      .then(r => r.json())
+      .then(data => {
+        geojsonLayer = L.geoJSON(data, {
+          style: style,
+          onEachFeature: onEachFeature
+        }).addTo(map);
+
+        map.fitBounds(geojsonLayer.getBounds());
+      })
+      .catch(err => {
+        console.error('Erro a carregar GeoJSON:', err);
+        alert('Não foi possível carregar georef-portugal-distrito-millesime.geojson');
+      });
+  }
+
+  function highlightFeature(e) {
+    const layer = e.target;
+
+    layer.setStyle({
+      weight: 2,
+      color: '#000',
+      fillOpacity: 1
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+      layer.bringToFront();
+    }
+
+    info.update(layer.feature.properties);
+  }
+
+  function resetHighlight(e) {
+    geojsonLayer.resetStyle(e.target);
+    info.update();
+  }
+
+  function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+  }
+
+  function onEachFeature(feature, layer) {
+    layer.on({
+      mouseover: highlightFeature,
+      mouseout: resetHighlight,
+      click: zoomToFeature
+    });
+  }
+
+  // Quando o utilizador muda de ano
+  function onYearChange(year) {
+    currentYear = year;
+
+    if (geojsonLayer) {
+      geojsonLayer.setStyle(style);
+    }
+
+    legend.remove();
+    legend.addTo(map);
+    info.update();
+  }
+
+  // Quando o utilizador muda de paleta
+  function onColorChange(palette) {
+    currentPalette = palette;
+
+    if (geojsonLayer) {
+      geojsonLayer.setStyle(style);
+    }
+
+    legend.remove();
+    legend.addTo(map);
+    info.update();
+  }
+
+  // Carregar JSON com todos os anos e depois inicializar o mapa
+  fetch('habitacoes_por_ano.json')
+    .then(r => r.json())
+    .then(data => {
+      hab = data;
+      initMap();
+    })
+    .catch(err => {
+      console.error('Erro a carregar habitacoes_por_ano.json:', err);
+      alert('Não foi possível carregar habitacoes_por_ano.json');
+    });
+
+  // Listeners para os <select>
+  document.addEventListener('DOMContentLoaded', () => {
+    const yearSelect = document.getElementById('year-select');
+    const colorSelect = document.getElementById('color-select');
+
+    yearSelect.addEventListener('change', function () {
+      onYearChange(this.value);
+    });
+
+    colorSelect.addEventListener('change', function () {
+      onColorChange(this.value);
+    });
+  });
+</script>
+
+</body>
+</html>
