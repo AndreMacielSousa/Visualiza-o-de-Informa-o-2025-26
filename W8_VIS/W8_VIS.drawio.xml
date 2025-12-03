@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0" version="29.2.3">
+  <diagram name="Pipeline Vertical Colorido" id="nJ9XZ7LwnbfpACqz8WyC">
+    <mxGraphModel dx="1418" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#607D8B;fontSize=18;fontColor=#263238;fontStyle=1;" value="PIPELINE DO NOSSO GRUPO&#xa;(Baseado nas etapas práticas de Kandel et al.)" vertex="1">
+          <mxGeometry height="90" width="550" x="150" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1E88E5;fontSize=14;fontColor=#0D47A1;" value="🔍 DISCOVERY&#xa;- Procurar dados INE, PORDATA, Censos&#xa;- Compreender definições diferentes&#xa;- Identificar lacunas e fontes úteis" vertex="1">
+          <mxGeometry height="130" width="350" x="250" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-4" edge="1" parent="1" source="9Ks7G-EKRcwrD5O8fJez-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#90A4AE;endArrow=block;html=1;" target="9Ks7G-EKRcwrD5O8fJez-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;fontSize=14;fontColor=#1B5E20;" value="🧹 WRANGLING&#xa;- Normalizar anos e distritos&#xa;- Corrigir formatos e tipos&#xa;- Unir tabelas incompatíveis&#xa;- Excluir Censo 1970 por falta de fiabilidade" vertex="1">
+          <mxGeometry height="150" width="350" x="250" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-6" edge="1" parent="1" source="9Ks7G-EKRcwrD5O8fJez-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#90A4AE;endArrow=block;html=1;" target="9Ks7G-EKRcwrD5O8fJez-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FB8C00;fontSize=14;fontColor=#E65100;" value="🔎 PROFILING&#xa;- Verificar incoerências&#xa;- Controlar outliers&#xa;- Decidir o que corrigir, excluir ou manter" vertex="1">
+          <mxGeometry height="130" width="350" x="250" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-8" edge="1" parent="1" source="9Ks7G-EKRcwrD5O8fJez-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#90A4AE;endArrow=block;html=1;" target="9Ks7G-EKRcwrD5O8fJez-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=14;fontColor=#4A148C;" value="📊 MODELING&#xa;- Criar visuais exploratórios&#xa;- Testar relações e padrões&#xa;- Hypothesis testing inicial" vertex="1">
+          <mxGeometry height="130" width="350" x="250" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-10" edge="1" parent="1" source="9Ks7G-EKRcwrD5O8fJez-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#90A4AE;endArrow=block;html=1;" target="9Ks7G-EKRcwrD5O8fJez-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F7FA;strokeColor=#00838F;fontSize=14;fontColor=#004D40;" value="📝 REPORTING&#xa;- Consolidar visualizações&#xa;- Explicar decisões e limitações&#xa;- Preparar narrativa final" vertex="1">
+          <mxGeometry height="130" width="350" x="250" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="9Ks7G-EKRcwrD5O8fJez-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#607D8B;fontSize=14;fontColor=#263238;" value="Observação: Após consolidar o dataset, evoluímos para soluções visuais online com programação mais avançada, aproximando-nos do perfil ‘scripter’." vertex="1">
+          <mxGeometry height="110" width="550" x="150" y="1020" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
