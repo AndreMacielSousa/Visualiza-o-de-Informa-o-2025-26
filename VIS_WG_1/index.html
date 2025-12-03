@@ -6,6 +6,13 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Carregar modo escuro IMEDIATAMENTE (antes de qualquer CSS) -->
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.write('<style>body{background:#121212!important;color:#e3e3e3!important;}</style>');
+    }
+  </script>
+
   <style>
     /* Paleta inspirada no branding UAb (azul) + UTAD (roxo) */
     :root {
@@ -210,7 +217,10 @@
 <body>
 
 <header>
-  <button class="dark-toggle" onclick="toggleDark()">🌙 Modo escuro</button>
+  <button class="dark-toggle" onclick="toggleDark()" id="darkModeBtn">
+    <span id="darkModeIcon">🌙</span>
+    <span id="darkModeText">Modo escuro</span>
+  </button>
 
   <div class="logos">
     <img src="imagens/uab.png" class="logo" alt="Universidade Aberta">
@@ -385,8 +395,38 @@
 </footer>
 
 <script>
+  // Aplicar modo escuro ao carregar
+  const isDarkMode = localStorage.getItem('darkMode') === 'true';
+  if (isDarkMode) {
+    document.body.classList.add('dark');
+  }
+  
+  // Atualizar texto do botão
+  function updateDarkModeButton() {
+    const isDark = document.body.classList.contains('dark');
+    const icon = document.getElementById('darkModeIcon');
+    const text = document.getElementById('darkModeText');
+    
+    if (isDark) {
+      icon.textContent = '☀️';
+      text.textContent = 'Modo claro';
+    } else {
+      icon.textContent = '🌙';
+      text.textContent = 'Modo escuro';
+    }
+  }
+  
+  // Atualizar ao carregar
+  updateDarkModeButton();
+
   function toggleDark() {
     document.body.classList.toggle('dark');
+    // Guardar preferência
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+    
+    // Recarregar página para aplicar mudança (evita flash)
+    window.location.reload();
   }
 </script>
 

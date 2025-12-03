@@ -552,7 +552,9 @@
   <a href="index.html" class="back-btn">← Voltar ao início</a>
   <h1>🧩 Treemap</h1>
   <p>Habitações por Distrito — Portugal (1940–2021)</p>
-  <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+  <button class="dark-toggle" onclick="toggleDark()" id="darkModeBtn" title="Alternar modo">
+    <span id="darkModeIcon">🌙</span>
+  </button>
 </header>
 
 <div class="tabs-container">
@@ -793,7 +795,7 @@
       </div>
       
       <div id="resultadoComparacao" style="display: none; padding: 15px; background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196f3; border-radius: 4px; margin-bottom: 20px;">
-      
+        <!-- Resultado da comparação aparece aqui -->
       </div>
       
       <div id="textoAnalise">
@@ -858,7 +860,7 @@ const distritoNUTS = {
 
 // Função para obter cor por gradiente baseado no valor
 function getColorByValue(value) {
-  
+  // ATUALIZADO: Escala Blues EXATAMENTE igual ao mapa do André
   const blues = [
     '#deebf7', // 70k-90k
     '#c6dbef', // 90k-120k
@@ -1675,13 +1677,36 @@ async function init() {
 
 function toggleDark() {
   document.body.classList.toggle('dark');
-  localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+  
+  // Recarregar página para aplicar mudança
+  window.location.reload();
 }
 
-// Restaurar modo escuro
-if (localStorage.getItem('darkMode') === 'true') {
+// Restaurar modo escuro e atualizar botão
+const isDarkMode = localStorage.getItem('darkMode') === 'true';
+if (isDarkMode) {
   document.body.classList.add('dark');
 }
+
+// Atualizar ícone do botão
+function updateDarkModeButton() {
+  const icon = document.getElementById('darkModeIcon');
+  const btn = document.getElementById('darkModeBtn');
+  if (icon && btn) {
+    if (isDarkMode) {
+      icon.textContent = '☀️';
+      btn.setAttribute('title', 'Mudar para modo claro');
+    } else {
+      icon.textContent = '🌙';
+      btn.setAttribute('title', 'Mudar para modo escuro');
+    }
+  }
+}
+
+// Atualizar ao carregar
+updateDarkModeButton();
 
 // Iniciar quando página carregar
 document.addEventListener('DOMContentLoaded', init);

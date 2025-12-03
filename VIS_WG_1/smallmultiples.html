@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Small Multiples - Habitações Portugal</title>
+  
+  <!-- Carregar modo escuro IMEDIATAMENTE (antes de qualquer CSS) -->
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.write('<style>body{background:#1a1a1a!important;color:#e0e0e0!important;}</style>');
+    }
+  </script>
+  
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     :root {
@@ -11,7 +19,8 @@
       --card-bg: white;
       --text: #2c3e50;
       --border: #e1e8ed;
-      --primary: #1976d2;
+      --primary: #005b96;
+      --header-bg: linear-gradient(135deg, #005b96, #5a2a82);
     }
 
     body.dark {
@@ -20,6 +29,7 @@
       --text: #e0e0e0;
       --border: #444;
       --primary: #64b5f6;
+      --header-bg: linear-gradient(135deg, #000000, #3a1757);
     }
 
     * {
@@ -36,7 +46,7 @@
     }
 
     header {
-      background: var(--primary);
+      background: var(--header-bg);
       color: white;
       padding: 20px;
       text-align: center;
@@ -302,7 +312,9 @@
   <a href="index.html" class="back-btn">← Voltar ao início</a>
   <h1>⏱️ Small Multiples</h1>
   <p>Análise Temporal — Habitações por Distrito (1940–2021)</p>
-  <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+  <button class="dark-toggle" onclick="toggleDark()" id="darkModeBtn" title="Alternar modo">
+    <span id="darkModeIcon">🌙</span>
+  </button>
 </header>
 
 <div class="container">
@@ -429,8 +441,38 @@ function getColorByValue(value) {
          value > 90000  ? blues[1] : blues[0];
 }
 
+// Aplicar modo escuro ao carregar
+const isDarkMode = localStorage.getItem('darkMode') === 'true';
+if (isDarkMode) {
+  document.body.classList.add('dark');
+}
+
+// Atualizar ícone do botão
+function updateDarkModeButton() {
+  const icon = document.getElementById('darkModeIcon');
+  const btn = document.getElementById('darkModeBtn');
+  if (icon && btn) {
+    if (isDarkMode) {
+      icon.textContent = '☀️';
+      btn.setAttribute('title', 'Mudar para modo claro');
+    } else {
+      icon.textContent = '🌙';
+      btn.setAttribute('title', 'Mudar para modo escuro');
+    }
+  }
+}
+
+// Atualizar ao carregar
+updateDarkModeButton();
+
 function toggleDark() {
   document.body.classList.toggle('dark');
+  // Guardar preferência
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+  
+  // Recarregar página para aplicar mudança
+  window.location.reload();
 }
 
 function switchTab(index) {
@@ -671,7 +713,7 @@ function desenharTreemapPequeno(ano, dados) {
     .text(d => {
       const w = d.x1 - d.x0;
       const h = d.y1 - d.y0;
-      
+      // Threshold muito reduzido: 20x15 (quase todos aparecem)
       if (w < 20 || h < 15) return '';
       const nome = d.data.name;
       // Abreviação progressiva
