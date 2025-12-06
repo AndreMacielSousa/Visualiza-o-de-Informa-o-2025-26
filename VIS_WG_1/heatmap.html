@@ -1,445 +1,428 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <title>Heatmap · VIS · Habitação 1940–2021</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>Heatmap · Habitações por Distrito (1940–2021)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Carregar modo escuro IMEDIATAMENTE -->
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.write('<style>body{background:#1a1a1a!important;color:#e0e0e0!important;}</style>');
+    }
+  </script>
+
   <style>
     :root {
-      color-scheme: light dark;
-      --bg: #f5f5f5;
-      --bg-card: #ffffff;
-      --text: #222222;
-      --muted: #555555;
-      --accent: #005ea8;
-      --border: #dddddd;
-      --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --bg: #f5f7fa;
+      --card-bg: white;
+      --text: #2c3e50;
+      --border: #e1e8ed;
+      --primary: #005b96;
+      --header-bg: linear-gradient(135deg, #005b96, #5a2a82);
+      --muted: #6c757d;
     }
 
-    :root[data-theme="dark"] {
-      --bg: #101010;
-      --bg-card: #1b1b1b;
-      --text: #f3f3f3;
-      --muted: #aaaaaa;
-      --accent: #4da3ff;
-      --border: #333333;
-      --shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    body.dark {
+      --bg: #1a1a1a;
+      --card-bg: #2d2d2d;
+      --text: #e0e0e0;
+      --border: #444;
+      --primary: #64b5f6;
+      --header-bg: linear-gradient(135deg, #000000, #3a1757);
+      --muted: #aaa;
     }
 
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
     body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
       background: var(--bg);
       color: var(--text);
+      transition: all 0.3s ease;
       line-height: 1.6;
     }
 
     header {
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card);
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      background: var(--header-bg);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
     }
 
-    .header-inner {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 12px 16px;
+    header h1 {
+      margin: 0;
+      font-size: 24px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .site-title {
-      font-size: 16px;
-      font-weight: 600;
+    header p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
     }
 
-    .breadcrumb {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .breadcrumb a {
-      color: var(--accent);
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
       text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: all 0.3s;
     }
 
-    .breadcrumb a:hover {
-      text-decoration: underline;
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
 
     .dark-toggle {
-      font-size: 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text);
-      padding: 4px 10px;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
       cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+
+    .dark-toggle:hover {
+      background: rgba(255,255,255,0.3);
     }
 
     main {
       max-width: 960px;
-      margin: 24px auto 40px;
-      padding: 0 16px 40px;
-    }
-
-    h1 {
-      font-size: 26px;
-      margin-bottom: 4px;
-    }
-
-    h2 {
-      font-size: 20px;
-      margin-top: 24px;
-      margin-bottom: 8px;
-    }
-
-    h3 {
-      font-size: 16px;
-      margin-top: 18px;
-      margin-bottom: 6px;
-    }
-
-    p {
-      margin: 0 0 10px;
-    }
-
-    .lead {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 18px;
+      margin: 30px auto;
+      padding: 0 20px;
     }
 
     .card {
-      background: var(--bg-card);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      margin-bottom: 24px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    p {
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .lead {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    ul {
+      padding-left: 25px;
+      margin: 10px 0;
+    }
+
+    li {
+      margin-bottom: 8px;
     }
 
     figure {
-      margin: 0 0 12px;
+      margin: 20px 0;
     }
 
     figure img {
       width: 100%;
       height: auto;
-      display: block;
       border-radius: 8px;
       border: 1px solid var(--border);
     }
 
-    figure figcaption {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    ul {
-      padding-left: 20px;
-      margin-top: 4px;
-      margin-bottom: 8px;
-    }
-
-    li {
-      margin-bottom: 4px;
-    }
-
-    .refs {
+    figcaption {
       font-size: 13px;
-    }
-
-    .refs h2 {
-      font-size: 18px;
-    }
-
-    .refs p {
-      margin-bottom: 6px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
     }
 
     footer {
-      max-width: 960px;
-      margin: 0 auto 24px;
-      padding: 0 16px;
-      font-size: 11px;
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
       color: var(--muted);
     }
-
-    @media (min-width: 768px) {
-      h1 {
-        font-size: 30px;
-      }
-      .lead {
-        font-size: 15px;
-      }
-    }
   </style>
-  <script>
-    // Aplicar preferência de tema o mais cedo possível
-    (function () {
-      try {
-        const stored = localStorage.getItem("vis-theme");
-        if (stored === "dark") {
-          document.documentElement.dataset.theme = "dark";
-        }
-      } catch (e) {
-        // ignore
-      }
-    })();
-  </script>
 </head>
 <body>
-  <header>
-    <div class="header-inner">
-      <div>
-        <div class="site-title">VIS · Trabalho de Grupo · Habitação em Portugal</div>
-        <nav class="breadcrumb">
-          <a href="index.html">Início</a> ·
-          <a href="coropletico.html">Mapa coroplético</a> ·
-          <a href="treemap.html">Treemap</a> ·
-          <a href="smallmultiples.html">Small multiples</a> ·
-          Heatmap
-        </nav>
-      </div>
-      <button class="dark-toggle" type="button" onclick="toggleTheme()">
-        Alternar modo escuro
-      </button>
-    </div>
-  </header>
 
-  <main>
-    <header>
-      <h1>Heatmap distritos × anos</h1>
-      <p class="lead">
-        Evolução do número de alojamentos familiares clássicos por distrito entre
-        1940 e 2021, evidenciando padrões de crescimento, quebras e estabilização
-        ao longo das diferentes décadas.
-      </p>
-    </header>
+<header>
+  <a href="index.html" class="back-btn">← Voltar ao início</a>
+  
+  <h1>🔥 Heatmap</h1>
+  <p>Habitações por Distrito — Portugal (1940–2021)</p>
+  
+  <button class="dark-toggle" onclick="toggleDark()" id="darkModeBtn" title="Alternar modo">
+    <span id="darkModeIcon">🌙</span>
+  </button>
+</header>
 
-    <section class="card">
-      <figure>
-        <img
-          src="imagens/heatmap_distrito_x_ano.svg"
-          alt="Heatmap com distritos no eixo vertical e anos de censo no eixo horizontal, mostrando a intensidade do número de habitações por cor."
-        />
-        <figcaption>
-          Figura – Heatmap de alojamentos familiares clássicos por distrito e ano de censo (1940–2021). Fonte: INE – Censos 1940–2021.
-        </figcaption>
-      </figure>
-      <p>
-        Neste heatmap, cada célula representa o número de alojamentos familiares clássicos
-        num distrito específico para um ano de recenseamento. As tonalidades mais escuras
-        correspondem a maior número de habitações, enquanto as cores mais claras indicam
-        valores relativamente mais baixos. Esta vista permite identificar rapidamente
-        tendências temporais e contrastes espaciais entre distritos.
-      </p>
-    </section>
+<main>
+  <p class="lead">
+    Evolução do número de alojamentos familiares clássicos por distrito entre
+    1940 e 2021, evidenciando padrões de crescimento, quebras e estabilização
+    ao longo das diferentes décadas.
+  </p>
 
-    <section class="card">
-      <h2>Padrões temporais identificados no heatmap</h2>
+  <section class="card">
+    <figure>
+      <img
+        src="imagens/heatmap_distrito_x_ano.svg"
+        alt="Heatmap com distritos no eixo vertical e anos de censo no eixo horizontal, mostrando a intensidade do número de habitações por cor."
+      />
+      <figcaption>
+        Figura — Heatmap de alojamentos familiares clássicos por distrito e ano de censo (1940–2021). Fonte: INE — Censos 1940–2021.
+      </figcaption>
+    </figure>
+    <p>
+      Neste heatmap, cada célula representa o número de alojamentos familiares clássicos
+      num distrito específico para um ano de recenseamento. As tonalidades mais escuras
+      correspondem a maior número de habitações, enquanto as cores mais claras indicam
+      valores relativamente mais baixos. Esta vista permite identificar rapidamente
+      tendências temporais e contrastes espaciais entre distritos.
+    </p>
+  </section>
 
-      <h3>1. Crescimento sustentado de longo prazo</h3>
-      <p>
-        O padrão mais abrangente é um crescimento robusto e praticamente contínuo
-        no número de habitações ao longo de oito décadas (1940–2021) na maioria dos
-        distritos. A “mancha” global do heatmap torna-se progressivamente mais escura
-        à medida que avançamos no eixo temporal.
-      </p>
-      <ul>
-        <li>
-          <strong>Aveiro</strong> praticamente duplica o número de habitações, passando
-          de <strong>124&nbsp;954</strong> em 1940 para <strong>257&nbsp;230</strong> em 2021.
-        </li>
-        <li>
-          <strong>Braga</strong> evidencia um crescimento muito expressivo, de
-          <strong>113&nbsp;354</strong> em 1940 para <strong>278&nbsp;807</strong> em 2021.
-        </li>
-        <li>
-          <strong>Porto</strong> mantém-se como um dos distritos com maior concentração
-          habitacional, evoluindo de <strong>200&nbsp;743</strong> em 1940 para
-          <strong>443&nbsp;980</strong> em 2021.
-        </li>
-      </ul>
-      <p>
-        Este padrão de “aquecimento” gradual da matriz sugere um aumento continuado
-        da capacidade habitacional, associado à urbanização, crescimento demográfico
-        e expansão dos perímetros urbanos ao longo do século XX.
-      </p>
+  <section class="card">
+    <h2>Padrões temporais identificados no heatmap</h2>
 
-      <h3>2. A redução generalizada em 1981 – a “mancha fria”</h3>
-      <p>
-        O padrão temporal mais marcante é a quebra no número de habitações observada
-        na maioria dos distritos entre 1960 e 1981. No heatmap, a coluna de 1981
-        surge, em muitos casos, com uma tonalidade mais clara em comparação com 1960
-        e com os censos posteriores, formando uma autêntica “mancha fria”.
-      </p>
-      <p>
-        Este comportamento é especialmente visível nos distritos do interior:
-      </p>
-      <ul>
-        <li>
-          <strong>Castelo Branco</strong>: de <strong>173&nbsp;163</strong> habitações em
-          1960 para <strong>97&nbsp;932</strong> em 1981.
-        </li>
-        <li>
-          <strong>Guarda</strong>: de <strong>167&nbsp;975</strong> em 1960 para
-          <strong>90&nbsp;500</strong> em 1981.
-        </li>
-        <li>
-          <strong>Viseu</strong>: de <strong>229&nbsp;259</strong> em 1960 para
-          <strong>145&nbsp;853</strong> em 1981.
-        </li>
-        <li>
-          <strong>Bragança</strong>: regista o valor mais baixo da série em 1981, com
-          <strong>66&nbsp;117</strong> habitações.
-        </li>
-      </ul>
-      <p>
-        Este padrão não é, contudo, universal. Alguns distritos mantêm a trajectória
-        de crescimento, mesmo neste período:
-      </p>
-      <ul>
-        <li>
-          <strong>Lisboa</strong>: de <strong>238&nbsp;876</strong> em 1960 para
-          <strong>266&nbsp;133</strong> em 1981.
-        </li>
-        <li>
-          <strong>Setúbal</strong>: de <strong>97&nbsp;402</strong> em 1960 para
-          <strong>130&nbsp;127</strong> em 1981.
-        </li>
-      </ul>
-      <p>
-        A coexistência de uma “mancha fria” no interior com a manutenção de valores
-        elevados e em crescimento em áreas metropolitanas sugere processos assimétricos
-        de despovoamento e reconfiguração territorial, que o heatmap torna visualmente
-        evidentes.
-      </p>
+    <h3>1. Crescimento sustentado de longo prazo</h3>
+    <p>
+      O padrão mais abrangente é um crescimento robusto e praticamente contínuo
+      no número de habitações ao longo de oito décadas (1940–2021) na maioria dos
+      distritos. A "mancha" global do heatmap torna-se progressivamente mais escura
+      à medida que avançamos no eixo temporal.
+    </p>
+    <ul>
+      <li>
+        <strong>Aveiro</strong> praticamente duplica o número de habitações, passando
+        de <strong>124 954</strong> em 1940 para <strong>257 230</strong> em 2021.
+      </li>
+      <li>
+        <strong>Braga</strong> evidencia um crescimento muito expressivo, de
+        <strong>113 354</strong> em 1940 para <strong>278 807</strong> em 2021.
+      </li>
+      <li>
+        <strong>Porto</strong> mantém-se como um dos distritos com maior concentração
+        habitacional, evoluindo de <strong>200 743</strong> em 1940 para
+        <strong>443 980</strong> em 2021.
+      </li>
+    </ul>
+    <p>
+      Este padrão de "aquecimento" gradual da matriz sugere um aumento continuado
+      da capacidade habitacional, associado à urbanização, crescimento demográfico
+      e expansão dos perímetros urbanos ao longo do século XX.
+    </p>
 
-      <h3>3. Recuperação e aceleração após 1981</h3>
-      <p>
-        Depois do mínimo relativo que, em muitos distritos, ocorre em 1981, observa-se
-        um período prolongado de recuperação e expansão entre 1991 e 2011. As colunas
-        correspondentes a estes anos mostram um “re-aquecimento” da matriz, com
-        intensificação da cor em grande parte dos distritos.
-      </p>
-      <p>
-        Os distritos costeiros e com forte pressão urbana destacam-se particularmente:
-        <strong>Faro</strong>, por exemplo, aumenta de <strong>114&nbsp;752</strong>
-        habitações em 1981 para <strong>201&nbsp;078</strong> em 2021, mantendo uma
-        tonalidade consistentemente escura ao longo das últimas décadas.
-      </p>
+    <h3>2. A redução generalizada em 1981 — a "mancha fria"</h3>
+    <p>
+      O padrão temporal mais marcante é a quebra no número de habitações observada
+      na maioria dos distritos entre 1960 e 1981. No heatmap, a coluna de 1981
+      surge, em muitos casos, com uma tonalidade mais clara em comparação com 1960
+      e com os censos posteriores, formando uma autêntica "mancha fria".
+    </p>
+    <p>
+      Este comportamento é especialmente visível nos distritos do interior:
+    </p>
+    <ul>
+      <li>
+        <strong>Castelo Branco</strong>: de <strong>173 163</strong> habitações em
+        1960 para <strong>97 932</strong> em 1981.
+      </li>
+      <li>
+        <strong>Guarda</strong>: de <strong>167 975</strong> em 1960 para
+        <strong>90 500</strong> em 1981.
+      </li>
+      <li>
+        <strong>Viseu</strong>: de <strong>229 259</strong> em 1960 para
+        <strong>145 853</strong> em 1981.
+      </li>
+      <li>
+        <strong>Bragança</strong>: regista o valor mais baixo da série em 1981, com
+        <strong>66 117</strong> habitações.
+      </li>
+    </ul>
+    <p>
+      Este padrão não é, contudo, universal. Alguns distritos mantêm a trajectória
+      de crescimento, mesmo neste período:
+    </p>
+    <ul>
+      <li>
+        <strong>Lisboa</strong>: de <strong>238 876</strong> em 1960 para
+        <strong>266 133</strong> em 1981.
+      </li>
+      <li>
+        <strong>Setúbal</strong>: de <strong>97 402</strong> em 1960 para
+        <strong>130 127</strong> em 1981.
+      </li>
+    </ul>
+    <p>
+      A coexistência de uma "mancha fria" no interior com a manutenção de valores
+      elevados e em crescimento em áreas metropolitanas sugere processos assimétricos
+      de despovoamento e reconfiguração territorial, que o heatmap torna visualmente
+      evidentes.
+    </p>
 
-      <h3>4. Estagnação e quebras recentes (2011–2021)</h3>
-      <p>
-        O período mais recente revela um padrão mais heterogéneo. Em vários distritos,
-        a evolução entre 2011 e 2021 é de estabilização ou ligeira diminuição do
-        número de habitações, o que se traduz em pequenas reduções de intensidade
-        na coluna de 2021.
-      </p>
-      <ul>
-        <li>
-          <strong>Coimbra</strong>: ligeira redução de
-          <strong>190&nbsp;131</strong> (2011) para <strong>188&nbsp;245</strong> (2021).
-        </li>
-        <li>
-          <strong>Lisboa</strong>: quebra residual de <strong>366&nbsp;073</strong> (2011)
-          para <strong>365&nbsp;844</strong> (2021).
-        </li>
-        <li>
-          <strong>Santarém</strong>: de <strong>211&nbsp;558</strong> (2011) para
-          <strong>209&nbsp;481</strong> (2021).
-        </li>
-        <li>
-          <strong>Madeira</strong>: de <strong>91&nbsp;961</strong> (2011) para
-          <strong>90&nbsp;970</strong> (2021).
-        </li>
-      </ul>
-      <p>
-        Em contraste, outros distritos mantêm uma trajectória de crescimento, com
-        intensificação da cor em 2021:
-      </p>
-      <ul>
-        <li>
-          <strong>Braga</strong>: de <strong>268&nbsp;462</strong> (2011) para
-          <strong>278&nbsp;807</strong> (2021).
-        </li>
-        <li>
-          <strong>Porto</strong>: de <strong>443&nbsp;042</strong> (2011) para
-          <strong>443&nbsp;980</strong> (2021).
-        </li>
-      </ul>
-      <p>
-        Esta combinação de estabilização em alguns territórios e crescimento noutros
-        sugere uma fase recente de maior maturidade do parque habitacional, com
-        dinâmicas regionais diferenciadas que o heatmap permite comparar de forma
-        imediata.
-      </p>
-    </section>
+    <h3>3. Recuperação e aceleração após 1981</h3>
+    <p>
+      Depois do mínimo relativo que, em muitos distritos, ocorre em 1981, observa-se
+      um período prolongado de recuperação e expansão entre 1991 e 2011. As colunas
+      correspondentes a estes anos mostram um "re-aquecimento" da matriz, com
+      intensificação da cor em grande parte dos distritos.
+    </p>
+    <p>
+      Os distritos costeiros e com forte pressão urbana destacam-se particularmente:
+      <strong>Faro</strong>, por exemplo, aumenta de <strong>114 752</strong>
+      habitações em 1981 para <strong>201 078</strong> em 2021, mantendo uma
+      tonalidade consistentemente escura ao longo das últimas décadas.
+    </p>
 
-    <section class="card">
-      <h2>Síntese visual</h2>
-      <p>
-        Em síntese, o heatmap deixa ver o tempo como uma sequência de transições
-        relativamente claras:
-      </p>
-      <ul>
-        <li>
-          um período inicial de <strong>crescimento</strong> (1940–1960);
-        </li>
-        <li>
-          uma fase de <strong>contração generalizada</strong> em muitos distritos (1960–1981), visível na “mancha fria” de 1981;
-        </li>
-        <li>
-          um longo período de <strong>expansão</strong> e densificação do parque habitacional (1981–2011);
-        </li>
-        <li>
-          uma fase recente de <strong>estabilização ou ligeira regressão</strong> em alguns territórios (2011–2021).
-        </li>
-      </ul>
-      <p>
-        A leitura conjunta destas “manchas” de cor facilita a identificação de
-        momentos de rutura e de continuidade, permitindo relacionar os padrões
-        estatísticos de habitação com processos mais amplos de urbanização,
-        despovoamento do interior e reconfiguração demográfica do país.
-      </p>
-    </section>
+    <h3>4. Estagnação e quebras recentes (2011–2021)</h3>
+    <p>
+      O período mais recente revela um padrão mais heterogéneo. Em vários distritos,
+      a evolução entre 2011 e 2021 é de estabilização ou ligeira diminuição do
+      número de habitações, o que se traduz em pequenas reduções de intensidade
+      na coluna de 2021.
+    </p>
+    <ul>
+      <li>
+        <strong>Coimbra</strong>: ligeira redução de
+        <strong>190 131</strong> (2011) para <strong>188 245</strong> (2021).
+      </li>
+      <li>
+        <strong>Lisboa</strong>: quebra residual de <strong>366 073</strong> (2011)
+        para <strong>365 844</strong> (2021).
+      </li>
+      <li>
+        <strong>Santarém</strong>: de <strong>211 558</strong> (2011) para
+        <strong>209 481</strong> (2021).
+      </li>
+      <li>
+        <strong>Madeira</strong>: de <strong>91 961</strong> (2011) para
+        <strong>90 970</strong> (2021).
+      </li>
+    </ul>
+    <p>
+      Em contraste, outros distritos mantêm uma trajectória de crescimento, com
+      intensificação da cor em 2021:
+    </p>
+    <ul>
+      <li>
+        <strong>Braga</strong>: de <strong>268 462</strong> (2011) para
+        <strong>278 807</strong> (2021).
+      </li>
+      <li>
+        <strong>Porto</strong>: de <strong>443 042</strong> (2011) para
+        <strong>443 980</strong> (2021).
+      </li>
+    </ul>
+    <p>
+      Esta combinação de estabilização em alguns territórios e crescimento noutros
+      sugere uma fase recente de maior maturidade do parque habitacional, com
+      dinâmicas regionais diferenciadas que o heatmap permite comparar de forma
+      imediata.
+    </p>
+  </section>
 
-   
-  </main>
+  <section class="card">
+    <h2>Síntese visual</h2>
+    <p>
+      Em síntese, o heatmap deixa ver o tempo como uma sequência de transições
+      relativamente claras:
+    </p>
+    <ul>
+      <li>
+        um período inicial de <strong>crescimento</strong> (1940–1960);
+      </li>
+      <li>
+        uma fase de <strong>contração generalizada</strong> em muitos distritos (1960–1981), visível na "mancha fria" de 1981;
+      </li>
+      <li>
+        um longo período de <strong>expansão</strong> e densificação do parque habitacional (1981–2011);
+      </li>
+      <li>
+        uma fase recente de <strong>estabilização ou ligeira regressão</strong> em alguns territórios (2011–2021).
+      </li>
+    </ul>
+    <p>
+      A leitura conjunta destas "manchas" de cor facilita a identificação de
+      momentos de rutura e de continuidade, permitindo relacionar os padrões
+      estatísticos de habitação com processos mais amplos de urbanização,
+      despovoamento do interior e reconfiguração demográfica do país.
+    </p>
+  </section>
+</main>
 
-  <footer>
-    Página desenvolvida no âmbito da unidade curricular “Visualização de Informação”
-    (MEIW – Universidade Aberta).
-  </footer>
+<footer>
+  © VIS · Trabalho de Grupo — 2025 · Universidade Aberta & UTAD
+</footer>
 
-  <script>
-    function toggleTheme() {
-      const current = document.documentElement.dataset.theme;
-      if (current === "dark") {
-        document.documentElement.dataset.theme = "";
-        try {
-          localStorage.setItem("vis-theme", "light");
-        } catch (e) {}
+<script>
+  // Aplicar modo escuro ao carregar
+  const isDarkMode = localStorage.getItem('darkMode') === 'true';
+  if (isDarkMode) {
+    document.body.classList.add('dark');
+  }
+
+  // Atualizar ícone do botão
+  function updateDarkModeButton() {
+    const icon = document.getElementById('darkModeIcon');
+    const btn = document.getElementById('darkModeBtn');
+    if (icon && btn) {
+      if (isDarkMode) {
+        icon.textContent = '☀️';
+        btn.setAttribute('title', 'Mudar para modo claro');
       } else {
-        document.documentElement.dataset.theme = "dark";
-        try {
-          localStorage.setItem("vis-theme", "dark");
-        } catch (e) {}
+        icon.textContent = '🌙';
+        btn.setAttribute('title', 'Mudar para modo escuro');
       }
     }
-  </script>
+  }
+  updateDarkModeButton();
+
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+    window.location.reload();
+  }
+</script>
+
 </body>
 </html>

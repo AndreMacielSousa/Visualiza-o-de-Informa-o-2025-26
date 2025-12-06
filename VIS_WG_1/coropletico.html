@@ -2,7 +2,14 @@
 <html lang="pt">
 <head>
   <meta charset="utf-8">
-  <title>Mapa coroplético – Habitações por distrito (1940–2021)</title>
+  <title>Mapa Coroplético — Habitações por Distrito (1940–2021)</title>
+
+  <!-- Carregar modo escuro IMEDIATAMENTE -->
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.write('<style>body{background:#1a1a1a!important;color:#e0e0e0!important;}</style>');
+    }
+  </script>
 
   <!-- Leaflet CSS -->
   <link
@@ -13,63 +20,145 @@
   />
 
   <style>
+    :root {
+      --bg: #f5f7fa;
+      --card-bg: white;
+      --text: #2c3e50;
+      --border: #e1e8ed;
+      --primary: #005b96;
+      --header-bg: linear-gradient(135deg, #005b96, #5a2a82);
+    }
+
+    body.dark {
+      --bg: #1a1a1a;
+      --card-bg: #2d2d2d;
+      --text: #e0e0e0;
+      --border: #444;
+      --primary: #64b5f6;
+      --header-bg: linear-gradient(135deg, #000000, #3a1757);
+    }
+
     html, body {
       height: 100%;
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f5f5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .dark-toggle {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+
+    .dark-toggle:hover {
+      background: rgba(255,255,255,0.3);
     }
 
     #map {
       width: 100%;
-      height: 100vh;
+      height: calc(100vh - 140px);
     }
 
-    .top-bar {
-      position: absolute;
-      z-index: 1000;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255,255,255,0.95);
-      padding: 6px 12px;
-      border-radius: 4px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    .controls {
+      background: var(--card-bg);
+      padding: 15px 20px;
       display: flex;
       align-items: center;
-      gap: 14px;
-      font-size: 14px;
+      gap: 20px;
       flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
     }
 
-    .top-bar strong {
-      display: block;
-      font-size: 15px;
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
     }
 
-    .top-bar select {
-      padding: 2px 6px;
-      font-size: 13px;
+    .controls select {
+      padding: 6px 10px;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--text);
     }
 
     .info {
       padding: 8px 12px;
-      background: rgba(255,255,255,0.9);
+      background: var(--card-bg);
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
       border-radius: 4px;
       font-size: 12px;
+      color: var(--text);
     }
 
     .info h4 {
       margin: 0 0 5px;
       font-size: 14px;
+      color: var(--text);
     }
 
     .legend {
       line-height: 18px;
-      color: #555;
+      color: var(--text);
       padding: 6px 8px;
-      background: rgba(255,255,255,0.9);
+      background: var(--card-bg);
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
       border-radius: 4px;
       font-size: 12px;
@@ -84,28 +173,33 @@
     }
 
     .source-box {
-      position: absolute;
-      z-index: 1000;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(255,255,255,0.9);
-      padding: 4px 8px;
-      border-radius: 4px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      background: var(--card-bg);
+      padding: 15px 20px;
       font-size: 11px;
-      color: #444;
+      color: var(--text);
+      border-top: 1px solid var(--border);
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-<div class="top-bar">
-  <div>
-    <strong>Habitações por distrito</strong>
-    Mapa coroplético interativo – 1940–2021
-  </div>
-  <div>
-    Ano:
+<header>
+  <a href="index.html" class="back-btn">← Voltar ao início</a>
+  
+  <h1>
+    🗺️ Mapa Coroplético
+  </h1>
+  <p>Habitações por Distrito — Portugal (1940–2021)</p>
+  
+  <button class="dark-toggle" onclick="toggleDark()" id="darkModeBtn" title="Alternar modo">
+    <span id="darkModeIcon">🌙</span>
+  </button>
+</header>
+
+<div class="controls">
+  <label>
+    📅 Ano:
     <select id="year-select">
       <option value="1940">1940</option>
       <option value="1950">1950</option>
@@ -116,48 +210,27 @@
       <option value="2011">2011</option>
       <option value="2021" selected>2021</option>
     </select>
-  </div>
-  <div>
-    Cor:
+  </label>
+  
+  <label>
+    🎨 Paleta de Cores:
     <select id="color-select">
-      <option value="Blues">Blues</option>
-      <option value="Greens">Greens</option>
-      <option value="Reds">Reds</option>
-      <option value="Purples">Purples</option>
-      <option value="Oranges" selected>Oranges</option>
-      <option value="Gray">Escala de cinzentos</option>
+      <option value="Blues" selected>Blues (Azul)</option>
+      <option value="Greens">Greens (Verde)</option>
+      <option value="Reds">Reds (Vermelho)</option>
+      <option value="Purples">Purples (Roxo)</option>
+      <option value="Oranges">Oranges (Laranja)</option>
+      <option value="Gray">Escala de Cinzentos</option>
     </select>
-  </div>
+  </label>
 </div>
-
-<div class="source-box">
-  Fonte: INE – Alojamentos familiares clássicos à data dos Censos (dados normalizados pelo autor).<br>
-  Limites distritais: OpenDataSoft – georef-portugal-distrito-millesime.
-</div>
-
-<!-- Botão Voltar ao Index -->
-<div style="
-    position: fixed;
-    top: 20px;
-    left: 60px;
-    z-index: 9999;
-">
-    <a href="index.html" 
-       style="
-           background: #0050a0;
-           color: white;
-           padding: 10px 16px;
-           border-radius: 6px;
-           text-decoration: none;
-           font-family: Arial, sans-serif;
-           box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-       ">
-       ← Voltar ao início
-    </a>
-</div>
-
 
 <div id="map"></div>
+
+<div class="source-box">
+  <strong>Fonte:</strong> INE — Alojamentos familiares clássicos à data dos Censos (dados normalizados pelo autor).<br>
+  <strong>Limites distritais:</strong> OpenDataSoft — georef-portugal-distrito-millesime.
+</div>
 
 <!-- Leaflet JS -->
 <script
@@ -167,39 +240,49 @@
 </script>
 
 <script>
-  let hab = null;              // JSON com todos os anos
+  let hab = null;
   let currentYear = "2021";
-  let currentPalette = "Oranges";
+  let currentPalette = "Blues";
   let geojsonLayer = null;
   let map, info, legend;
 
-  // Paletas de cores (sequenciais + cinzentos)
+  // Aplicar modo escuro ao carregar
+  const isDarkMode = localStorage.getItem('darkMode') === 'true';
+  if (isDarkMode) {
+    document.body.classList.add('dark');
+  }
+
+  // Atualizar ícone do botão
+  function updateDarkModeButton() {
+    const icon = document.getElementById('darkModeIcon');
+    const btn = document.getElementById('darkModeBtn');
+    if (icon && btn) {
+      if (isDarkMode) {
+        icon.textContent = '☀️';
+        btn.setAttribute('title', 'Mudar para modo claro');
+      } else {
+        icon.textContent = '🌙';
+        btn.setAttribute('title', 'Mudar para modo escuro');
+      }
+    }
+  }
+  updateDarkModeButton();
+
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+    window.location.reload();
+  }
+
   function getColor(d) {
     const palettes = {
-      "Blues": [
-        '#deebf7', '#c6dbef', '#9ecae1',
-        '#6baed6', '#4292c6', '#2171b5', '#084594'
-      ],
-      "Greens": [
-        '#e5f5e0', '#c7e9c0', '#a1d99b',
-        '#74c476', '#41ab5d', '#238b45', '#005a32'
-      ],
-      "Reds": [
-        '#fee5d9', '#fcbba1', '#fc9272',
-        '#fb6a4a', '#ef3b2c', '#cb181d', '#99000d'
-      ],
-      "Purples": [
-        '#efedf5', '#dadaeb', '#bcbddc',
-        '#9e9ac8', '#807dba', '#6a51a3', '#4a1486'
-      ],
-      "Oranges": [
-        '#feedde', '#fdd0a2', '#fdae6b',
-        '#fd8d3c', '#f16913', '#d94801', '#8c2d04'
-      ],
-      "Gray": [
-        '#f7f7f7', '#d9d9d9', '#bdbdbd',
-        '#969696', '#737373', '#525252', '#252525'
-      ]
+      "Blues": ['#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#084594'],
+      "Greens": ['#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#005a32'],
+      "Reds": ['#fee5d9', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#99000d'],
+      "Purples": ['#efedf5', '#dadaeb', '#bcbddc', '#9e9ac8', '#807dba', '#6a51a3', '#4a1486'],
+      "Oranges": ['#feedde', '#fdd0a2', '#fdae6b', '#fd8d3c', '#f16913', '#d94801', '#8c2d04'],
+      "Gray": ['#f7f7f7', '#d9d9d9', '#bdbdbd', '#969696', '#737373', '#525252', '#252525']
     };
 
     const c = palettes[currentPalette] || palettes["Blues"];
@@ -209,8 +292,7 @@
            d > 180000 ? c[4] :
            d > 120000 ? c[3] :
            d > 90000  ? c[2] :
-           d > 70000  ? c[1] :
-                        c[0];
+           d > 70000  ? c[1] : c[0];
   }
 
   function style(feature) {
@@ -247,7 +329,6 @@
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Painel info
     info = L.control();
     info.onAdd = function () {
       this._div = L.DomUtil.create('div', 'info');
@@ -268,7 +349,6 @@
     };
     info.addTo(map);
 
-    // Legenda
     legend = L.control({position: 'bottomright'});
     legend.onAdd = function () {
       const div = L.DomUtil.create('div', 'legend');
@@ -290,7 +370,6 @@
     };
     legend.addTo(map);
 
-    // Carregar GeoJSON
     fetch('georef-portugal-distrito-millesime.geojson')
       .then(r => r.json())
       .then(data => {
@@ -340,7 +419,6 @@
     });
   }
 
-  // Quando o utilizador muda de ano
   function onYearChange(year) {
     currentYear = year;
 
@@ -353,7 +431,6 @@
     info.update();
   }
 
-  // Quando o utilizador muda de paleta
   function onColorChange(palette) {
     currentPalette = palette;
 
@@ -366,7 +443,6 @@
     info.update();
   }
 
-  // Carregar JSON com todos os anos e depois inicializar o mapa
   fetch('habitacoes_por_ano.json')
     .then(r => r.json())
     .then(data => {
@@ -378,7 +454,6 @@
       alert('Não foi possível carregar habitacoes_por_ano.json');
     });
 
-  // Listeners para os <select>
   document.addEventListener('DOMContentLoaded', () => {
     const yearSelect = document.getElementById('year-select');
     const colorSelect = document.getElementById('color-select');
@@ -392,6 +467,10 @@
     });
   });
 </script>
+
+<footer style="text-align: center; padding: 20px; font-size: 12px; opacity: 0.7;">
+  © VIS · Trabalho de Grupo — 2025 · Universidade Aberta & UTAD
+</footer>
 
 </body>
 </html>

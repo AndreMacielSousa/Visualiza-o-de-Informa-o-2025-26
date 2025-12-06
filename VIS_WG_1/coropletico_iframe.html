@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="utf-8">
-  <title>Mapa coroplético – Habitações por distrito (1940–2021)</title>
+  <title>Mapa Coroplético (iframe)</title>
 
   <!-- Leaflet CSS -->
   <link
@@ -102,7 +102,7 @@
 <div class="top-bar">
   <div>
     <strong>Habitações por distrito</strong>
-    Mapa coroplético interativo – 1940–2021
+    Mapa coroplético interativo — 1940–2021
   </div>
   <div>
     Ano:
@@ -131,10 +131,9 @@
 </div>
 
 <div class="source-box">
-  Fonte: INE – Alojamentos familiares clássicos à data dos Censos (dados normalizados pelo autor).<br>
-  Limites distritais: OpenDataSoft – georef-portugal-distrito-millesime.
+  Fonte: INE — Alojamentos familiares clássicos à data dos Censos (dados normalizados pelo autor).<br>
+  Limites distritais: OpenDataSoft — georef-portugal-distrito-millesime.
 </div>
-
 
 <div id="map"></div>
 
@@ -146,39 +145,20 @@
 </script>
 
 <script>
-  let hab = null;              // JSON com todos os anos
+  let hab = null;
   let currentYear = "2021";
   let currentPalette = "Oranges";
   let geojsonLayer = null;
   let map, info, legend;
 
-  // Paletas de cores (sequenciais + cinzentos)
   function getColor(d) {
     const palettes = {
-      "Blues": [
-        '#deebf7', '#c6dbef', '#9ecae1',
-        '#6baed6', '#4292c6', '#2171b5', '#084594'
-      ],
-      "Greens": [
-        '#e5f5e0', '#c7e9c0', '#a1d99b',
-        '#74c476', '#41ab5d', '#238b45', '#005a32'
-      ],
-      "Reds": [
-        '#fee5d9', '#fcbba1', '#fc9272',
-        '#fb6a4a', '#ef3b2c', '#cb181d', '#99000d'
-      ],
-      "Purples": [
-        '#efedf5', '#dadaeb', '#bcbddc',
-        '#9e9ac8', '#807dba', '#6a51a3', '#4a1486'
-      ],
-      "Oranges": [
-        '#feedde', '#fdd0a2', '#fdae6b',
-        '#fd8d3c', '#f16913', '#d94801', '#8c2d04'
-      ],
-      "Gray": [
-        '#f7f7f7', '#d9d9d9', '#bdbdbd',
-        '#969696', '#737373', '#525252', '#252525'
-      ]
+      "Blues": ['#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#084594'],
+      "Greens": ['#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#005a32'],
+      "Reds": ['#fee5d9', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d', '#99000d'],
+      "Purples": ['#efedf5', '#dadaeb', '#bcbddc', '#9e9ac8', '#807dba', '#6a51a3', '#4a1486'],
+      "Oranges": ['#feedde', '#fdd0a2', '#fdae6b', '#fd8d3c', '#f16913', '#d94801', '#8c2d04'],
+      "Gray": ['#f7f7f7', '#d9d9d9', '#bdbdbd', '#969696', '#737373', '#525252', '#252525']
     };
 
     const c = palettes[currentPalette] || palettes["Blues"];
@@ -188,8 +168,7 @@
            d > 180000 ? c[4] :
            d > 120000 ? c[3] :
            d > 90000  ? c[2] :
-           d > 70000  ? c[1] :
-                        c[0];
+           d > 70000  ? c[1] : c[0];
   }
 
   function style(feature) {
@@ -226,13 +205,11 @@
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
     
-    // FIX: Forçar recalcular tamanho do mapa (importante para iframes)
     setTimeout(function() {
       map.invalidateSize();
       map.setView([39.5, -8.0], 6);
     }, 100);
 
-    // Painel info
     info = L.control();
     info.onAdd = function () {
       this._div = L.DomUtil.create('div', 'info');
@@ -253,7 +230,6 @@
     };
     info.addTo(map);
 
-    // Legenda
     legend = L.control({position: 'bottomright'});
     legend.onAdd = function () {
       const div = L.DomUtil.create('div', 'legend');
@@ -275,7 +251,6 @@
     };
     legend.addTo(map);
 
-    // Carregar GeoJSON
     fetch('georef-portugal-distrito-millesime.geojson')
       .then(r => r.json())
       .then(data => {
@@ -284,11 +259,9 @@
           onEachFeature: onEachFeature
         }).addTo(map);
 
-       
         map.invalidateSize();
         map.fitBounds(geojsonLayer.getBounds());
         
-        // FIX adicional: garantir que zoom está correto
         setTimeout(function() {
           map.invalidateSize();
           map.fitBounds(geojsonLayer.getBounds());
@@ -333,7 +306,6 @@
     });
   }
 
-  // Quando o utilizador muda de ano
   function onYearChange(year) {
     currentYear = year;
 
@@ -346,7 +318,6 @@
     info.update();
   }
 
-  // Quando o utilizador muda de paleta
   function onColorChange(palette) {
     currentPalette = palette;
 
@@ -359,7 +330,6 @@
     info.update();
   }
 
-  // Carregar JSON com todos os anos e depois inicializar o mapa
   fetch('habitacoes_por_ano.json')
     .then(r => r.json())
     .then(data => {
@@ -371,7 +341,6 @@
       alert('Não foi possível carregar habitacoes_por_ano.json');
     });
 
-  // Listeners para os <select>
   document.addEventListener('DOMContentLoaded', () => {
     const yearSelect = document.getElementById('year-select');
     const colorSelect = document.getElementById('color-select');
@@ -385,7 +354,6 @@
     });
   });
   
-  // FIX: Forçar ajuste do mapa quando window/iframe é carregado ou redimensionado
   window.addEventListener('load', function() {
     setTimeout(function() {
       if (map) {

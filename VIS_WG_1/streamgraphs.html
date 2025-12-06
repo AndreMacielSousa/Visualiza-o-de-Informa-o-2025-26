@@ -1,432 +1,416 @@
+
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <title>Streamgraphs · VIS · Habitação 1940–2021</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>Streamgraphs · Habitações por Distrito (1940–2021)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Carregar modo escuro IMEDIATAMENTE -->
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.write('<style>body{background:#1a1a1a!important;color:#e0e0e0!important;}</style>');
+    }
+  </script>
+
   <style>
     :root {
-      color-scheme: light dark;
-      --bg: #f5f5f5;
-      --bg-card: #ffffff;
-      --text: #222222;
-      --muted: #555555;
-      --accent: #005ea8;
-      --border: #dddddd;
-      --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --bg: #f5f7fa;
+      --card-bg: white;
+      --text: #2c3e50;
+      --border: #e1e8ed;
+      --primary: #005b96;
+      --header-bg: linear-gradient(135deg, #005b96, #5a2a82);
+      --muted: #6c757d;
     }
 
-    :root[data-theme="dark"] {
-      --bg: #101010;
-      --bg-card: #1b1b1b;
-      --text: #f3f3f3;
-      --muted: #aaaaaa;
-      --accent: #4da3ff;
-      --border: #333333;
-      --shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    body.dark {
+      --bg: #1a1a1a;
+      --card-bg: #2d2d2d;
+      --text: #e0e0e0;
+      --border: #444;
+      --primary: #64b5f6;
+      --header-bg: linear-gradient(135deg, #000000, #3a1757);
+      --muted: #aaa;
     }
 
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
     body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
       background: var(--bg);
       color: var(--text);
+      transition: all 0.3s ease;
       line-height: 1.6;
     }
 
     header {
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card);
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      background: var(--header-bg);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
     }
 
-    .header-inner {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 12px 16px;
+    header h1 {
+      margin: 0;
+      font-size: 24px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .site-title {
-      font-size: 16px;
-      font-weight: 600;
+    header p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
     }
 
-    .breadcrumb {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .breadcrumb a {
-      color: var(--accent);
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
       text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: all 0.3s;
     }
 
-    .breadcrumb a:hover {
-      text-decoration: underline;
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
 
     .dark-toggle {
-      font-size: 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text);
-      padding: 4px 10px;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
       cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+
+    .dark-toggle:hover {
+      background: rgba(255,255,255,0.3);
     }
 
     main {
       max-width: 960px;
-      margin: 24px auto 40px;
-      padding: 0 16px 40px;
-    }
-
-    h1 {
-      font-size: 26px;
-      margin-bottom: 4px;
-    }
-
-    h2 {
-      font-size: 20px;
-      margin-top: 24px;
-      margin-bottom: 8px;
-    }
-
-    h3 {
-      font-size: 16px;
-      margin-top: 18px;
-      margin-bottom: 6px;
-    }
-
-    p {
-      margin: 0 0 10px;
-    }
-
-    .lead {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 18px;
+      margin: 30px auto;
+      padding: 0 20px;
     }
 
     .card {
-      background: var(--bg-card);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      margin-bottom: 24px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    p {
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .lead {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    ul {
+      padding-left: 25px;
+      margin: 10px 0;
+    }
+
+    li {
+      margin-bottom: 8px;
     }
 
     figure {
-      margin: 0 0 12px;
+      margin: 20px 0;
     }
 
     figure img {
       width: 100%;
       height: auto;
-      display: block;
       border-radius: 8px;
       border: 1px solid var(--border);
     }
 
-    figure figcaption {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    ul {
-      padding-left: 20px;
-      margin-top: 4px;
-      margin-bottom: 8px;
-    }
-
-    li {
-      margin-bottom: 4px;
-    }
-
-    .refs {
+    figcaption {
       font-size: 13px;
-    }
-
-    .refs h2 {
-      font-size: 18px;
-    }
-
-    .refs p {
-      margin-bottom: 6px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
     }
 
     footer {
-      max-width: 960px;
-      margin: 0 auto 24px;
-      padding: 0 16px;
-      font-size: 11px;
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
       color: var(--muted);
     }
-
-    @media (min-width: 768px) {
-      h1 {
-        font-size: 30px;
-      }
-      .lead {
-        font-size: 15px;
-      }
-    }
   </style>
-  <script>
-    // Aplicar preferência de tema o mais cedo possível
-    (function () {
-      try {
-        const stored = localStorage.getItem("vis-theme");
-        if (stored === "dark") {
-          document.documentElement.dataset.theme = "dark";
-        }
-      } catch (e) {
-        // ignore
-      }
-    })();
-  </script>
 </head>
 <body>
-  <header>
-    <div class="header-inner">
-      <div>
-        <div class="site-title">VIS · Trabalho de Grupo · Habitação em Portugal</div>
-        <nav class="breadcrumb">
-          <a href="index.html">Início</a> ·
-          <a href="coropletico.html">Mapa coroplético</a> ·
-          <a href="treemap.html">Treemap</a> ·
-          <a href="smallmultiples.html">Small multiples</a> ·
-          <a href="heatmap.html">Heatmap</a> ·
-          Streamgraphs
-        </nav>
-      </div>
-      <button class="dark-toggle" type="button" onclick="toggleTheme()">
-        Alternar modo escuro
-      </button>
-    </div>
-  </header>
 
-  <main>
-    <header>
-      <h1>Streamgraphs de alojamentos por distrito</h1>
-      <p class="lead">
-        Representação em streamgraph da evolução do número de alojamentos familiares clássicos
-        por distrito entre 1940 e 2021, destacando a grande rutura de 1960–1981 e as
-        acelerações subsequentes.
-      </p>
-    </header>
+<header>
+  <a href="index.html" class="back-btn">← Voltar ao início</a>
+  
+  <h1>🌊 Streamgraphs</h1>
+  <p>Habitações por Distrito — Portugal (1940–2021)</p>
+  
+  <button class="dark-toggle" onclick="toggleDark()" id="darkModeBtn" title="Alternar modo">
+    <span id="darkModeIcon">🌙</span>
+  </button>
+</header>
 
-    <section class="card">
-      <figure>
-        <img
-          src="imagens/linhas_temporais_distorcidas.svg"
-          alt="Streamgraph dos distritos portugueses, com o tempo no eixo horizontal e a espessura das camadas a representar o número de habitações, evidenciando uma rutura entre 1960 e 1981."
-        />
-        <figcaption>
-          Figura – Streamgraph de alojamentos familiares clássicos por distrito (1940–2021). As
-          camadas representam distritos; a espessura codifica o número de habitações em cada ano
-          de censo. Fonte: INE – Censos 1940–2021.
-        </figcaption>
-      </figure>
-      <p>
-        Neste streamgraph, o eixo horizontal representa os anos de recenseamento e cada camada
-        codifica o contributo de um distrito para o total de alojamentos familiares clássicos.
-        A espessura da camada em cada ponto do tempo corresponde ao número de habitações nesse
-        distrito, enquanto a espessura total da corrente traduz o volume global de habitação
-        no país. Esta vista enfatiza variações relativas e ruturas temporais mais do que
-        valores absolutos pontuais.
-      </p>
-    </section>
+<main>
+  <p class="lead">
+    Representação em streamgraph da evolução do número de alojamentos familiares clássicos
+    por distrito entre 1940 e 2021, destacando a grande rutura de 1960–1981 e as
+    acelerações subsequentes.
+  </p>
 
-    <section class="card">
-      <h2>Padrões temporais evidenciados pelos streamgraphs</h2>
+  <section class="card">
+    <figure>
+      <img
+        src="imagens/linhas_temporais_distorcidas.svg"
+        alt="Streamgraph dos distritos portugueses, com o tempo no eixo horizontal e a espessura das camadas a representar o número de habitações, evidenciando uma rutura entre 1960 e 1981."
+      />
+      <figcaption>
+        Figura — Streamgraph de alojamentos familiares clássicos por distrito (1940–2021). As
+        camadas representam distritos; a espessura codifica o número de habitações em cada ano
+        de censo. Fonte: INE — Censos 1940–2021.
+      </figcaption>
+    </figure>
+    <p>
+      Neste streamgraph, o eixo horizontal representa os anos de recenseamento e cada camada
+      codifica o contributo de um distrito para o total de alojamentos familiares clássicos.
+      A espessura da camada em cada ponto do tempo corresponde ao número de habitações nesse
+      distrito, enquanto a espessura total da corrente traduz o volume global de habitação
+      no país. Esta vista enfatiza variações relativas e ruturas temporais mais do que
+      valores absolutos pontuais.
+    </p>
+  </section>
 
-      <h3>I. A grande rutura nos distritos do interior (1960–1981)</h3>
-      <p>
-        O ponto de rutura mais evidente ocorre entre 1960 e 1981, quando a espessura total
-        da corrente diminui de forma acentuada e, em seguida, recupera rapidamente. Esta
-        rutura é sobretudo impulsionada pelos distritos do interior, cujas camadas “colapsam”
-        visualmente na zona correspondente a 1981.
-      </p>
-      <p>
-        A redução manifesta-se como um afinamento pronunciado das camadas de vários distritos:
-      </p>
-      <ul>
-        <li>
-          <strong>Castelo Branco</strong> desce de <strong>173&nbsp;163</strong> habitações em
-          1960 para <strong>97&nbsp;932</strong> em 1981.
-        </li>
-        <li>
-          <strong>Guarda</strong> diminui de <strong>167&nbsp;975</strong> (1960) para
-          <strong>90&nbsp;500</strong> (1981).
-        </li>
-        <li>
-          <strong>Viseu</strong> passa de <strong>229&nbsp;259</strong> habitações em 1960
-          para <strong>145&nbsp;853</strong> em 1981.
-        </li>
-        <li>
-          <strong>Bragança</strong> atinge, em 1981, o valor mais baixo da série, com
-          <strong>66&nbsp;117</strong> alojamentos.
-        </li>
-        <li>
-          <strong>Santarém</strong> acompanha a mesma dinâmica de contração, contribuindo
-          para o estreitamento global da corrente.
-        </li>
-      </ul>
-      <p>
-        Em contraste, as faixas correspondentes aos principais polos urbanos comportam-se
-        de forma distinta:
-      </p>
-      <ul>
-        <li>
-          <strong>Porto</strong> e <strong>Lisboa</strong> mantêm camadas relativamente
-          espessas e estáveis ao longo deste período.
-        </li>
-        <li>
-          <strong>Lisboa</strong> cresce de <strong>238&nbsp;876</strong> habitações em
-          1960 para <strong>266&nbsp;133</strong> em 1981, evidenciando uma continuidade
-          que contrasta com o “colapso” observado no interior.
-        </li>
-      </ul>
-      <p>
-        Em termos visuais, esta combinação de um afinamento forte nas camadas do interior
-        com a robustez das camadas metropolitanas cria uma rutura nítida na forma global
-        do streamgraph, tornando o período 1960–1981 um marco temporal facilmente
-        identificável.
-      </p>
+  <section class="card">
+    <h2>Padrões temporais evidenciados pelos streamgraphs</h2>
 
-      <h3>II. Aceleração pós-1981 e expansão do volume</h3>
-      <p>
-        Após 1981, observa-se uma aceleração generalizada do volume total de habitações,
-        visível pelo alargamento progressivo da corrente até 2011. As camadas de grande
-        parte dos distritos começam a “abrir”, sugerindo uma recuperação rápida da rutura
-        anterior e um período de forte expansão do parque habitacional.
-      </p>
-      <p>
-        Alguns casos são particularmente ilustrativos:
-      </p>
-      <ul>
-        <li>
-          <strong>Setúbal</strong> cresce de <strong>130&nbsp;127</strong> habitações em
-          1981 para <strong>206&nbsp;603</strong> em 2011, traduzindo-se numa camada que
-          aumenta significativamente de espessura ao longo deste intervalo.
-        </li>
-        <li>
-          <strong>Faro</strong> acompanha esta tendência de “abertura”, integrando a aceleração
-          observada nos distritos do litoral e com forte pressão turística e urbana.
-        </li>
-      </ul>
-      <p>
-        Os distritos já dominantes reforçam ainda mais o seu peso:
-      </p>
-      <ul>
-        <li>
-          <strong>Porto</strong> passa de <strong>306&nbsp;275</strong> habitações em
-          1981 para <strong>443&nbsp;042</strong> em 2011, tornando-se uma das camadas mais
-          volumosas do gráfico.
-        </li>
-        <li>
-          <strong>Lisboa</strong> acompanha esta expansão, contribuindo de forma consistente
-          para o espessamento da corrente total.
-        </li>
-      </ul>
-      <p>
-        No streamgraph, esta fase é percebida como um período de “enchimento” e alargamento
-        global, em que tanto os distritos do interior (em recuperação) como os grandes polos
-        urbanos aumentam o seu contributo relativo para o total de habitações.
-      </p>
+    <h3>I. A grande rutura nos distritos do interior (1960–1981)</h3>
+    <p>
+      O ponto de rutura mais evidente ocorre entre 1960 e 1981, quando a espessura total
+      da corrente diminui de forma acentuada e, em seguida, recupera rapidamente. Esta
+      rutura é sobretudo impulsionada pelos distritos do interior, cujas camadas "colapsam"
+      visualmente na zona correspondente a 1981.
+    </p>
+    <p>
+      A redução manifesta-se como um afinamento pronunciado das camadas de vários distritos:
+    </p>
+    <ul>
+      <li>
+        <strong>Castelo Branco</strong> desce de <strong>173 163</strong> habitações em
+        1960 para <strong>97 932</strong> em 1981.
+      </li>
+      <li>
+        <strong>Guarda</strong> diminui de <strong>167 975</strong> (1960) para
+        <strong>90 500</strong> (1981).
+      </li>
+      <li>
+        <strong>Viseu</strong> passa de <strong>229 259</strong> habitações em 1960
+        para <strong>145 853</strong> em 1981.
+      </li>
+      <li>
+        <strong>Bragança</strong> atinge, em 1981, o valor mais baixo da série, com
+        <strong>66 117</strong> alojamentos.
+      </li>
+      <li>
+        <strong>Santarém</strong> acompanha a mesma dinâmica de contração, contribuindo
+        para o estreitamento global da corrente.
+      </li>
+    </ul>
+    <p>
+      Em contraste, as faixas correspondentes aos principais polos urbanos comportam-se
+      de forma distinta:
+    </p>
+    <ul>
+      <li>
+        <strong>Porto</strong> e <strong>Lisboa</strong> mantêm camadas relativamente
+        espessas e estáveis ao longo deste período.
+      </li>
+      <li>
+        <strong>Lisboa</strong> cresce de <strong>238 876</strong> habitações em
+        1960 para <strong>266 133</strong> em 1981, evidenciando uma continuidade
+        que contrasta com o "colapso" observado no interior.
+      </li>
+    </ul>
+    <p>
+      Em termos visuais, esta combinação de um afinamento forte nas camadas do interior
+      com a robustez das camadas metropolitanas cria uma rutura nítida na forma global
+      do streamgraph, tornando o período 1960–1981 um marco temporal facilmente
+      identificável.
+    </p>
 
-      <h3>III. Rutura e estagnação recente (2011–2021)</h3>
-      <p>
-        Na extremidade direita do gráfico, a transição de 2011 para 2021 revela um padrão
-        mais subtil, mas relevante: a interrupção da aceleração e, em alguns casos, uma
-        ligeira inversão.
-      </p>
-      <ul>
-        <li>
-          A camada de <strong>Lisboa</strong> mostra uma pequena contração da espessura,
-          coerente com a descida de <strong>366&nbsp;073</strong> habitações em 2011 para
-          <strong>365&nbsp;844</strong> em 2021.
-        </li>
-        <li>
-          <strong>Coimbra</strong> apresenta um comportamento semelhante, passando de
-          <strong>190&nbsp;131</strong> (2011) para <strong>188&nbsp;245</strong> (2021).
-        </li>
-      </ul>
-      <p>
-        Em termos visuais, a corrente deixa de se expandir de forma tão marcada como no
-        período 1981–2011, sugerindo uma fase de maturação do parque habitacional e um
-        eventual abrandamento na criação de novos alojamentos em alguns distritos.
-      </p>
-    </section>
+    <h3>II. Aceleração pós-1981 e expansão do volume</h3>
+    <p>
+      Após 1981, observa-se uma aceleração generalizada do volume total de habitações,
+      visível pelo alargamento progressivo da corrente até 2011. As camadas de grande
+      parte dos distritos começam a "abrir", sugerindo uma recuperação rápida da rutura
+      anterior e um período de forte expansão do parque habitacional.
+    </p>
+    <p>
+      Alguns casos são particularmente ilustrativos:
+    </p>
+    <ul>
+      <li>
+        <strong>Setúbal</strong> cresce de <strong>130 127</strong> habitações em
+        1981 para <strong>206 603</strong> em 2011, traduzindo-se numa camada que
+        aumenta significativamente de espessura ao longo deste intervalo.
+      </li>
+      <li>
+        <strong>Faro</strong> acompanha esta tendência de "abertura", integrando a aceleração
+        observada nos distritos do litoral e com forte pressão turística e urbana.
+      </li>
+    </ul>
+    <p>
+      Os distritos já dominantes reforçam ainda mais o seu peso:
+    </p>
+    <ul>
+      <li>
+        <strong>Porto</strong> passa de <strong>306 275</strong> habitações em
+        1981 para <strong>443 042</strong> em 2011, tornando-se uma das camadas mais
+        volumosas do gráfico.
+      </li>
+      <li>
+        <strong>Lisboa</strong> acompanha esta expansão, contribuindo de forma consistente
+        para o espessamento da corrente total.
+      </li>
+    </ul>
+    <p>
+      No streamgraph, esta fase é percebida como um período de "enchimento" e alargamento
+      global, em que tanto os distritos do interior (em recuperação) como os grandes polos
+      urbanos aumentam o seu contributo relativo para o total de habitações.
+    </p>
 
-    <section class="card">
-      <h2>Síntese visual</h2>
-      <p>
-        Os streamgraphs permitem ler o tempo como uma sucessão de fases com forma distinta:
-      </p>
-      <ul>
-        <li>
-          uma fase de <strong>crescimento</strong> inicial até 1960, em que as camadas
-          se vão espessando;
-        </li>
-        <li>
-          uma <strong>rutura acentuada</strong> entre 1960 e 1981, com o afinamento das
-          camadas de muitos distritos do interior;
-        </li>
-        <li>
-          uma fase de <strong>aceleração e expansão</strong> muito marcada entre 1981 e
-          2011, visível no “inchar” da corrente;
-        </li>
-        <li>
-          um período recente de <strong>estagnação ou ligeira contração</strong> em alguns
-          distritos entre 2011 e 2021.
-        </li>
-      </ul>
-      <p>
-        A representação em streamgraph destaca não apenas os valores absolutos, mas
-        sobretudo a forma das transformações temporais, tornando especialmente claros
-        os momentos de rutura e de mudança de tendência na evolução da habitação em
-        Portugal.
-      </p>
-    </section>
+    <h3>III. Rutura e estagnação recente (2011–2021)</h3>
+    <p>
+      Na extremidade direita do gráfico, a transição de 2011 para 2021 revela um padrão
+      mais subtil, mas relevante: a interrupção da aceleração e, em alguns casos, uma
+      ligeira inversão.
+    </p>
+    <ul>
+      <li>
+        A camada de <strong>Lisboa</strong> mostra uma pequena contração da espessura,
+        coerente com a descida de <strong>366 073</strong> habitações em 2011 para
+        <strong>365 844</strong> em 2021.
+      </li>
+      <li>
+        <strong>Coimbra</strong> apresenta um comportamento semelhante, passando de
+        <strong>190 131</strong> (2011) para <strong>188 245</strong> (2021).
+      </li>
+    </ul>
+    <p>
+      Em termos visuais, a corrente deixa de se expandir de forma tão marcada como no
+      período 1981–2011, sugerindo uma fase de maturação do parque habitacional e um
+      eventual abrandamento na criação de novos alojamentos em alguns distritos.
+    </p>
+  </section>
 
-  </main>
+  <section class="card">
+    <h2>Síntese visual</h2>
+    <p>
+      Os streamgraphs permitem ler o tempo como uma sucessão de fases com forma distinta:
+    </p>
+    <ul>
+      <li>
+        uma fase de <strong>crescimento</strong> inicial até 1960, em que as camadas
+        se vão espessando;
+      </li>
+      <li>
+        uma <strong>rutura acentuada</strong> entre 1960 e 1981, com o afinamento das
+        camadas de muitos distritos do interior;
+      </li>
+      <li>
+        uma fase de <strong>aceleração e expansão</strong> muito marcada entre 1981 e
+        2011, visível no "inchar" da corrente;
+      </li>
+      <li>
+        um período recente de <strong>estagnação ou ligeira contração</strong> em alguns
+        distritos entre 2011 e 2021.
+      </li>
+    </ul>
+    <p>
+      A representação em streamgraph destaca não apenas os valores absolutos, mas
+      sobretudo a forma das transformações temporais, tornando especialmente claros
+      os momentos de rutura e de mudança de tendência na evolução da habitação em
+      Portugal.
+    </p>
+  </section>
+</main>
 
-  <footer>
-    Página desenvolvida no âmbito da unidade curricular “Visualização de Informação”
-    (MEIW – Universidade Aberta).
-  </footer>
+<footer>
+  © VIS · Trabalho de Grupo — 2025 · Universidade Aberta & UTAD
+</footer>
 
-  <script>
-    function toggleTheme() {
-      const current = document.documentElement.dataset.theme;
-      if (current === "dark") {
-        document.documentElement.dataset.theme = "";
-        try {
-          localStorage.setItem("vis-theme", "light");
-        } catch (e) {}
+<script>
+  // Aplicar modo escuro ao carregar
+  const isDarkMode = localStorage.getItem('darkMode') === 'true';
+  if (isDarkMode) {
+    document.body.classList.add('dark');
+  }
+
+  // Atualizar ícone do botão
+  function updateDarkModeButton() {
+    const icon = document.getElementById('darkModeIcon');
+    const btn = document.getElementById('darkModeBtn');
+    if (icon && btn) {
+      if (isDarkMode) {
+        icon.textContent = '☀️';
+        btn.setAttribute('title', 'Mudar para modo claro');
       } else {
-        document.documentElement.dataset.theme = "dark";
-        try {
-          localStorage.setItem("vis-theme", "dark");
-        } catch (e) {}
+        icon.textContent = '🌙';
+        btn.setAttribute('title', 'Mudar para modo escuro');
       }
     }
-  </script>
+  }
+  updateDarkModeButton();
+
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+    window.location.reload();
+  }
+</script>
+
 </body>
 </html>
