@@ -215,11 +215,11 @@
   <label>
     🎨 Paleta de Cores:
     <select id="color-select">
-      <option value="Blues" selected>Blues (Azul)</option>
+      <option value="Blues" >Blues (Azul)</option>
       <option value="Greens">Greens (Verde)</option>
       <option value="Reds">Reds (Vermelho)</option>
       <option value="Purples">Purples (Roxo)</option>
-      <option value="Oranges">Oranges (Laranja)</option>
+      <option value="Oranges" selected>Oranges (Laranja)</option>
       <option value="Gray">Escala de Cinzentos</option>
     </select>
   </label>
@@ -242,7 +242,7 @@
 <script>
   let hab = null;
   let currentYear = "2021";
-  let currentPalette = "Blues";
+  let currentPalette = "Oranges";
   let geojsonLayer = null;
   let map, info, legend;
 
