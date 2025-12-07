@@ -260,7 +260,7 @@
       color: #ffeb3b;
     }
 
-    /* Resto dos estilos do treemap original */
+    
     .container {
       max-width: 1400px;
       margin: 0 auto;
@@ -860,7 +860,7 @@ const distritoNUTS = {
 
 // Função para obter cor por gradiente baseado no valor
 function getColorByValue(value) {
-  // ATUALIZADO: Escala Blues EXATAMENTE igual ao mapa do André
+
   const blues = [
     '#deebf7', // 70k-90k
     '#c6dbef', // 90k-120k
@@ -901,7 +901,7 @@ function switchMainTab(index) {
     }
   });
   
-  // FIX: Redesenhar treemap ao mudar para TAB 2
+ 
   if (index === 1 && instances['2']) {
     setTimeout(() => {
       instances['2'].desenharTreemap();
@@ -1210,7 +1210,6 @@ class TreemapInstance {
       .text(d => {
         const width = d.x1 - d.x0;
         const height = d.y1 - d.y0;
-        // MELHORADO: Mostrar nome se tiver espaço mínimo (reduzido para 25x15)
         if (width < 25 || height < 15) return '';
         
         // Para nomes longos, abreviar se necessário
@@ -1250,7 +1249,7 @@ function atualizarAnaliseAutomatica() {
     return;
   }
   
-  // Atualizar os dropdowns silenciosamente
+
   const select1 = document.getElementById('compareYear1');
   const select2 = document.getElementById('compareYear2');
   if (select1 && select2) {
@@ -1460,7 +1459,7 @@ function compararAnos() {
   // Atualizar texto da análise usando a função auxiliar
   atualizarTextoAnalise(ano1, ano2, dados1, dados2, total1, total2, top1, top2, maiorCrescimento);
   
-  // Scroll suave até ao resultado
+ 
   resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 

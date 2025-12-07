@@ -713,10 +713,10 @@ function desenharTreemapPequeno(ano, dados) {
     .text(d => {
       const w = d.x1 - d.x0;
       const h = d.y1 - d.y0;
-      // Threshold muito reduzido: 20x15 (quase todos aparecem)
+     
       if (w < 20 || h < 15) return '';
       const nome = d.data.name;
-      // Abreviação progressiva
+      
       if (w < 50 && nome.length > 6) return nome.substring(0, 5) + '.';
       if (w < 70 && nome.length > 8) return nome.substring(0, 7) + '.';
       return nome;
