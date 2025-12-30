@@ -119,7 +119,7 @@ Este trabalho assume explicitamente uma **postura analítica e crítica**, recon
 
 ---
 
-<div style="background-color:#eef2f7; padding:16px 20px; border-radius:10px; border-left:6px solid #694747; margin:32px 0;">
+<div style="background-color:#eef2f7; padding:16px 20px; border-radius:10px; border-left:6px solid rgb(105,71,71); margin:32px 0;">
 
 <strong>Organização do trabalho</strong><br>
 As secções seguintes descrevem a componente <em>operacional</em> do Trabalho&nbsp;2,
