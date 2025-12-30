@@ -43,19 +43,25 @@ Tal como assinalado pela equipa docente:
 
 > "Neste momento, o que acontece é que com as visualizações em si, vocês estão basicamente a testar duas ideias em formatos diferentes. Uma das ideias sendo a apresentação dos totais globais e outra a apresentação da evolução da versão temporal ou da série temporal, como quiserem. E, portanto, nas próximas etapas, a ideia será decidir para uma determinada perspetiva, qual das visualizações é mais funcional. Aqui, penso que não será preciso dizer-vos que o mapa coroplético funciona bastante melhor do que o Tree Map, porque estamos a falar de dados geográficos e, portanto, a apresentação geográfica é evidente."
 
-Assim, neste Trabalho 2, deixamos de “testar formatos em paralelo” e passamos a **selecionar explicitamente as visualizações mais funcionais** para cada perspetiva analítica.
+Assim, neste Trabalho 2, deixa-se de testar formatos em paralelo e passa-se a
+selecionar explicitamente as visualizações mais funcionais para cada perspetiva analítica.
+
 
 ### Escolha de visualizações
 
 - **Distribuição espacial (dados geográficos)**  
-  O **mapa coroplético** é adotado como visualização principal para a análise espacial, por preservar a estrutura geográfica do território e permitir uma leitura imediata das assimetrias regionais.  
-  O **treemap** é mantido apenas como referência exploratória do Trabalho 1 (ou alternativa comparativa), mas não como visualização central do protótipo, dado que abstrai a dimensão territorial.
+  O **mapa coroplético** é adotado como visualização espacial principal,
+  por preservar a estrutura territorial e permitir a leitura imediata
+  das assimetrias regionais num determinado momento temporal.
 
 - **Evolução temporal (foco do Trabalho 2)**  
-  Dado o foco analítico deste trabalho, privilegiam-se visualizações **temporais**, nomeadamente:
-  - heatmaps (Distrito × Ano),
-  - séries temporais,
-  - small multiples.
+  Para a perspetiva temporal, opta-se por uma **seleção informada das
+  visualizações mais funcionais**, sendo:
+  - o **heatmap (Distrito × Ano)** a visualização temporal principal;
+  - as séries temporais e os small multiples utilizados de forma complementar.
+  
+  Esta hierarquia permite evitar redundância visual e reforça a legibilidade da evolução temporal.
+
 
 Estas decisões refletem a transição de uma fase exploratória para uma fase de **escolha informada**, orientada pela adequação das codificações visuais à pergunta de investigação.
 
@@ -120,7 +126,7 @@ Este trabalho assume explicitamente uma **postura analítica e crítica**, recon
 ---
 <table width="100%" cellspacing="0" cellpadding="0">
   <tr>
-   <td bgcolor="#e90b16ff" style="padding:14px 18px;">
+  <td bgcolor="#e90b16" style="padding:14px 18px;">
       <strong>Organização do trabalho</strong><br>
       As secções seguintes descrevem a componente <em>operacional</em> do Trabalho&nbsp;2,
       incluindo a distribuição de tarefas pela equipa e os procedimentos técnicos
