@@ -121,6 +121,19 @@ Este trabalho assume explicitamente uma **postura analítica e crítica**, recon
 
 <hr>
 
+<div style="background-color:#f9fafb; padding:14px 18px; border-left:5px solid #9ca3af; margin:24px 0;">
+
+<strong>Organização e planeamento do trabalho</strong><br>
+A partir desta secção apresenta-se a estrutura operacional do Trabalho&nbsp;2,
+incluindo a distribuição de tarefas e os procedimentos técnicos de implementação.
+
+</div>
+
+<hr>
+
+
+<hr>
+
 <div style="background-color:#f8fafc; padding:14px 18px; border-left:5px solid #64748b; margin:24px 0;">
 
 <strong>Nota de estrutura do repositório</strong><br>
