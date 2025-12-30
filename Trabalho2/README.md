@@ -118,15 +118,17 @@ Independentemente do resultado, estas decisões serão descritas de forma transp
 Este trabalho assume explicitamente uma **postura analítica e crítica**, reconhecendo a visualização como um processo iterativo de descoberta. As escolhas efetuadas refletem a adequação funcional das representações às perguntas colocadas, em coerência com os objetivos da unidade curricular e com o feedback da equipa docente.
 
 ---
+<table width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td style="border-left:6px solid #694747; background-color:#eef2f7; padding:16px 20px; border-radius:8px;">
+      <strong>Organização do trabalho</strong><br>
+      As secções seguintes descrevem a componente <em>operacional</em> do Trabalho&nbsp;2,
+      incluindo a distribuição de tarefas pela equipa e os procedimentos técnicos
+      necessários à implementação do protótipo de dashboard.
+    </td>
+  </tr>
+</table>
 
-<div style="background-color:#eef2f7; padding:16px 20px; border-radius:10px; border-left:6px solid rgb(105,71,71); margin:32px 0;">
-
-<strong>Organização do trabalho</strong><br>
-As secções seguintes descrevem a componente <em>operacional</em> do Trabalho&nbsp;2,
-incluindo a distribuição de tarefas pela equipa e os procedimentos técnicos
-necessários à implementação do protótipo de dashboard.
-
-</div>
 
 
 
