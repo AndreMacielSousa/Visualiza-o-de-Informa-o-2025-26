@@ -111,7 +111,6 @@ Independentemente do resultado, estas decisões serão descritas de forma transp
 
 └── README.md
 
-
 ---
 
 ## Nota final
@@ -119,7 +118,19 @@ Independentemente do resultado, estas decisões serão descritas de forma transp
 Este trabalho assume explicitamente uma **postura analítica e crítica**, reconhecendo a visualização como um processo iterativo de descoberta. As escolhas efetuadas refletem a adequação funcional das representações às perguntas colocadas, em coerência com os objetivos da unidade curricular e com o feedback da equipa docente.
 
 ---
----
+
+<hr>
+
+<div style="background-color:#f8fafc; padding:14px 18px; border-left:5px solid #64748b; margin:24px 0;">
+
+<strong>Nota de estrutura do repositório</strong><br>
+A secção anterior apresenta o <em>enquadramento conceptual e metodológico do projeto</em>.
+A partir deste ponto inicia-se a documentação <strong>operacional específica do Trabalho&nbsp;2</strong>,
+incluindo planeamento, distribuição de tarefas e procedimentos técnicos.
+
+</div>
+
+<hr>
 
 # Trabalho 2 — Protótipo de Dashboard  
 ## Parque Habitacional e População em Portugal (1940–2021)
@@ -270,3 +281,4 @@ A distribuição de tarefas e os procedimentos técnicos descritos visam garanti
 - integração consistente entre dados estatísticos e geográficos.
 
 Este README serve como referência operacional para o desenvolvimento do Trabalho 2.
+
