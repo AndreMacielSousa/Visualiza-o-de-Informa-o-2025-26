@@ -80,7 +80,7 @@ Esta integração permitirá:
 - identificação de situações de crescimento habitacional sem crescimento populacional;
 - leitura mais contextualizada das dinâmicas territoriais.
 
-### Anos em falta (197X)
+### Anos em falta (1970)
 
 Reconhecendo a relevância histórica da década de 1970, será realizado um esforço adicional para:
 
@@ -167,7 +167,7 @@ Tarefas:
   - variação percentual de habitações;
   - variação percentual da população;
   - desvio entre crescimento habitacional e crescimento populacional.
-- Análise e tentativa de colmatar os **dados em falta dos anos 197X**, documentando o processo e as decisões tomadas.
+- Análise e tentativa de colmatar os **dados em falta dos anos 1970**, documentando o processo e as decisões tomadas.
 - Validação básica dos dados (coerência temporal e territorial).
 
 Entregáveis:
@@ -222,7 +222,7 @@ Entregáveis:
 
 Tarefas:
 - Formulação da pergunta de investigação e questões secundárias.
-- Descrição dos dados, limpeza e validação (incluindo anos 197X).
+- Descrição dos dados, limpeza e validação (incluindo anos 1970).
 - Justificação das escolhas visuais e exclusão de alternativas menos funcionais.
 - Análise e interpretação dos resultados.
 - Reflexão crítica sobre limitações e melhorias futuras.
