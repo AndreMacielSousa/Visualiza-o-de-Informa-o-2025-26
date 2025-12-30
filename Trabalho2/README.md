@@ -120,7 +120,7 @@ Este trabalho assume explicitamente uma **postura analítica e crítica**, recon
 ---
 <table width="100%" cellspacing="0" cellpadding="0">
   <tr>
-    <td style="border-left:6px solid #694747; background-color:#eef2f7; padding:16px 20px; border-radius:8px;">
+   <td bgcolor="#e90b16ff" style="padding:14px 18px;">
       <strong>Organização do trabalho</strong><br>
       As secções seguintes descrevem a componente <em>operacional</em> do Trabalho&nbsp;2,
       incluindo a distribuição de tarefas pela equipa e os procedimentos técnicos
