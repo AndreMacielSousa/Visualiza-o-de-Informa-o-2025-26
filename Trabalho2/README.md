@@ -117,3 +117,156 @@ Independentemente do resultado, estas decisões serão descritas de forma transp
 ## Nota final
 
 Este trabalho assume explicitamente uma **postura analítica e crítica**, reconhecendo a visualização como um processo iterativo de descoberta. As escolhas efetuadas refletem a adequação funcional das representações às perguntas colocadas, em coerência com os objetivos da unidade curricular e com o feedback da equipa docente.
+
+---
+---
+
+# Trabalho 2 — Protótipo de Dashboard  
+## Parque Habitacional e População em Portugal (1940–2021)
+
+Este documento descreve a **distribuição de tarefas** da equipa e os **procedimentos técnicos** para integração dos dados geográficos (GeoJSON) no Tableau, no âmbito do Trabalho 2 da unidade curricular de Visualização da Informação.
+
+---
+
+## 1. Distribuição de tarefas
+
+A organização do trabalho foi definida de forma a separar claramente responsabilidades técnicas, analíticas e de comunicação, garantindo eficiência e coerência metodológica.
+
+### 1.1 Dados e integração (Responsável A)
+
+**Objetivo:** preparar um dataset único e consistente para utilização no Tableau.
+
+Tarefas:
+- Recolha dos dados de **população por distrito e ano censitário**.
+- Harmonização das chaves (`Distrito`, `Ano`) entre:
+  - alojamentos familiares clássicos;
+  - população residente.
+- Criação de métricas derivadas:
+  - `Habitações por 1000 habitantes`;
+  - variação percentual de habitações;
+  - variação percentual da população;
+  - desvio entre crescimento habitacional e crescimento populacional.
+- Análise e tentativa de colmatar os **dados em falta dos anos 197X**, documentando o processo e as decisões tomadas.
+- Validação básica dos dados (coerência temporal e territorial).
+
+Entregáveis:
+- Dataset final (`CSV` ou `XLSX`) pronto para Tableau.
+- Notas de limpeza e validação para inclusão no relatório.
+
+---
+
+### 1.2 Geografia e mapa (Responsável B)
+
+**Objetivo:** garantir a correta integração da componente geográfica no Tableau.
+
+Tarefas:
+- Validação do ficheiro **GeoJSON dos distritos de Portugal**.
+- Identificação do campo que representa o nome do distrito no GeoJSON.
+- Normalização dos nomes dos distritos, assegurando correspondência com o dataset estatístico.
+- Apoio à criação do mapa coroplético no Tableau.
+- Criação de tabela de correspondência (mapping), se necessário, para resolver inconsistências de nomes.
+
+Entregáveis:
+- Ficheiro `distritos.geojson` validado.
+- Eventual tabela auxiliar de correspondência de nomes.
+
+---
+
+### 1.3 Dashboard e visualizações (Responsável C)
+
+**Objetivo:** construir o protótipo de dashboard estático no Tableau.
+
+Tarefas:
+- Criação das visualizações principais:
+  - mapa coroplético (distribuição espacial);
+  - heatmap Distrito × Ano;
+  - séries temporais ou small multiples;
+  - visualização complementar de ranking ou comparação, se aplicável.
+- Implementação de filtros globais (Ano, Distrito, Métrica).
+- Garantia de coerência visual:
+  - paletas de cor adequadas;
+  - eixos com escalas legíveis (milhares);
+  - tooltips informativos.
+- Construção do dashboard final, integrando as visualizações de forma coesa.
+
+Entregáveis:
+- Link público do Tableau Public (ou ficheiro `.twb/.twbx`).
+- Capturas de ecrã das visualizações para o relatório.
+
+---
+
+### 1.4 Relatório (Responsável D)
+
+**Objetivo:** redigir o relatório final (6–8 páginas).
+
+Tarefas:
+- Formulação da pergunta de investigação e questões secundárias.
+- Descrição dos dados, limpeza e validação (incluindo anos 197X).
+- Justificação das escolhas visuais e exclusão de alternativas menos funcionais.
+- Análise e interpretação dos resultados.
+- Reflexão crítica sobre limitações e melhorias futuras.
+- Revisão de citações e bibliografia (consistência total).
+
+Entregáveis:
+- Relatório final em PDF.
+
+---
+
+## 2. Integração do GeoJSON no Tableau
+
+### 2.1 Preparação do ficheiro GeoJSON
+
+Antes da importação no Tableau, deve garantir-se que:
+- o ficheiro está num único `.geojson`;
+- cada distrito corresponde a um único polígono;
+- existe um campo identificador do distrito (ex.: `name`, `district`, `DISTRITO`);
+- os nomes dos distritos coincidem exatamente com os do dataset estatístico.
+
+---
+
+### 2.2 Importar GeoJSON no Tableau Desktop / Tableau Public (app)
+
+Passos:
+1. Abrir o Tableau.
+2. Em **Connect**, selecionar **Spatial File**.
+3. Escolher o ficheiro `distritos.geojson`.
+4. O Tableau irá criar automaticamente um campo do tipo **Geometry**.
+5. Arrastar o campo **Geometry** para a área de trabalho para criar o mapa base.
+6. Adicionar o dataset estatístico (habitação + população).
+7. Criar uma **Relationship** ou **Join** entre:
+   - campo do distrito no GeoJSON;
+   - campo `Distrito` do dataset estatístico.
+
+---
+
+### 2.3 Importar GeoJSON no Tableau Public (web)
+
+Caso seja utilizado o Tableau no browser:
+1. Criar um novo workbook.
+2. Na secção **Files**, fazer upload do ficheiro `distritos.geojson`.
+3. Adicionar o ficheiro de dados estatísticos.
+4. Relacionar as tabelas pelo campo do distrito.
+5. Construir o mapa coroplético a partir do campo **Geometry**.
+
+> Nota: a disponibilidade desta opção depende do tipo de acesso/licença do Tableau.
+
+---
+
+### 2.4 Boas práticas para o mapa coroplético
+
+- Utilizar métricas normalizadas (ex.: habitações por 1000 habitantes).
+- Evitar escalas com valores absolutos muito grandes sem formatação.
+- Garantir legendas claras e fontes legíveis.
+- Usar o mapa como visualização âncora, complementada por vistas temporais.
+
+---
+
+## 3. Nota final
+
+A distribuição de tarefas e os procedimentos técnicos descritos visam garantir:
+- coerência metodológica;
+- alinhamento com o feedback da equipa docente;
+- foco na análise temporal e territorial;
+- integração consistente entre dados estatísticos e geográficos.
+
+Este README serve como referência operacional para o desenvolvimento do Trabalho 2.
