@@ -98,11 +98,17 @@ Independentemente do resultado, estas decisões serão descritas de forma transp
 ## Estrutura do repositório
 
 /
+
 ├── data/ # Datasets (habitação, população, geográficos)
+
 ├── notebooks/ # Scripts de preparação e validação dos dados
+
 ├── tableau/ # Ligações ou exports do Tableau Public
+
 ├── docs/ # Relatórios e documentação
+
 ├── site/ # Página do projeto (GitHub Pages)
+
 └── README.md
 
 
