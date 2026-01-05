@@ -90,10 +90,10 @@ Reconhecendo a relevância histórica da década de 1970, será realizado um esf
 
 Independentemente do resultado, estas decisões serão descritas de forma transparente no relatório.
 
-'''bash
+```bash
 https://www.ocontador.pt/direito-a-habitacao/historico/00000054,00000016/index.htm?1-de-1970-a-2021-o-numero-de-casas-e-muito-maior-que-o-de-familias-mas-muitas-sao-residencias-secundarias-ou-estao-vagas
 Os resultados definitivos dos Censos de 1970 não foram publicados, estando disponíveis no portal do INE apenas as publicações das estimativas a 20% para a população e para a habitação.
-'''
+``` 
 
 ---
 
