@@ -161,7 +161,7 @@ Este documento descreve a **distribuição de tarefas** da equipa e os **procedi
 
 A organização do trabalho foi definida de forma a separar claramente responsabilidades técnicas, analíticas e de comunicação, garantindo eficiência e coerência metodológica.
 
-### 1.1 Dados e integração (Responsável A)
+### 1.1 Dados e integração (Responsável Miguel e André)
 
 **Objetivo:** preparar um dataset único e consistente para utilização no Tableau.
 
@@ -184,7 +184,7 @@ Entregáveis:
 
 ---
 
-### 1.2 Geografia e mapa (Responsável B)
+### 1.2 Geografia e mapa (Responsável André e Pedro)
 
 **Objetivo:** garantir a correta integração da componente geográfica no Tableau.
 
@@ -201,7 +201,7 @@ Entregáveis:
 
 ---
 
-### 1.3 Dashboard e visualizações (Responsável C)
+### 1.3 Dashboard e visualizações (Pedro e Miguel)
 
 **Objetivo:** construir o protótipo de dashboard estático no Tableau.
 
@@ -224,7 +224,7 @@ Entregáveis:
 
 ---
 
-### 1.4 Relatório (Responsável D)
+### 1.4 Relatório (André, Miguel e Pedro)
 
 **Objetivo:** redigir o relatório final (6–8 páginas).
 
