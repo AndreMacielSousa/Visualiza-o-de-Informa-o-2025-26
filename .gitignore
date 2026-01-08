@@ -4,3 +4,5 @@
 
 # Ignorar ficheiros de workflow locais (se existirem)
 gitignore
+*.twbr
+*~*.twbr
