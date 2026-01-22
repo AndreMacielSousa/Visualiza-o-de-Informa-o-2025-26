@@ -1,10 +1,21 @@
 import { extentFinite } from "./utils.js";
 
 export async function loadData() {
-  const [topo, rowsRaw] = await Promise.all([
-    d3.json("data/districts.topo.json"),
-    d3.csv("data/housing_population_long.csv", d3.autoType)
-  ]);
+const topoUrl = "data/districts.topo.json";
+const csvUrl = "data/housing_population_long.csv";
+
+const topoText = await fetch(topoUrl).then(r => r.text());
+console.log("TopoJSON primeiros 120 chars:", topoText.slice(0, 120));
+
+let topo;
+try {
+  topo = JSON.parse(topoText);
+} catch (e) {
+  console.error("TopoJSON inválido! URL:", topoUrl);
+  throw e;
+}
+
+const rowsRaw = await d3.csv(csvUrl, d3.autoType);
 
   // TopoJSON -> GeoJSON (assume topo.objects.districts)
   const geo = topojson.feature(topo, topo.objects.districts);
