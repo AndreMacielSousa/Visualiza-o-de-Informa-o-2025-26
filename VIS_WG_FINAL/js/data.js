@@ -1,40 +1,72 @@
 import { extentFinite } from "./utils.js";
 
-export async function loadData() {
-const topoUrl = "data/districts.topo.json";
-const csvUrl = "data/housing_population_long.csv";
-
-const topoText = await fetch(topoUrl).then(r => r.text());
-console.log("TopoJSON primeiros 120 chars:", topoText.slice(0, 120));
-
-let topo;
-try {
-  topo = JSON.parse(topoText);
-} catch (e) {
-  console.error("TopoJSON inválido! URL:", topoUrl);
-  throw e;
+/**
+ * Normaliza nomes para garantir match entre GeoJSON e CSV:
+ * - minúsculas
+ * - remove acentos
+ * - remove espaços extra
+ */
+function normName(s) {
+  return String(s ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")  // remove diacríticos
+    .replace(/\s+/g, " ");           // espaços múltiplos -> 1
 }
 
-const rowsRaw = await d3.csv(csvUrl, d3.autoType);
+export async function loadData() {
+  // NOTA: apesar do nome, este ficheiro é GeoJSON (FeatureCollection)
+  const [geoRaw, rowsRaw] = await Promise.all([
+    d3.json("data/districts.topo.json"),
+    d3.csv("data/housing_population_long.csv", d3.autoType)
+  ]);
 
-  // TopoJSON -> GeoJSON (assume topo.objects.districts)
-  const geo = topojson.feature(topo, topo.objects.districts);
+  // 1) Validar GeoJSON
+  if (!geoRaw || geoRaw.type !== "FeatureCollection") {
+    throw new Error("O ficheiro do mapa não é GeoJSON FeatureCollection.");
+  }
 
-  // Normalização básica + filtros
-  const rows = rowsRaw
-    .filter(d => d && d.district_id && Number.isFinite(d.year))
+  // 2) Filtrar apenas distritos (se existir dis_type)
+  const hasDisType = geoRaw.features?.[0]?.properties?.dis_type !== undefined;
+  const geo = {
+    type: "FeatureCollection",
+    features: (geoRaw.features || []).filter(f => {
+      if (!hasDisType) return true;
+      return String(f.properties?.dis_type).toLowerCase() === "district";
+    })
+  };
+
+  // 3) Preparar CSV: garantir nomes esperados e criar chave normalizada
+  const rows = (rowsRaw || [])
+    .filter(d => d && d.district_name && Number.isFinite(d.year))
     .map(d => ({
       ...d,
-      year: +d.year
+      year: +d.year,
+      district_key: normName(d.district_name)
     }));
 
-  const years = Array.from(new Set(rows.map(d => d.year))).sort((a,b)=>a-b);
+  // 4) Preparar GeoJSON: chave normalizada a partir de dis_name (ou fallback)
+  geo.features.forEach(f => {
+    const p = f.properties || {};
+    const name = p.dis_name ?? p.dis_name_upper ?? p.dis_name_lower ?? p.name ?? p.Distrito ?? "";
+    f.properties = {
+      ...p,
+      district_name: name,
+      district_key: normName(name),
+      // mantém dis_code se quiseres usar mais tarde
+      district_code: p.dis_code ?? null
+    };
+  });
 
-  // Índices (lookup rápido)
-  const byDistrict = d3.group(rows, d => d.district_id);
-  const byKey = new Map(rows.map(d => [`${d.district_id}|${d.year}`, d]));
+  // 5) Índices para lookup rápido
+  const years = Array.from(new Set(rows.map(d => d.year))).sort((a, b) => a - b);
+  const districtKeys = Array.from(new Set(rows.map(d => d.district_key))).sort();
 
-  // Derivados se não existirem
+  const byDistrictKey = d3.group(rows, d => d.district_key);
+  const byKeyYear = new Map(rows.map(d => [`${d.district_key}|${d.year}`, d]));
+
+  // 6) Se alguns derivados estiverem em falta, tenta calcular housing_per_1000
   rows.forEach(d => {
     if (!Number.isFinite(d.housing_per_1000) &&
         Number.isFinite(d.housing) &&
@@ -44,42 +76,34 @@ const rowsRaw = await d3.csv(csvUrl, d3.autoType);
     }
   });
 
-  // Variações e desvio (entre anos consecutivos disponíveis por distrito)
-  for (const [id, series] of byDistrict.entries()) {
-    const s = [...series].sort((a,b)=>a.year-b.year);
-    for (let i=1; i<s.length; i++) {
-      const prev = s[i-1], cur = s[i];
-
-      if (!Number.isFinite(cur.housing_yoy_pct) &&
-          Number.isFinite(prev.housing) &&
-          Number.isFinite(cur.housing) &&
-          prev.housing !== 0) {
-        cur.housing_yoy_pct = ((cur.housing - prev.housing) / prev.housing) * 100;
-      }
-
-      if (!Number.isFinite(cur.population_yoy_pct) &&
-          Number.isFinite(prev.population) &&
-          Number.isFinite(cur.population) &&
-          prev.population !== 0) {
-        cur.population_yoy_pct = ((cur.population - prev.population) / prev.population) * 100;
-      }
-
-      if (!Number.isFinite(cur.delta_growth) &&
-          Number.isFinite(cur.housing_yoy_pct) &&
-          Number.isFinite(cur.population_yoy_pct)) {
-        cur.delta_growth = cur.housing_yoy_pct - cur.population_yoy_pct;
-      }
-    }
-  }
-
-  const districtIds = Array.from(new Set(rows.map(d => d.district_id))).sort();
-
-  // Domínios globais (fallback)
+  // 7) Domínios globais (fallback)
   const metrics = ["housing_per_1000", "housing_yoy_pct", "population_yoy_pct", "delta_growth"];
   const globalDomains = Object.fromEntries(metrics.map(m => {
     const vals = rows.map(r => r[m]).filter(Number.isFinite);
     return [m, extentFinite(vals)];
   }));
 
-  return { geo, rows, byDistrict, byKey, years, districtIds, globalDomains };
+  // 8) Validação de match (muito útil agora)
+  const geoKeys = new Set(geo.features.map(f => f.properties.district_key));
+  const csvKeys = new Set(districtKeys);
+
+  const inGeoNotCsv = Array.from(geoKeys).filter(k => !csvKeys.has(k));
+  const inCsvNotGeo = Array.from(csvKeys).filter(k => !geoKeys.has(k));
+
+  return {
+    geo,
+    rows,
+    years,
+    districtKeys,
+    byDistrictKey,
+    byKeyYear,
+    globalDomains,
+    // diagnóstico de correspondência
+    matchCheck: {
+      geoCount: geo.features.length,
+      csvCount: districtKeys.length,
+      inGeoNotCsv,
+      inCsvNotGeo
+    }
+  };
 }
