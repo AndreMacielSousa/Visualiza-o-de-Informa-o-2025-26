@@ -1,56 +1,80 @@
-<!DOCTYPE html>
-<html lang="pt">
+<!doctype html>
+<html lang="pt-PT">
 <head>
   <meta charset="utf-8" />
-  <title>Mini Bar Chart — D3</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Projeto Final — Visualização Interativa (D3.js)</title>
+
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- D3 + TopoJSON -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    .bar { fill: steelblue; }
-    .axis path, .axis line { stroke: #999; }
-  </style>
+  <script src="https://unpkg.com/topojson-client@3"></script>
 </head>
+
 <body>
-<svg width="420" height="220"></svg>
+  <header class="page-header">
+    <div class="header-inner">
+      <h1>Habitação e População em Portugal (1940–2021)</h1>
+      <p class="subtitle">
+        Exploração interativa da evolução do parque habitacional e da população, e respetiva divergência por distrito.
+      </p>
+    </div>
+  </header>
 
-<script>
-const data = [12, 5, 9, 18, 7];
+  <main class="container">
+    <section class="controls">
+      <div class="control">
+        <label for="metricSelect">Métrica</label>
+        <select id="metricSelect"></select>
+      </div>
 
-const svg = d3.select("svg"),
-      margin = {top: 20, right: 20, bottom: 30, left: 30},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom;
+      <div class="control year-control">
+        <div class="year-row">
+          <label for="yearSlider">Ano</label>
+          <span id="yearValue" class="year-value"></span>
+        </div>
+        <input id="yearSlider" type="range" min="1940" max="2021" step="1" />
+      </div>
 
-const g = svg.append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
+      <div class="control">
+        <button id="resetBtn" class="btn">Reset</button>
+        <div class="hint">
+          <span><strong>Dica:</strong> clicar no mapa/pontos para selecionar distritos · arrastar na série temporal para escolher intervalo</span>
+        </div>
+      </div>
+    </section>
 
-const x = d3.scaleBand()
-  .domain(d3.range(data.length))
-  .range([0, width])
-  .padding(0.2);
+    <section class="grid">
+      <article class="card">
+        <div class="card-header">
+          <h2>Mapa (coroplético)</h2>
+          <p>Seleção por distrito. Hover para detalhes. Clique para fixar seleção.</p>
+        </div>
+        <div id="map" class="viz"></div>
+      </article>
 
-const y = d3.scaleLinear()
-  .domain([0, d3.max(data)])
-  .range([height, 0]);
+      <article class="card">
+        <div class="card-header">
+          <h2>Série temporal</h2>
+          <p>Evolução ao longo do tempo. Brush para definir intervalo e atualizar o scatter.</p>
+        </div>
+        <div id="timeseries" class="viz"></div>
+      </article>
+    </section>
 
-g.append("g")
-  .attr("class", "axis")
-  .attr("transform", `translate(0,${height})`)
-  .call(d3.axisBottom(x).tickFormat(i => i + 1));
+    <section class="card full">
+      <div class="card-header">
+        <h2>Comparação (crescimento População vs Habitação)</h2>
+        <p>Scatter por distrito no intervalo selecionado (ou intervalo padrão). Clique para selecionar e ligar ao mapa/série.</p>
+      </div>
+      <div id="scatter" class="viz"></div>
+    </section>
+  </main>
 
-g.append("g")
-  .attr("class", "axis")
-  .call(d3.axisLeft(y));
+  <div id="tooltip" class="tooltip" aria-hidden="true"></div>
 
-g.selectAll(".bar")
-  .data(data)
-  .enter()
-  .append("rect")
-  .attr("class", "bar")
-  .attr("x", (d, i) => x(i))
-  .attr("y", d => y(d))
-  .attr("width", x.bandwidth())
-  .attr("height", d => height - y(d));
-</script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
+
