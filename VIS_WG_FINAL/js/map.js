@@ -54,6 +54,7 @@ export function drawMap(container, data) {
 
   const g = svg.append("g");
 
+  /*
 const paths = g.selectAll("path")
   .data(data.geo.features)
   .join("path")
@@ -69,6 +70,58 @@ const paths = g.selectAll("path")
       ? color(row.housing_per_1000)
       : "#1a1f2e";
   });
+
+*/
+
+
+
+// 🔹 Dissolver features por distrito
+const featuresByDistrict = d3.group(
+  data.geo.features,
+  d => d.properties.district_key
+);
+
+// Criar uma feature por distrito (MultiPolygon)
+const districts = Array.from(featuresByDistrict, ([key, feats]) => ({
+  type: "Feature",
+  properties: feats[0].properties,
+  geometry: {
+    type: "MultiPolygon",
+    coordinates: feats.flatMap(f =>
+      f.geometry.type === "Polygon"
+        ? [f.geometry.coordinates]
+        : f.geometry.coordinates
+    )
+  }
+}));
+
+// Desenhar distritos (agora sim, 1 shape = 1 distrito)
+const paths = g.selectAll("path")
+  .data(districts)
+  .join("path")
+  .attr("class", "district")
+  .attr("d", path)
+  .attr("stroke", "white")
+  .attr("stroke-width", 1)
+  .attr("fill-opacity", 0.9)
+  .attr("fill", d => {
+    const k = d.properties.district_key;
+    const row = valueByKey.get(k);
+    return row && Number.isFinite(row.housing_per_1000)
+      ? color(row.housing_per_1000)
+      : "#1a1f2e";
+  });
+
+paths.append("title")
+  .text(d => {
+    const k = d.properties.district_key;
+    const row = valueByKey.get(k);
+    return row
+      ? `${d.properties.district_name}
+Habitações/1000 hab.: ${fmtNumber1(row.housing_per_1000)}`
+      : d.properties.district_name;
+  });
+
 
 
 
