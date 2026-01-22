@@ -63,19 +63,16 @@ import { loadData } from "./data.js";
 
 */
 
-
 import { loadData } from "./data.js";
 import { drawMap } from "./map.js";
 import { state } from "./state.js";
 
 (async function () {
-  console.log("main.js carregou ✅");
-
   const data = await loadData();
-  console.log("Dados carregados para o mapa ✅");
 
   // ano inicial = último disponível
   state.year = data.years[data.years.length - 1];
 
-  drawMap("#map", data);
+  // desenhar depois do layout estar calculado
+  requestAnimationFrame(() => drawMap("#map", data));
 })();
