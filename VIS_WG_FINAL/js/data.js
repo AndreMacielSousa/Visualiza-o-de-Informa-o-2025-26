@@ -5,7 +5,7 @@ import { extentFinite } from "./utils.js";
  * - minúsculas
  * - remove acentos
  * - remove espaços extra
- */
+ 
 function normName(s) {
   return String(s ?? "")
     .trim()
@@ -14,6 +14,28 @@ function normName(s) {
     .replace(/[\u0300-\u036f]/g, "")  // remove diacríticos
     .replace(/\s+/g, " ");           // espaços múltiplos -> 1
 }
+*/
+
+
+const ALIASES = new Map([
+  // coloca aqui os 2 casos que aparecerem em inCsvNotGeo
+  // exemplos comuns:
+  // ["viana do castelo", "viana do castelo"],
+  // ["vila real", "vila real"],
+  // ["lisboa", "lisboa"],
+]);
+
+function normName(s) {
+  const base = String(s ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+
+  return ALIASES.get(base) ?? base;
+}
+
 
 export async function loadData() {
   // NOTA: apesar do nome, este ficheiro é GeoJSON (FeatureCollection)
