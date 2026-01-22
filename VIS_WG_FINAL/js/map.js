@@ -59,6 +59,9 @@ export function drawMap(container, data) {
     .join("path")
     .attr("class", "district")
     .attr("d", path)
+    .attr("stroke", "white")
+    .attr("stroke-width", 1)
+    .attr("fill-opacity", 0.85)
     .attr("fill", d => {
       const k = d.properties.district_key;
       const row = valueByKey.get(k);
@@ -66,6 +69,9 @@ export function drawMap(container, data) {
         ? color(row.housing_per_1000)
         : "#1a1f2e";
     });
+
+
+
 
   paths.append("title")
     .text(d => {

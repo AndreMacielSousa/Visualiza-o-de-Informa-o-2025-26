@@ -195,3 +195,5 @@ svg{ width:100%; height:auto; display:block; }
   color: var(--muted);
   font-size: 12px;
 }
+
+.viz { overflow: visible; }
