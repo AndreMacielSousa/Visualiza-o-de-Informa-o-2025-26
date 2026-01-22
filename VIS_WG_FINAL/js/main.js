@@ -35,6 +35,13 @@ import { loadData } from "./data.js";
 (async function () {
   console.log("main.js carregou ✅");
 
+// debug distritos
+
+console.log("CSV mas não Geo:", d.matchCheck.inCsvNotGeo);
+console.log("Geo mas não CSV:", d.matchCheck.inGeoNotCsv);
+
+
+
   const d = await loadData();
 
   console.log("LOAD OK ✅", {
