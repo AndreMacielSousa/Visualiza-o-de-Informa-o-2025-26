@@ -28,7 +28,6 @@ import { loadData } from "./data.js";
   console.log("Exemplo properties:", p);
 })();
 
-*/
 
 import { loadData } from "./data.js";
 
@@ -60,4 +59,23 @@ import { loadData } from "./data.js";
     d.rows[0]?.district_key,
     d.rows[0]?.district_name
   );
+})();
+
+*/
+
+
+import { loadData } from "./data.js";
+import { drawMap } from "./map.js";
+import { state } from "./state.js";
+
+(async function () {
+  console.log("main.js carregou ✅");
+
+  const data = await loadData();
+  console.log("Dados carregados para o mapa ✅");
+
+  // ano inicial = último disponível
+  state.year = data.years[data.years.length - 1];
+
+  drawMap("#map", data);
 })();
