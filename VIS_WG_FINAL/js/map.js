@@ -54,21 +54,22 @@ export function drawMap(container, data) {
 
   const g = svg.append("g");
 
-  const paths = g.selectAll("path")
-    .data(data.geo.features)
-    .join("path")
-    .attr("class", "district")
-    .attr("d", path)
-    .attr("stroke", "white")
-    .attr("stroke-width", 1)
-    .attr("fill-opacity", 0.85)
-    .attr("fill", d => {
-      const k = d.properties.district_key;
-      const row = valueByKey.get(k);
-      return row && Number.isFinite(row.housing_per_1000)
-        ? color(row.housing_per_1000)
-        : "#1a1f2e";
-    });
+const paths = g.selectAll("path")
+  .data(data.geo.features)
+  .join("path")
+  .attr("class", "district")
+  .attr("d", path)
+  .attr("stroke", "white")
+  .attr("stroke-width", 1)
+  .attr("fill-opacity", 0.85)
+  .attr("fill", d => {
+    const k = d.properties.district_key;
+    const row = valueByKey.get(k);
+    return row && Number.isFinite(row.housing_per_1000)
+      ? color(row.housing_per_1000)
+      : "#1a1f2e";
+  });
+
 
 
 
