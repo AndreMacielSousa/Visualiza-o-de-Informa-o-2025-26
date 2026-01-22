@@ -46,7 +46,15 @@ import { loadData } from "./data.js";
 
   console.log("Match check ✅", d.matchCheck);
 
-  // Mostra exemplos para confirmar a chave
-  console.log("Exemplo geo key:", d.geo.features[0]?.properties?.district_key, d.geo.features[0]?.properties?.district_name);
-  console.log("Exemplo csv key:", d.rows[0]?.district_key, d.rows[0]?.district_name);
+  console.log(
+    "Exemplo geo key:",
+    d.geo.features[0]?.properties?.district_key,
+    d.geo.features[0]?.properties?.district_name
+  );
+
+  console.log(
+    "Exemplo csv key:",
+    d.rows[0]?.district_key,
+    d.rows[0]?.district_name
+  );
 })();
