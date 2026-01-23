@@ -13,6 +13,8 @@ let metrics;
 let selectedYear;
 let selectedMetric;
 
+
+
 // para já, distrito default (vamos ligar ao clique no mapa depois)
 let selectedDistrict = "Portugal";
 
