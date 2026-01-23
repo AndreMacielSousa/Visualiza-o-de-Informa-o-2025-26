@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="css/styles.css" />
 
-  <!-- D3 + TopoJSON (TopoJSON só é usado se o ficheiro do mapa vier em TopoJSON) -->
+  <!-- D3 + TopoJSON -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/topojson@3"></script>
 </head>
@@ -16,7 +16,7 @@
   <header class="topbar">
     <div class="brand">
       <div class="title">População vs Habitação (Portugal, 1940–2021)</div>
-      <div class="subtitle">Mapa coroplético + tooltip. Inclui Açores e Madeira.</div>
+      <div class="subtitle">Mapa (base) + série temporal. Inclui Açores e Madeira.</div>
     </div>
 
     <div class="controls" aria-label="Controlos">
@@ -34,8 +34,14 @@
 
   <main class="layout">
     <section class="panel">
+      <div class="panel-title">Mapa</div>
       <div id="map-container" class="viz"></div>
       <div id="legend-container" class="legend-host"></div>
+    </section>
+
+    <section class="panel" style="margin-top:14px;">
+      <div class="panel-title">Série temporal</div>
+      <div id="line-container" class="viz viz-line"></div>
     </section>
   </main>
 

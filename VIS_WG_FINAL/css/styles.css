@@ -75,6 +75,13 @@ body{
   padding: 14px;
 }
 
+.panel-title{
+  font-size: 13px;
+  font-weight: 700;
+  margin: 4px 2px 10px;
+  color: rgba(255,255,255,.9);
+}
+
 .viz{
   width:100%;
   height: 560px;
@@ -88,6 +95,10 @@ body{
 .viz svg{
   width:100%;
   height:100%;
+}
+
+.viz-line{
+  height: 320px;
 }
 
 .district{
@@ -111,4 +122,27 @@ body{
   box-shadow: 0 10px 28px rgba(0,0,0,.35);
   max-width: 320px;
   z-index: 9999;
+}
+
+/* line chart */
+.axis text{ fill: rgba(255,255,255,.75); font-size: 11px; }
+.axis path, .axis line{ stroke: rgba(255,255,255,.15); }
+
+.grid line{ stroke: rgba(255,255,255,.08); }
+.grid path{ stroke: none; }
+
+.line{
+  fill: none;
+  stroke: rgba(255,255,255,.9);
+  stroke-width: 2.2;
+}
+
+.dot{
+  stroke: rgba(0,0,0,.35);
+  stroke-width: 1;
+}
+
+.hint{
+  fill: rgba(255,255,255,.7);
+  font-size: 11px;
 }

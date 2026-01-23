@@ -1,6 +1,5 @@
 // js/utils.js
 
-// Labels legíveis (para o dropdown e tooltip)
 export const metricLabels = {
   population: "População",
   housing: "N.º de habitações",
@@ -34,7 +33,7 @@ export function processData(rows){
   }
 
   const years = Array.from(yearsSet).sort((a,b) => a - b);
-  const metrics = Object.keys(metricLabels); // ordem controlada
+  const metrics = Object.keys(metricLabels);
 
   return { dataByYear, years, metrics };
 }

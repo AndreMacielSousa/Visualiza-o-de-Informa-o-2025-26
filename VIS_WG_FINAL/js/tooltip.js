@@ -6,9 +6,8 @@ export function showTooltip(html){
 }
 
 export function moveTooltip(x, y){
-  tooltip
-    .style("left", (x + 12) + "px")
-    .style("top", (y + 12) + "px");
+  tooltip.style("left", (x + 12) + "px")
+         .style("top", (y + 12) + "px");
 }
 
 export function hideTooltip(){
