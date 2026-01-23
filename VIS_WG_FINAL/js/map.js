@@ -35,10 +35,14 @@ export function drawMap(container, data) {
 
   const path = d3.geoPath(projection);
 
-  const [min, max] = data.globalDomains.housing_per_1000;
-  const color = d3.scaleSequential()
-    .domain([min, max])
-    .interpolator(d3.interpolateBlues);
+const valsYear = data.rows
+  .filter(d => d.year === year && Number.isFinite(d.housing_per_1000))
+  .map(d => d.housing_per_1000);
+
+const color = d3.scaleQuantile()
+  .domain(valsYear)
+  .range(d3.schemeBlues[5]); // 5 classes
+
 
   const year = state.year;
 
