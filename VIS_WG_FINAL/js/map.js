@@ -84,6 +84,43 @@ export function drawMap(container, data) {
     distinctDistricts: distinctKeys.size       // esperado: 18 (continente)
   });
 
+  // ✅ Em vez de dissolver, escolhemos 1 feature por distrito (mais robusto)
+const byCode = d3.group(baseFeatures, f => f.properties.district_code ?? f.properties.dis_code ?? f.properties.district_key);
+
+// cria uma lista com 1 feature por distrito
+const districts = Array.from(byCode, ([k, feats]) => feats[0]);
+
+console.log("Map debug districts (chosen):", districts.map(d => d.properties.district_name));
+console.log("Map debug paths count (should be 18):", districts.length);
+
+// desenhar (18 paths)
+const paths = g.selectAll("path")
+  .data(districts)
+  .join("path")
+  .attr("class", "district")
+  .attr("d", path)
+  .attr("stroke", "white")
+  .attr("stroke-width", 1)
+  .attr("fill-opacity", 0.9)
+  .attr("fill", d => {
+    const k = d.properties.district_key;
+    const row = valueByKey.get(k);
+    return row && Number.isFinite(row.housing_per_1000)
+      ? color(row.housing_per_1000)
+      : "#1a1f2e";
+  });
+
+paths.append("title")
+  .text(d => {
+    const k = d.properties.district_key;
+    const row = valueByKey.get(k);
+    return row
+      ? `${d.properties.district_name}\nHabitações/1000 hab.: ${fmtNumber1(row.housing_per_1000)}`
+      : d.properties.district_name;
+  });
+
+
+  /*
   // ✅ Dissolver por distrito
   const featuresByDistrict = d3.group(baseFeatures, d => d.properties.district_key);
 
@@ -127,3 +164,4 @@ export function drawMap(container, data) {
         : d.properties.district_name;
     });
 }
+*/
