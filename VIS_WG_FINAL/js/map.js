@@ -97,6 +97,8 @@ console.log("Map debug paths count (should be 18):", districts.length);
 const paths = g.selectAll("path")
   .data(districts)
   .join("path")
+  console.log("DOM paths:", g.selectAll("path").size());
+
   .attr("class", "district")
   .attr("d", path)
   .attr("stroke", "white")
