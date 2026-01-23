@@ -96,10 +96,11 @@ console.log("Map debug paths count (should be 18):", districts.length);
 // desenhar (18 paths)
 const paths = g.selectAll("path")
   .data(districts)
-  .join("path")
-  
-  console.log("DOM paths:", g.selectAll("path").size())
+  .join("path");
 
+console.log("DOM paths:", paths.size());
+
+paths
   .attr("class", "district")
   .attr("d", path)
   .attr("stroke", "white")
@@ -121,6 +122,7 @@ paths.append("title")
       ? `${d.properties.district_name}\nHabitações/1000 hab.: ${fmtNumber1(row.housing_per_1000)}`
       : d.properties.district_name;
   });
+
 
   }
 
