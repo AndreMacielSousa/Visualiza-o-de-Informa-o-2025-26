@@ -1,116 +1,165 @@
-import { state } from "./state.js";
-import { fmtNumber1 } from "./utils.js";
+// map.js
 
-function isLonLat(geo) {
-  const f = geo?.features?.[0];
-  const coords = f?.geometry?.coordinates;
-  if (!coords) return true;
+// Parâmetros de dimensões iniciais (podem ser adaptados conforme o container)
+const width = 800;
+const height = 600;
 
-  let c = coords;
-  while (Array.isArray(c) && Array.isArray(c[0])) c = c[0];
-  const pt = Array.isArray(c) ? c : null;
-  if (!pt || pt.length < 2) return true;
+// Variáveis globais (estado atual) para métrica e ano selecionados
+let currentMetric = null;
+let currentYear = null;
 
-  const x = +pt[0], y = +pt[1];
-  return Math.abs(x) <= 180 && Math.abs(y) <= 90;
+// Referência ao SVG e camada do mapa (group dos distritos)
+let svg, mapLayer;
+
+// Escala de cor (será definida posteriormente com base na métrica selecionada)
+let colorScale;
+
+/**
+ * Inicializa o mapa desenhando os polígonos dos distritos.
+ * @param {Object} geoData - objeto TopoJSON já convertido em GeoJSON (features dos distritos).
+ * @param {Object} dataByYear - dados estruturados por ano (resultado de processData).
+ * @param {number} initialYear - ano inicial a visualizar.
+ * @param {string} initialMetric - métrica inicial a visualizar.
+ */
+function initMap(geoData, dataByYear, initialYear, initialMetric) {
+  currentYear = initialYear;
+  currentMetric = initialMetric;
+
+  // Criar projeção geográfica e path generator
+  const projection = d3.geoMercator()
+    .center([-8.5, 39.5])      // centro aproximado de Portugal para projeção Mercator
+    .translate([width/2, height/2])
+    .scale(2000);
+  const geoPath = d3.geoPath().projection(projection);
+
+  // Criar SVG dentro do container do mapa
+  svg = d3.select("#map-container")
+          .append("svg")
+          .attr("viewBox", `0 0 ${width} ${height}`)  // viewBox para escalabilidade responsiva
+          .attr("preserveAspectRatio", "xMidYMid meet");
+
+  // Agrupar distritos (camada de mapa)
+  mapLayer = svg.append("g").attr("class", "map-layer");
+
+  // Desenhar cada distrito como path
+  mapLayer.selectAll("path")
+    .data(geoData.features)   // geoData.features é um array de features GeoJSON
+    .join("path")
+      .attr("d", geoPath)
+      .attr("class", "district")
+      .attr("fill", "#ccc")  // preenchimento inicial neutro (será atualizado depois)
+      .on("mouseover", function(event, d) {
+        // Destacar distrito atual (opcional: contorno mais espesso)
+        d3.select(this).raise().attr("stroke", "#000").attr("stroke-width", 2);
+        // Obter valores para tooltip
+        const districtName = d.properties.NAME_1 || d.properties.Distrito || d.properties.name || d.properties.NOME; 
+        // (acima, tentamos diferentes propriedades possíveis - ajuste conforme o TopoJSON)
+        const metricLabel = metricLabels[currentMetric] || currentMetric;
+        const value = dataByYear[currentYear][districtName]?.[currentMetric];
+        const valueStr = formatValue(currentMetric, value);
+        showTooltip(districtName, metricLabel, valueStr);
+      })
+      .on("mousemove", function(event) {
+        moveTooltip(event.pageX, event.pageY);
+      })
+      .on("mouseout", function() {
+        // Reverter destaque e esconder tooltip
+        d3.select(this).attr("stroke", "#fff").attr("stroke-width", 1);
+        hideTooltip();
+      });
+
+  // Desenhar legenda de cores (grupo g separado)
+  svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(20, ${height - 30})`);  // posicionada no canto inferior esquerdo
+
+  // Aplicar cores iniciais e atualizar legenda
+  updateMap(currentYear, currentMetric, dataByYear);
 }
 
-export function drawMap(container, data) {
-  const el = d3.select(container);
-  el.selectAll("*").remove();
+/**
+ * Atualiza o preenchimento dos distritos e a legenda, com base no ano e métrica selecionados.
+ * @param {number} year - Ano selecionado.
+ * @param {string} metric - Métrica selecionada.
+ * @param {Object} dataByYear - Dados estruturados por ano (como em processData).
+ */
+function updateMap(year, metric, dataByYear) {
+  currentYear = year;
+  currentMetric = metric;
 
-  const w = el.node()?.clientWidth ?? 0;
-  const width = w > 0 ? w : 900;
-  const height = 520;
+  // Extrair todos os valores da métrica selecionada para o ano dado (para definir domínio da escala)
+  const values = Object.values(dataByYear[year]).map(d => d[metric]);
+  const minVal = d3.min(values);
+  const maxVal = d3.max(values);
 
-  const svg = el.append("svg")
-    .attr("width", "100%")
-    .attr("height", height)
-    .attr("viewBox", `0 0 ${width} ${height}`)
-    .attr("role", "img");
+  // Definir a escala de cor (usaremos uma escala quantize para intervalos iguais de valores)
+  colorScale = d3.scaleQuantize()
+    .domain([minVal, maxVal])
+    .range(d3.schemeBlues[7]);  // 7 tons de azul (pode ajustar cores ou quantidade)
 
-  const projection = isLonLat(data.geo)
-    ? d3.geoMercator().fitSize([width, height], data.geo)
-    : d3.geoIdentity().reflectY(true).fitSize([width, height], data.geo);
+  // Atualizar cor de preenchimento de cada distrito de acordo com o valor
+  mapLayer.selectAll("path.district")
+    .transition().duration(500)
+    .attr("fill", function(d) {
+      const name = d.properties.NAME_1 || d.properties.Distrito || d.properties.name || d.properties.NOME;
+      const val = dataByYear[year][name]?.[metric];
+      return val != null ? colorScale(val) : "#ccc";
+    });
 
-  const path = d3.geoPath(projection);
+  // Atualizar legenda
+  renderLegend(colorScale, metric);
+}
 
-const valsYear = data.rows
-  .filter(d => d.year === year && Number.isFinite(d.housing_per_1000))
-  .map(d => d.housing_per_1000);
+// Labels legíveis para cada métrica (em Português, para usar na tooltip/legenda)
+const metricLabels = {
+  "Populacao": "População",
+  "Habitacoes": "Nº de Habitações",
+  "Habitacoes_por_1000_hab": "Habitações por 1000 hab",
+  "Var_Habitacoes_%": "Variação de Habitações (%)",
+  "Var_Populacao_%": "Variação da População (%)",
+  "Desvio_Crescimento_%": "Desvio do Crescimento (%)"
+};
 
-const color = d3.scaleQuantile()
-  .domain(valsYear)
-  .range(d3.schemeBlues[5]); // 5 classes
+/**
+ * Renderiza (ou atualiza) a legenda de cor no SVG com base na escala de cor atual.
+ * @param {d3.ScaleQuantize} scale - Escala de cor quantize usada no mapa.
+ * @param {string} metric - Métrica atual (usada para rótulo da legenda).
+ */
+function renderLegend(scale, metric) {
+  const legendGroup = svg.select("g.legend");
+  legendGroup.selectAll("*").remove(); // limpa qualquer elemento prévio na legenda
 
+  // Gerar rótulos de intervalo para cada cor
+  const colorRange = scale.range();
+  const legendItemHeight = 15;
+  const legendItemWidth = 30;
+  const legendSpacing = 5;
 
-  const year = state.year;
+  // Texto título da legenda (nome da métrica)
+  legendGroup.append("text")
+    .attr("x", 0)
+    .attr("y", -10)
+    .text(metricLabels[metric] || metric);
 
-  // valores no ano selecionado
-  const valueByKey = new Map(
-    data.rows
-      .filter(d => d.year === year)
-      .map(d => [d.district_key, d])
-  );
+  // Para cada cor na escala, criar um quadrado e um rótulo de texto
+  colorRange.forEach((color, i) => {
+    const [from, to] = scale.invertExtent(color);
+    const y = i * (legendItemHeight + legendSpacing);
 
-  const g = svg.append("g");
+    // Caixa de cor
+    legendGroup.append("rect")
+      .attr("x", 0)
+      .attr("y", y)
+      .attr("width", legendItemWidth)
+      .attr("height", legendItemHeight)
+      .attr("fill", color)
+      .attr("stroke", "#ccc");
 
-  // ✅ Em vez de "dissolver", escolhe 1 feature por distrito (mais robusto)
-  // (o teu GeoJSON tem várias features por distrito; esta abordagem evita colapsos visuais)
-  const byKey = d3.group(data.geo.features, f => f.properties.district_key);
-  const districts = Array.from(byKey, ([k, feats]) => feats[0]);
-
-  // Ordenar por área (maiores primeiro), para evitar que grandes tapem pequenos
-  districts.sort((a, b) => d3.geoArea(b) - d3.geoArea(a));
-
-  // DEBUG útil (podes remover depois)
-  console.log("Map debug:", {
-    featuresIn: data.geo.features.length,
-    districts: districts.length
+    // Texto do intervalo
+    legendGroup.append("text")
+      .attr("x", legendItemWidth + 5)
+      .attr("y", y + legendItemHeight / 2)
+      .attr("dy", "0.35em")
+      .text(`${formatValue(metric, from)} - ${formatValue(metric, to)}`);
   });
-
-  // ================================
-  // CAMADA 1 — preenchimento
-  // ================================
-  const fillLayer = g.append("g").attr("class", "fill-layer");
-
-  const fills = fillLayer.selectAll("path")
-    .data(districts)
-    .join("path")
-    .attr("d", path)
-    .attr("stroke", "#ffffff")     // ✅ contorno
-    .attr("stroke-width", 1.2)       // ✅ mais grosso
-    .attr("stroke-opacity", 0.9)     // ✅ visível
-    .attr("fill-opacity", 0.75)
-    .attr("fill", d => {
-      const k = d.properties.district_key;
-      const row = valueByKey.get(k);
-      return row && Number.isFinite(row.housing_per_1000)
-        ? color(row.housing_per_1000)
-        : "#2a2a2a";
-    });
-
-  fills.append("title")
-    .text(d => {
-      const k = d.properties.district_key;
-      const row = valueByKey.get(k);
-      return row
-        ? `${d.properties.district_name}\nHabitações/1000 hab.: ${fmtNumber1(row.housing_per_1000)}`
-        : d.properties.district_name;
-    });
-
-  // ================================
-  // CAMADA 2 — contornos (por cima, sempre visíveis)
-  // ================================
-  const outlineLayer = g.append("g").attr("class", "outline-layer");
-
-  outlineLayer.selectAll("path")
-    .data(districts)
-    .join("path")
-    .attr("d", path)
-    .attr("fill", "none")
-    .attr("stroke", "#ffffff")
-    .attr("stroke-width", 1.4)
-    .attr("stroke-opacity", 0.9)
-    .style("pointer-events", "none");
 }

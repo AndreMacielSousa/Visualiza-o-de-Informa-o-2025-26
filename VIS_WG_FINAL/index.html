@@ -1,80 +1,40 @@
-<!doctype html>
-<html lang="pt-PT">
+<!DOCTYPE html>
+<html lang="pt">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Projeto Final — Visualização Interativa (D3.js)</title>
-
-  <link rel="stylesheet" href="css/styles.css" />
-
-  <!-- D3 + TopoJSON -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>População e Habitação por Distrito (1940-2021)</title>
+  <!-- Ficheiro CSS para estilos -->
+  <link rel="stylesheet" href="style.css" />
+  <!-- Biblioteca D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/topojson-client@3"></script>
+  <!-- Biblioteca TopoJSON (necessária para converter TopoJSON->GeoJSON) -->
+  <script src="https://unpkg.com/topojson@3"></script>
 </head>
-
 <body>
-  <header class="page-header">
-    <div class="header-inner">
-      <h1>Habitação e População em Portugal (1940–2021)</h1>
-      <p class="subtitle">
-        Exploração interativa da evolução do parque habitacional e da população, e respetiva divergência por distrito.
-      </p>
-    </div>
-  </header>
+  <div id="controls">
+    <!-- Dropdown para seleção do Ano -->
+    <label for="yearDropdown">Ano: </label>
+    <select id="yearDropdown"></select>
 
-  <main class="container">
-    <section class="controls">
-      <div class="control">
-        <label for="metricSelect">Métrica</label>
-        <select id="metricSelect"></select>
-      </div>
+    <!-- Dropdown para seleção da Métrica -->
+    <label for="metricDropdown">Métrica: </label>
+    <select id="metricDropdown"></select>
+  </div>
 
-      <div class="control year-control">
-        <div class="year-row">
-          <label for="yearSlider">Ano</label>
-          <span id="yearValue" class="year-value"></span>
-        </div>
-        <input id="yearSlider" type="range" min="1940" max="2021" step="1" />
-      </div>
+  <!-- Contêiner para o mapa -->
+  <div id="map-container">
+    <!-- O SVG do mapa será inserido aqui via D3 -->
+  </div>
 
-      <div class="control">
-        <button id="resetBtn" class="btn">Reset</button>
-        <div class="hint">
-          <span><strong>Dica:</strong> clicar no mapa/pontos para selecionar distritos · arrastar na série temporal para escolher intervalo</span>
-        </div>
-      </div>
-    </section>
+  <!-- Tooltip oculta (aparecerá ao passar o rato sobre um distrito) -->
+  <div id="tooltip" class="tooltip" style="opacity: 0;"></div>
 
-    <section class="grid">
-      <article class="card">
-        <div class="card-header">
-          <h2>Mapa (coroplético)</h2>
-          <p>Seleção por distrito. Hover para detalhes. Clique para fixar seleção.</p>
-        </div>
-        <div id="map" class="viz"></div>
-      </article>
-
-      <article class="card">
-        <div class="card-header">
-          <h2>Série temporal</h2>
-          <p>Evolução ao longo do tempo. Brush para definir intervalo e atualizar o scatter.</p>
-        </div>
-        <div id="timeseries" class="viz"></div>
-      </article>
-    </section>
-
-    <section class="card full">
-      <div class="card-header">
-        <h2>Comparação (crescimento População vs Habitação)</h2>
-        <p>Scatter por distrito no intervalo selecionado (ou intervalo padrão). Clique para selecionar e ligar ao mapa/série.</p>
-      </div>
-      <div id="scatter" class="viz"></div>
-    </section>
-  </main>
-
-  <div id="tooltip" class="tooltip" aria-hidden="true"></div>
-
-  <script type="module" src="js/main.js"></script>
+  <!-- Importação dos ficheiros JavaScript (módulos) -->
+  <script src="utils.js"></script>
+  <script src="tooltip.js"></script>
+  <script src="map.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
 

@@ -1,32 +1,35 @@
-import { clamp } from "./utils.js";
+// tooltip.js
 
-const el = document.getElementById("tooltip");
+// Selecionar o elemento tooltip (div) existente no HTML
+const tooltip = d3.select("#tooltip");
 
-export function hideTooltip() {
-  el.classList.remove("show");
-  el.setAttribute("aria-hidden", "true");
+/**
+ * Mostra a tooltip com determinada informação.
+ * @param {string} districtName - Nome do distrito/região.
+ * @param {string} metricLabel - Nome legível da métrica (para mostrar no título da tooltip).
+ * @param {any} valueFormatted - Valor formatado a mostrar.
+ */
+function showTooltip(districtName, metricLabel, valueFormatted) {
+  tooltip
+    .style("opacity", 1)  // tornar visível
+    .html(`<strong>${districtName}</strong><br>${metricLabel}: <strong>${valueFormatted}</strong>`);
 }
 
-export function showTooltip(html, x, y) {
-  el.innerHTML = html;
+/**
+ * Atualiza a posição da tooltip conforme o ponteiro do rato se move.
+ * Deve ser chamado em eventos 'mousemove'.
+ * @param {number} x - Posição X (píxeis) do ponteiro.
+ * @param {number} y - Posição Y (píxeis) do ponteiro.
+ */
+function moveTooltip(x, y) {
+  // Ajustar levemente a posição para não cobrir totalmente o cursor
+  const offset = 10;
+  tooltip
+    .style("left", (x + offset) + "px")
+    .style("top",  (y + offset) + "px");
+}
 
-  const pad = 14;
-  const rect = el.getBoundingClientRect();
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  let left = x + 14;
-  let top = y + 14;
-
-  if (left + rect.width + pad > vw) left = x - rect.width - 14;
-  if (top + rect.height + pad > vh) top = y - rect.height - 14;
-
-  left = clamp(left, pad, vw - rect.width - pad);
-  top = clamp(top, pad, vh - rect.height - pad);
-
-  el.style.left = `${left}px`;
-  el.style.top = `${top}px`;
-
-  el.classList.add("show");
-  el.setAttribute("aria-hidden", "false");
+/** Esconde a tooltip. */
+function hideTooltip() {
+  tooltip.style("opacity", 0);
 }
