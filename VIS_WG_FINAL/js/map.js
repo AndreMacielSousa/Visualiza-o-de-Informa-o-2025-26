@@ -74,6 +74,9 @@ export function drawMap(container, data) {
     .data(districts)
     .join("path")
     .attr("d", path)
+    .attr("stroke", "#ffffff")     // ✅ contorno
+    .attr("stroke-width", 1.2)       // ✅ mais grosso
+    .attr("stroke-opacity", 0.9)     // ✅ visível
     .attr("fill-opacity", 0.75)
     .attr("fill", d => {
       const k = d.properties.district_key;
