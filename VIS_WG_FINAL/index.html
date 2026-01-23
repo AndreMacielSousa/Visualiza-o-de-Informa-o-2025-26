@@ -1,39 +1,46 @@
-<!DOCTYPE html>
-<html lang="pt">
+<!doctype html>
+<html lang="pt-PT">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>População e Habitação por Distrito (1940-2021)</title>
-  <!-- Ficheiro CSS para estilos -->
-<link rel="stylesheet" href="css/styles.css">
-  <!-- Biblioteca D3.js -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VIS WG Final — População e Habitação (1940–2021)</title>
+
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- D3 + TopoJSON (TopoJSON só é usado se o ficheiro do mapa vier em TopoJSON) -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <!-- Biblioteca TopoJSON (necessária para converter TopoJSON->GeoJSON) -->
   <script src="https://unpkg.com/topojson@3"></script>
 </head>
+
 <body>
-  <div id="controls">
-    <!-- Dropdown para seleção do Ano -->
-    <label for="yearDropdown">Ano: </label>
-    <select id="yearDropdown"></select>
+  <header class="topbar">
+    <div class="brand">
+      <div class="title">População vs Habitação (Portugal, 1940–2021)</div>
+      <div class="subtitle">Mapa coroplético + tooltip. Inclui Açores e Madeira.</div>
+    </div>
 
-    <!-- Dropdown para seleção da Métrica -->
-    <label for="metricDropdown">Métrica: </label>
-    <select id="metricDropdown"></select>
-  </div>
+    <div class="controls" aria-label="Controlos">
+      <label class="control">
+        <span>Ano</span>
+        <select id="yearDropdown"></select>
+      </label>
 
-  <!-- Contêiner para o mapa -->
-  <div id="map-container">
-    <!-- O SVG do mapa será inserido aqui via D3 -->
-  </div>
+      <label class="control">
+        <span>Métrica</span>
+        <select id="metricDropdown"></select>
+      </label>
+    </div>
+  </header>
 
-  <!-- Tooltip oculta (aparecerá ao passar o rato sobre um distrito) -->
-  <div id="tooltip" class="tooltip" style="opacity: 0;"></div>
+  <main class="layout">
+    <section class="panel">
+      <div id="map-container" class="viz"></div>
+      <div id="legend-container" class="legend-host"></div>
+    </section>
+  </main>
 
-  <!-- Importação dos ficheiros JavaScript (módulos) -->
-<script type="module" src="js/main.js"></script>
+  <div id="tooltip" class="tooltip" style="opacity:0;"></div>
 
-
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
-

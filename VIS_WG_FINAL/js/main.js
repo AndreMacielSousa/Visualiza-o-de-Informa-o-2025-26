@@ -1,59 +1,91 @@
-// main.js
-
+// js/main.js
+import { processData, metricLabels } from "./utils.js";
 import { initMap, updateMap } from "./map.js";
 
+const DATA_CSV = "data/housing_population_long.csv";
+const MAP_FILE = "data/districts.topo.json"; // pode ser GeoJSON FeatureCollection OU TopoJSON
 
-// Caminhos dos ficheiros de dados (ajuste caso necessário)
-const DATA_CSV = "metricas_derivadas_habitacao_populacao_1940_2021.csv";
-const MAP_TOPOJSON = "portugal-distritos-ilhas.topojson";  // ficheiro TopoJSON do mapa de Portugal (Continente + Ilhas)
+let dataByYear;
+let years;
+let metrics;
 
-// Carregar CSV de dados e TopoJSON do mapa em paralelo
-Promise.all([
-  d3.csv(DATA_CSV),
-  d3.json(MAP_TOPOJSON)
-]).then(([csvData, topoData]) => {
-  // Processar dados CSV
-  const { dataByYear, years, metrics } = processData(csvData);
+let selectedYear;
+let selectedMetric;
 
-  // Converter TopoJSON para GeoJSON (extrair os distritos)
-  // Nota: substitua 'distritos' pelo nome do objeto dentro do TopoJSON.
-  const geoData = topojson.feature(topoData, topoData.objects.distritos); 
-
-  // Inicializar opções dos dropdowns:
+function populateDropdowns(){
   const yearSelect = d3.select("#yearDropdown");
   yearSelect.selectAll("option")
     .data(years)
     .join("option")
-      .attr("value", d => d)
-      .text(d => d);
+    .attr("value", d => d)
+    .text(d => d);
 
   const metricSelect = d3.select("#metricDropdown");
   metricSelect.selectAll("option")
     .data(metrics)
     .join("option")
-      .attr("value", d => d)
-      .text(d => metricLabels[d] || d);
+    .attr("value", d => d)
+    .text(d => metricLabels[d] || d);
 
-  // Definir ano e métrica iniciais (por exemplo, últ\o ano e População)
-  const initialYear = years[years.length - 1];      // ano mais recente
-  const initialMetric = "Populacao";                // métrica padrão inicial
+  // defaults
+  selectedYear = years[years.length - 1];
+  selectedMetric = "housing_per_1000";
 
-  // Selecionar como padrão nos dropdowns
-  yearSelect.property("value", initialYear);
-  metricSelect.property("value", initialMetric);
+  yearSelect.property("value", selectedYear);
+  metricSelect.property("value", selectedMetric);
 
-  // Inicializar mapa com dados geográficos e dados estatísticos
-  initMap(geoData, dataByYear, initialYear, initialMetric);
-
-  // Configurar eventos de mudança nos dropdowns para atualizar o mapa
-  yearSelect.on("change", function(event) {
-    const newYear = +event.target.value;
-    updateMap(newYear, currentMetric, dataByYear);
+  yearSelect.on("change", (event) => {
+    selectedYear = +event.target.value;
+    updateMap(selectedYear, selectedMetric, dataByYear);
   });
-  metricSelect.on("change", function(event) {
-    const newMetric = event.target.value;
-    updateMap(currentYear, newMetric, dataByYear);
+
+  metricSelect.on("change", (event) => {
+    selectedMetric = event.target.value;
+    updateMap(selectedYear, selectedMetric, dataByYear);
   });
-}).catch(error => {
-  console.error("Erro ao carregar dados: ", error);
+}
+
+function asFeatureCollection(maybeTopoOrGeo){
+  // Se vier em TopoJSON
+  if (maybeTopoOrGeo && maybeTopoOrGeo.type === "Topology" && maybeTopoOrGeo.objects) {
+    const objectName = Object.keys(maybeTopoOrGeo.objects)[0];
+    const geo = topojson.feature(maybeTopoOrGeo, maybeTopoOrGeo.objects[objectName]);
+    return geo;
+  }
+  // Se vier em GeoJSON FeatureCollection
+  if (maybeTopoOrGeo && maybeTopoOrGeo.type === "FeatureCollection" && Array.isArray(maybeTopoOrGeo.features)) {
+    return maybeTopoOrGeo;
+  }
+  throw new Error("Formato do mapa não suportado (esperado TopoJSON Topology ou GeoJSON FeatureCollection).");
+}
+
+function pickLatestYearFeatures(fc){
+  // alguns ficheiros têm várias versões por 'properties.year'
+  const withYear = fc.features.filter(f => f?.properties && (f.properties.year !== undefined));
+  if (!withYear.length) return fc;
+
+  const maxYear = d3.max(withYear, f => +f.properties.year);
+  return {
+    type: "FeatureCollection",
+    features: withYear.filter(f => +f.properties.year === maxYear)
+  };
+}
+
+Promise.all([
+  d3.csv(DATA_CSV),
+  d3.json(MAP_FILE)
+]).then(([csvRows, mapRaw]) => {
+
+  const processed = processData(csvRows);
+  dataByYear = processed.dataByYear;
+  years = processed.years;
+  metrics = processed.metrics;
+
+  const fc = pickLatestYearFeatures(asFeatureCollection(mapRaw));
+
+  populateDropdowns();
+  initMap(fc, dataByYear, selectedYear, selectedMetric);
+
+}).catch(err => {
+  console.error("Erro ao carregar o projeto:", err);
 });

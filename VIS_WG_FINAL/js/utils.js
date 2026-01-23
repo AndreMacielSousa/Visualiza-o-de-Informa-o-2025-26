@@ -1,89 +1,56 @@
-// utils.js
+// js/utils.js
 
-/**
- * Processa os dados CSV de população/habitação.
- * - Converte strings numéricas em números.
- * - Adapta os nomes dos distritos para corresponder aos do TopoJSON.
- * - Organiza os dados num objeto aninhado por ano->distrito->{métricas}.
- * Retorna um objeto com:
- *    dataByYear: { [ano]: { [distrito]: {Populacao:..., Habitacoes:..., ...} } },
- *    years: Array de anos disponíveis (ordenados),
- *    metrics: Array de identificadores de métricas (nomes das colunas, exceto Distrito/Ano).
- */
-function processData(csvData) {
+// Labels legíveis (para o dropdown e tooltip)
+export const metricLabels = {
+  population: "População",
+  housing: "N.º de habitações",
+  housing_per_1000: "Habitações por 1000 hab.",
+  housing_yoy_pct: "Variação habitações (%)",
+  population_yoy_pct: "Variação população (%)",
+  delta_growth: "Diferença de crescimento (%)"
+};
+
+// CSV esperado (colunas):
+// district_name, year, population, housing, housing_per_1000, housing_yoy_pct, population_yoy_pct, delta_growth
+export function processData(rows){
   const dataByYear = {};
   const yearsSet = new Set();
-  let metrics = [];
 
-  csvData.forEach(row => {
-    // Converter campos numéricos de string para Number (inteiros ou floats)
-    row.Ano = +row.Ano;
-    row.Populacao = +row.Populacao;
-    row.Habitacoes = +row.Habitacoes;
-    row.Habitacoes_por_1000_hab = +row.Habitacoes_por_1000_hab;
-    // Campos de variação podem estar vazios para o primeiro ano, tratar vazios como 0
-    row.Var_Habitacoes_% = row["Var_Habitacoes_%"] ? +row["Var_Habitacoes_%"] : 0;
-    row.Var_Populacao_% = row["Var_Populacao_%"] ? +row["Var_Populacao_%"] : 0;
-    row.Desvio_Crescimento_% = row["Desvio_Crescimento_%"] ? +row["Desvio_Crescimento_%"] : 0;
+  for (const r of rows){
+    const year = +r.year;
+    const district = (r.district_name || "").trim();
 
-    // Adaptar nomes dos distritos para corresponder ao TopoJSON, se necessário
-    if (row.Distrito === "Açores") {
-      row.Distrito = "Região Autónoma dos Açores";
-    } else if (row.Distrito === "Madeira") {
-      row.Distrito = "Região Autónoma da Madeira";
-    }
-    // (Certifique-se que estes nomes correspondem exatamente às propriedades do TopoJSON)
-
-    // Construir estrutura aninhada
-    const year = row.Ano;
-    const district = row.Distrito;
     yearsSet.add(year);
-    if (!dataByYear[year]) {
-      dataByYear[year] = {};
-    }
-    // Guardar objeto de métricas do distrito neste ano
-    dataByYear[year][district] = {
-      Populacao: row.Populacao,
-      Habitacoes: row.Habitacoes,
-      Habitacoes_por_1000_hab: row.Habitacoes_por_1000_hab,
-      Var_Habitacoes_%: row.Var_Habitacoes_%,
-      Var_Populacao_%: row.Var_Populacao_%,
-      Desvio_Crescimento_%: row.Desvio_Crescimento_%
-    };
-  });
+    if (!dataByYear[year]) dataByYear[year] = {};
 
-  // Extrair lista de métricas (colunas, excluindo Distrito e Ano)
-  if (csvData.length > 0) {
-    const sample = csvData[0];
-    metrics = Object.keys(sample).filter(key => key !== "Distrito" && key !== "Ano");
+    dataByYear[year][district] = {
+      population: +r.population,
+      housing: +r.housing,
+      housing_per_1000: +r.housing_per_1000,
+      housing_yoy_pct: (r.housing_yoy_pct === "" || r.housing_yoy_pct == null) ? NaN : +r.housing_yoy_pct,
+      population_yoy_pct: (r.population_yoy_pct === "" || r.population_yoy_pct == null) ? NaN : +r.population_yoy_pct,
+      delta_growth: (r.delta_growth === "" || r.delta_growth == null) ? NaN : +r.delta_growth
+    };
   }
 
-  return {
-    dataByYear: dataByYear,
-    years: Array.from(yearsSet).sort((a,b) => a - b),
-    metrics: metrics
-  };
+  const years = Array.from(yearsSet).sort((a,b) => a - b);
+  const metrics = Object.keys(metricLabels); // ordem controlada
+
+  return { dataByYear, years, metrics };
 }
 
-/**
- * Formata um valor de acordo com o tipo de métrica para apresentação na tooltip/legenda.
- * - Para Populacao e Habitacoes (valores absolutos grandes): adiciona separador de milhar.
- * - Para percentagens (métricas terminadas em '%'): formata com uma casa decimal + '%' sufixo.
- * - Para rácios (habitações por 1000 hab): formata com uma casa decimal.
- * - Caso geral (fallback): retorna o valor original.
- */
-function formatValue(metricKey, value) {
-  if (metricKey.includes("%")) {
-    // Métricas percentuais
-    return value.toFixed(1) + "%";
-  }
-  if (metricKey === "Habitacoes_por_1000_hab") {
-    return value.toFixed(1);
-  }
-  if (metricKey === "Populacao" || metricKey === "Habitacoes") {
-    // Formatar com separador de milhar (ex: 1234567 -> "1,234,567")
-    return value.toLocaleString('pt-PT');
-  }
-  // Caso geral
-  return value;
+export function formatValue(metric, v){
+  if (v == null || Number.isNaN(v)) return "—";
+  if (metric === "housing_per_1000") return (+v).toFixed(1);
+  if (metric.endsWith("_yoy_pct") || metric === "delta_growth") return `${(+v).toFixed(1)}%`;
+  return Math.round(+v).toLocaleString("pt-PT");
+}
+
+export function norm(s){
+  return String(s ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
 }
