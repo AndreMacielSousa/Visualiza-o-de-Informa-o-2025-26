@@ -93,6 +93,11 @@ const districts = Array.from(byCode, ([k, feats]) => feats[0]);
 console.log("Map debug districts (chosen):", districts.map(d => d.properties.district_name));
 console.log("Map debug paths count (should be 18):", districts.length);
 
+// 🔽 IMPORTANTE: ordenar por área (maiores primeiro)
+// evita que um distrito grande tape os pequenos
+districts.sort((a, b) => d3.geoArea(b) - d3.geoArea(a));
+
+
 // desenhar (18 paths)
 const paths = g.selectAll("path")
   .data(districts)
@@ -133,48 +138,4 @@ paths.append("title")
 
   }
 
-  /*
-  // ✅ Dissolver por distrito
-  const featuresByDistrict = d3.group(baseFeatures, d => d.properties.district_key);
-
-  const districts = Array.from(featuresByDistrict, ([key, feats]) => ({
-    type: "Feature",
-    properties: feats[0].properties,
-    geometry: {
-      type: "MultiPolygon",
-      coordinates: feats.flatMap(f =>
-        f.geometry.type === "Polygon"
-          ? [f.geometry.coordinates]
-          : f.geometry.coordinates
-      )
-    }
-  }));
-
-  console.log("Map debug districts:", districts.map(d => d.properties.district_name));
-
-  const paths = g.selectAll("path")
-    .data(districts)
-    .join("path")
-    .attr("class", "district")
-    .attr("d", path)
-    .attr("stroke", "white")
-    .attr("stroke-width", 1)
-    .attr("fill-opacity", 0.9)
-    .attr("fill", d => {
-      const k = d.properties.district_key;
-      const row = valueByKey.get(k);
-      return row && Number.isFinite(row.housing_per_1000)
-        ? color(row.housing_per_1000)
-        : "#1a1f2e";
-    });
-
-  paths.append("title")
-    .text(d => {
-      const k = d.properties.district_key;
-      const row = valueByKey.get(k);
-      return row
-        ? `${d.properties.district_name}\nHabitações/1000 hab.: ${fmtNumber1(row.housing_per_1000)}`
-        : d.properties.district_name;
-    });
-}
-*/
+  
