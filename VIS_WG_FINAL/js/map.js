@@ -114,6 +114,13 @@ paths
       : "#1a1f2e";
   });
 
+  // DEBUG: quantos paths distintos existem mesmo?
+const dStrings = paths.nodes().map(n => n.getAttribute("d") || "");
+const uniqueD = new Set(dStrings);
+console.log("DEBUG unique d count:", uniqueD.size);
+console.log("DEBUG first 2 d samples:", dStrings[0]?.slice(0,80), dStrings[1]?.slice(0,80));
+
+
 paths.append("title")
   .text(d => {
     const k = d.properties.district_key;
