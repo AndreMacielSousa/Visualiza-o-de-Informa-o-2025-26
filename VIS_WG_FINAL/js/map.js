@@ -119,6 +119,7 @@ paths.append("title")
       : d.properties.district_name;
   });
 
+  }
 
   /*
   // ✅ Dissolver por distrito
