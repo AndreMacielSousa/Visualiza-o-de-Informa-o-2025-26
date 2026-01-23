@@ -1,105 +1,104 @@
-// js/map.js
-// Nota: mapa como base (o coroplético será afinado mais tarde)
-import { formatValue, metricLabels, norm } from "./utils.js";
+import { metricLabels, formatValue, buildNameResolver } from "./utils.js";
 import { showTooltip, moveTooltip, hideTooltip } from "./tooltip.js";
+import { renderLegend } from "./legend.js";
 
-let svg, gMap;
-let projection, geoPath;
+let svg, g, path, projection, fc, dataByYear, resolver;
 
-let currentGeo;
-let currentDataByYear;
-let currentYear;
-let currentMetric;
-
-function getName(f){
+function geoName(f) {
   return f?.properties?.dis_name
-      || f?.properties?.NAME_1
-      || f?.properties?.Distrito
-      || f?.properties?.name
-      || f?.properties?.NOME
-      || "";
+    || f?.properties?.NAME_1
+    || f?.properties?.Distrito
+    || f?.properties?.name
+    || f?.properties?.NOME
+    || f?.properties?.dis_name_upper
+    || "";
 }
 
-function buildKeyMap(dataByYear, year){
-  const map = new Map();
-  const row = dataByYear[year] || {};
-  for (const k of Object.keys(row)) map.set(norm(k), k);
-  return map;
+function colorScaleFor(values) {
+  const finite = values.filter(Number.isFinite);
+  const min = d3.min(finite), max = d3.max(finite);
+
+  // evita domínio colapsado (min==max) que dá “tudo igual”
+  const domain = (min === max) ? [min - 1, max + 1] : [min, max];
+
+  return d3.scaleQuantize()
+    .domain(domain)
+    .range(d3.schemeBlues[7]);
 }
 
-function renderBase(){
-  const yearData = currentDataByYear[currentYear] || {};
-  const keyMap = buildKeyMap(currentDataByYear, currentYear);
-
-  const feats = [...currentGeo.features].sort((a,b) => d3.geoArea(b) - d3.geoArea(a));
-
-  const paths = gMap.selectAll("path")
-    .data(feats, d => getName(d));
-
-  const enter = paths.enter().append("path")
-    .attr("class", "district")
-    .attr("d", geoPath)
-    .attr("fill", "rgba(70,120,255,.22)")
-    .attr("stroke", "rgba(255,255,255,.75)")
-    .attr("stroke-width", 1.2)
-    .on("mouseover", function(event, d){
-      d3.select(this).attr("stroke-width", 2.0);
-
-      const nameGeo = getName(d);
-      const nameCsv = keyMap.get(norm(nameGeo)) || nameGeo;
-      const v = yearData?.[nameCsv]?.[currentMetric];
-
-      const label = metricLabels[currentMetric] || currentMetric;
-      showTooltip(`<strong>${nameGeo}</strong><br>${label}: <strong>${formatValue(currentMetric, v)}</strong><br><span style="color:rgba(255,255,255,.7)">Ano: ${currentYear}</span>`);
-      moveTooltip(event.pageX, event.pageY);
-    })
-    .on("mousemove", (event) => moveTooltip(event.pageX, event.pageY))
-    .on("mouseout", function(){
-      d3.select(this).attr("stroke-width", 1.2);
-      hideTooltip();
-    });
-
-  paths.merge(enter).attr("d", geoPath);
-  paths.exit().remove();
-}
-
-export function initMap(geoFeatureCollection, dataByYear, initialYear, initialMetric){
-  currentGeo = geoFeatureCollection;
-  currentDataByYear = dataByYear;
-  currentYear = initialYear;
-  currentMetric = initialMetric;
+export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSelectDistrict }) {
+  fc = featureCollection;
+  dataByYear = csvDataByYear;
+  resolver = buildNameResolver(csvDistricts);
 
   const container = d3.select("#map-container");
   container.selectAll("*").remove();
 
-  const w = container.node()?.clientWidth ?? 900;
-  const h = container.node()?.clientHeight ?? 560;
+  const w = container.node().clientWidth || 900;
+  const h = container.node().clientHeight || 520;
 
-  svg = container.append("svg")
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("viewBox", `0 0 ${w} ${h}`);
+  svg = container.append("svg").attr("viewBox", `0 0 ${w} ${h}`);
+  g = svg.append("g");
 
-  projection = d3.geoMercator().fitSize([w, h], currentGeo);
-  geoPath = d3.geoPath(projection);
+  projection = d3.geoMercator().fitSize([w, h], fc);
+  path = d3.geoPath(projection);
 
-  gMap = svg.append("g").attr("class", "map-layer");
+  // ordenar por área (desenho consistente)
+  const feats = [...fc.features].sort((a, b) => d3.geoArea(b) - d3.geoArea(a));
 
-  renderBase();
+  g.selectAll("path")
+    .data(feats, d => geoName(d))
+    .join("path")
+    .attr("class", "district")
+    .attr("d", path)
+    .on("mouseover", (event, d) => {
+      const name = geoName(d);
+      showTooltip(`<strong>${name}</strong>`);
+      moveTooltip(event.pageX, event.pageY);
+    })
+    .on("mousemove", (event) => moveTooltip(event.pageX, event.pageY))
+    .on("mouseout", () => hideTooltip())
+    .on("click", (event, d) => {
+      onSelectDistrict(resolver.resolve(geoName(d)));
+      event.stopPropagation();
+    });
 
-  window.addEventListener("resize", () => {
-    const w2 = container.node()?.clientWidth ?? w;
-    const h2 = container.node()?.clientHeight ?? h;
-    svg.attr("viewBox", `0 0 ${w2} ${h2}`);
-    projection.fitSize([w2, h2], currentGeo);
-    geoPath = d3.geoPath(projection);
-    renderBase();
-  }, { passive: true });
+  // clique fora limpa seleção
+  svg.on("click", () => onSelectDistrict(null));
 }
 
-export function updateMap(year, metric, dataByYear){
-  currentYear = year;
-  currentMetric = metric;
-  currentDataByYear = dataByYear;
-  renderBase();
+export function updateMap({ year, metric, selectedDistrict }) {
+  const yd = dataByYear[year] || {};
+
+  const vals = fc.features.map(f => {
+    const d = resolver.resolve(geoName(f));
+    const v = yd?.[d]?.[metric];
+    return Number.isFinite(v) ? v : NaN;
+  });
+
+  const scale = colorScaleFor(vals);
+
+  g.selectAll("path.district")
+    .attr("fill", d => {
+      const key = resolver.resolve(geoName(d));
+      const v = yd?.[key]?.[metric];
+      return Number.isFinite(v) ? scale(v) : "rgba(255,255,255,.10)";
+    })
+    .classed("is-selected", d => selectedDistrict && resolver.resolve(geoName(d)) === selectedDistrict)
+    .on("mouseover", (event, d) => {
+      const name = geoName(d);
+      const key = resolver.resolve(name);
+      const v = yd?.[key]?.[metric];
+
+      showTooltip(
+        `<strong>${name}</strong><br>` +
+        `${metricLabels[metric] || metric}: <strong>${formatValue(metric, v)}</strong><br>` +
+        `<span style="color:rgba(255,255,255,.7)">Ano: ${year}</span>`
+      );
+      moveTooltip(event.pageX, event.pageY);
+    })
+    .on("mousemove", (event) => moveTooltip(event.pageX, event.pageY))
+    .on("mouseout", () => hideTooltip());
+
+  renderLegend(scale, metric);
 }

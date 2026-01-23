@@ -3,46 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>VIS WG Final — População e Habitação (1940–2021)</title>
+  <title>Habitação e População (1940–2021)</title>
 
   <link rel="stylesheet" href="css/styles.css" />
 
-  <!-- D3 + TopoJSON -->
+  <!-- D3 + TopoJSON (globais) -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/topojson@3"></script>
 </head>
 
 <body>
   <header class="topbar">
-    <div class="brand">
-      <div class="title">População vs Habitação (Portugal, 1940–2021)</div>
-      <div class="subtitle">Mapa (base) + série temporal. Inclui Açores e Madeira.</div>
+    <div>
+      <div class="title">Habitação e População em Portugal (1940–2021)</div>
+      <div class="subtitle">Dashboard interativo (inclui Açores e Madeira).</div>
     </div>
 
-    <div class="controls" aria-label="Controlos">
-      <label class="control">
-        <span>Ano</span>
-        <select id="yearDropdown"></select>
+    <div class="controls">
+      <label>
+        Métrica
+        <select id="metricSelect"></select>
       </label>
 
-      <label class="control">
-        <span>Métrica</span>
-        <select id="metricDropdown"></select>
+      <label>
+        Ano <span id="yearLabel"></span>
+        <input id="yearSlider" type="range" min="1940" max="2021" step="1" value="2021" />
       </label>
+
+      <button id="resetBtn" type="button">Reset</button>
     </div>
   </header>
 
-  <main class="layout">
-    <section class="panel">
-      <div class="panel-title">Mapa</div>
-      <div id="map-container" class="viz"></div>
-      <div id="legend-container" class="legend-host"></div>
+  <main class="grid">
+    <section class="card">
+      <h2>Mapa (coroplético)</h2>
+      <p>Hover para detalhes. Clique para selecionar distrito. Clique fora para limpar.</p>
+      <div id="map-container" class="viz h520"></div>
+      <div id="legend-container" class="legend"></div>
     </section>
 
-    <section class="panel" style="margin-top:14px;">
-      <div class="panel-title">Série temporal</div>
-      div id="line-container" style="height:300px;"></div>
+    <section class="card">
+      <h2>Série temporal</h2>
+      <p>Brush para escolher intervalo.</p>
+      <div id="line-container" class="viz h280"></div>
+    </section>
 
+    <section class="card span2">
+      <h2>Scatter</h2>
+      <p>Média no intervalo selecionado. Clique num ponto para selecionar distrito.</p>
+      <div id="scatter-container" class="viz h520"></div>
     </section>
   </main>
 

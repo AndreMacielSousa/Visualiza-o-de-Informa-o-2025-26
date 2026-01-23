@@ -1,115 +1,97 @@
-// js/main.js
-import { processData, metricLabels } from "./utils.js";
+import { FILES, processData, asFeatureCollection, pickLatestYearFeatures } from "./data.js";
+import { metricLabels } from "./utils.js";
 import { initMap, updateMap } from "./map.js";
 import { initLine, updateLine } from "./line.js";
+import { initScatter, updateScatter } from "./scatter.js";
 
-const DATA_CSV = "data/housing_population_long.csv";
-const MAP_FILE = "data/districts.topo.json"; // GeoJSON FeatureCollection OU TopoJSON
+let years, metrics, districts, dataByYear, fc;
 
-let dataByYear;
-let years;
-let metrics;
+let state = {
+  metric: "housing_per_1000",
+  year: 2021,
+  brush: null,
+  selectedDistrict: null
+};
 
-let selectedYear;
-let selectedMetric;
+function render() {
+  updateMap({ year: state.year, metric: state.metric, selectedDistrict: state.selectedDistrict });
 
+  const d = state.selectedDistrict || districts[0];
+  updateLine({ dataByYear, years, metric: state.metric, district: d, brushRange: state.brush });
 
-
-// para já, distrito default (vamos ligar ao clique no mapa depois)
-let selectedDistrict = "Lisboa";
-
-function asFeatureCollection(maybeTopoOrGeo){
-  if (maybeTopoOrGeo && maybeTopoOrGeo.type === "Topology" && maybeTopoOrGeo.objects) {
-    const objectName = Object.keys(maybeTopoOrGeo.objects)[0];
-    return topojson.feature(maybeTopoOrGeo, maybeTopoOrGeo.objects[objectName]);
-  }
-  if (maybeTopoOrGeo && maybeTopoOrGeo.type === "FeatureCollection" && Array.isArray(maybeTopoOrGeo.features)) {
-    return maybeTopoOrGeo;
-  }
-  throw new Error("Mapa: esperado TopoJSON (Topology) ou GeoJSON (FeatureCollection).");
+  updateScatter({
+    dataByYear, years, districts, metric: state.metric,
+    brushRange: state.brush,
+    selectedDistrict: state.selectedDistrict,
+    onSelectDistrict: (x) => { state.selectedDistrict = x; render(); }
+  });
 }
 
-function pickLatestYearFeatures(fc){
-  const withYear = fc.features.filter(f => f?.properties && (f.properties.year !== undefined));
-  if (!withYear.length) return fc;
-  const maxYear = d3.max(withYear, f => +f.properties.year);
-  return { type: "FeatureCollection", features: withYear.filter(f => +f.properties.year === maxYear) };
-}
+Promise.all([d3.csv(FILES.csv), d3.json(FILES.map)])
+  .then(([csvRows, mapRaw]) => {
+    const p = processData(csvRows);
+    dataByYear = p.dataByYear;
+    years = p.years;
+    districts = p.districts;
+    metrics = p.metrics;
 
-function populateDropdowns(){
-  const yearSelect = d3.select("#yearDropdown");
-  yearSelect.selectAll("option")
-    .data(years)
-    .join("option")
-    .attr("value", d => d)
-    .text(d => d);
+    fc = pickLatestYearFeatures(asFeatureCollection(mapRaw));
 
-  const metricSelect = d3.select("#metricDropdown");
-  metricSelect.selectAll("option")
-    .data(metrics)
-    .join("option")
-    .attr("value", d => d)
-    .text(d => metricLabels[d] || d);
+    state.year = years[years.length - 1];
+    state.brush = [years[0], years[years.length - 1]];
 
-  selectedYear = years[years.length - 1];
-  selectedMetric = "housing_per_1000";
+    // UI
+    const metricSelect = d3.select("#metricSelect");
+    metricSelect.selectAll("option")
+      .data(metrics)
+      .join("option")
+      .attr("value", d => d)
+      .text(d => metricLabels[d] || d);
+    metricSelect.property("value", state.metric);
 
-  // distrito default: se existir "Portugal", usa; senão "Lisboa"
-  const row = dataByYear[selectedYear] || {};
-  selectedDistrict = Object.prototype.hasOwnProperty.call(row, "Portugal") ? "Portugal" : "Lisboa";
+    const yearSlider = d3.select("#yearSlider");
+    yearSlider
+      .attr("min", years[0])
+      .attr("max", years[years.length - 1])
+      .property("value", state.year);
+    d3.select("#yearLabel").text(state.year);
 
-  yearSelect.property("value", selectedYear);
-  metricSelect.property("value", selectedMetric);
-
-  yearSelect.on("change", (event) => {
-    selectedYear = +event.target.value;
-    updateMap(selectedYear, selectedMetric, dataByYear);
-
-    updateLine({
-      dataByYear,
-      years,
-      metric: selectedMetric,
-      districtName: selectedDistrict
+    metricSelect.on("change", (ev) => { state.metric = ev.target.value; render(); });
+    yearSlider.on("input", (ev) => {
+      state.year = +ev.target.value;
+      d3.select("#yearLabel").text(state.year);
+      render();
     });
-  });
 
-  metricSelect.on("change", (event) => {
-    selectedMetric = event.target.value;
-    updateMap(selectedYear, selectedMetric, dataByYear);
+    d3.select("#resetBtn").on("click", () => {
+      state.metric = "housing_per_1000";
+      state.year = years[years.length - 1];
+      state.brush = [years[0], years[years.length - 1]];
+      state.selectedDistrict = null;
 
-    updateLine({
-      dataByYear,
-      years,
-      metric: selectedMetric,
-      districtName: selectedDistrict
+      metricSelect.property("value", state.metric);
+      yearSlider.property("value", state.year);
+      d3.select("#yearLabel").text(state.year);
+
+      render();
     });
-  });
-}
 
-Promise.all([
-  d3.csv(DATA_CSV),
-  d3.json(MAP_FILE)
-]).then(([csvRows, mapRaw]) => {
+    // Viz init
+    initMap({
+      featureCollection: fc,
+      csvDistricts: districts,
+      csvDataByYear: dataByYear,
+      onSelectDistrict: (d) => { state.selectedDistrict = d; render(); }
+    });
 
-  const processed = processData(csvRows);
-  dataByYear = processed.dataByYear;
-  years = processed.years;
-  metrics = processed.metrics;
+    initLine({
+      onBrushChange: (r) => { state.brush = r; render(); }
+    });
 
-  const fc = pickLatestYearFeatures(asFeatureCollection(mapRaw));
+    initScatter({
+      onSelectDistrict: (d) => { state.selectedDistrict = d; render(); }
+    });
 
-  populateDropdowns();
-
-  initMap(fc, dataByYear, selectedYear, selectedMetric);
-
-  initLine("#line-container");
-  updateLine({
-    dataByYear,
-    years,
-    metric: selectedMetric, 
-    districtName: selectedDistrict
-  });
-
-}).catch(err => {
-  console.error("Erro ao carregar o projeto:", err);
-});
+    render();
+  })
+  .catch(err => console.error("Erro ao carregar:", err));
