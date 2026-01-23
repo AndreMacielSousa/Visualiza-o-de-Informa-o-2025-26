@@ -1,23 +1,16 @@
 import { state } from "./state.js";
 import { fmtNumber1 } from "./utils.js";
 
-function normName(s) {
-  return String(s ?? "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ");
-}
-
 function isLonLat(geo) {
   const f = geo?.features?.[0];
   const coords = f?.geometry?.coordinates;
   if (!coords) return true;
+
   let c = coords;
   while (Array.isArray(c) && Array.isArray(c[0])) c = c[0];
   const pt = Array.isArray(c) ? c : null;
   if (!pt || pt.length < 2) return true;
+
   const x = +pt[0], y = +pt[1];
   return Math.abs(x) <= 180 && Math.abs(y) <= 90;
 }
@@ -36,7 +29,6 @@ export function drawMap(container, data) {
     .attr("viewBox", `0 0 ${width} ${height}`)
     .attr("role", "img");
 
-  // projeção
   const projection = isLonLat(data.geo)
     ? d3.geoMercator().fitSize([width, height], data.geo)
     : d3.geoIdentity().reflectY(true).fitSize([width, height], data.geo);
@@ -50,7 +42,7 @@ export function drawMap(container, data) {
 
   const year = state.year;
 
-  // lookup dos valores no ano atual
+  // valores no ano selecionado
   const valueByKey = new Map(
     data.rows
       .filter(d => d.year === year)
@@ -59,83 +51,59 @@ export function drawMap(container, data) {
 
   const g = svg.append("g");
 
-  // ✅ Garantir que temos sempre district_name + district_key no GeoJSON
-  const baseFeatures = (data.geo.features || [])
-    .filter(f => String(f?.properties?.dis_type ?? "").toLowerCase() === "district")
-    .map(f => {
-      const p = f.properties || {};
-      const name = p.district_name ?? p.dis_name ?? p.dis_name_upper ?? p.dis_name_lower ?? p.name ?? "";
-      const key = p.district_key ?? normName(name);
-      return {
-        ...f,
-        properties: {
-          ...p,
-          district_name: name,
-          district_key: key
-        }
-      };
+  // ✅ Em vez de "dissolver", escolhe 1 feature por distrito (mais robusto)
+  // (o teu GeoJSON tem várias features por distrito; esta abordagem evita colapsos visuais)
+  const byKey = d3.group(data.geo.features, f => f.properties.district_key);
+  const districts = Array.from(byKey, ([k, feats]) => feats[0]);
+
+  // Ordenar por área (maiores primeiro), para evitar que grandes tapem pequenos
+  districts.sort((a, b) => d3.geoArea(b) - d3.geoArea(a));
+
+  // DEBUG útil (podes remover depois)
+  console.log("Map debug:", {
+    featuresIn: data.geo.features.length,
+    districts: districts.length
+  });
+
+  // ================================
+  // CAMADA 1 — preenchimento
+  // ================================
+  const fillLayer = g.append("g").attr("class", "fill-layer");
+
+  const fills = fillLayer.selectAll("path")
+    .data(districts)
+    .join("path")
+    .attr("d", path)
+    .attr("fill-opacity", 0.75)
+    .attr("fill", d => {
+      const k = d.properties.district_key;
+      const row = valueByKey.get(k);
+      return row && Number.isFinite(row.housing_per_1000)
+        ? color(row.housing_per_1000)
+        : "#2a2a2a";
     });
 
-  // Debug: se isto der 1, tinhas o problema do undefined
-  const distinctKeys = new Set(baseFeatures.map(f => f.properties.district_key));
-  console.log("Map debug keys:", {
-    featuresIn: data.geo.features.length,      // antes de filtrar
-    featuresUsed: baseFeatures.length,         // depois de filtrar p/ distritos
-    distinctDistricts: distinctKeys.size       // esperado: 18 (continente)
-  });
+  fills.append("title")
+    .text(d => {
+      const k = d.properties.district_key;
+      const row = valueByKey.get(k);
+      return row
+        ? `${d.properties.district_name}\nHabitações/1000 hab.: ${fmtNumber1(row.housing_per_1000)}`
+        : d.properties.district_name;
+    });
 
-  // ✅ Em vez de dissolver, escolhemos 1 feature por distrito (mais robusto)
-const byCode = d3.group(baseFeatures, f => f.properties.district_code ?? f.properties.dis_code ?? f.properties.district_key);
+  // ================================
+  // CAMADA 2 — contornos (por cima, sempre visíveis)
+  // ================================
+  const outlineLayer = g.append("g").attr("class", "outline-layer");
 
-// cria uma lista com 1 feature por distrito
-const districts = Array.from(byCode, ([k, feats]) => feats[0]);
-
-console.log("Map debug districts (chosen):", districts.map(d => d.properties.district_name));
-console.log("Map debug paths count (should be 18):", districts.length);
-
-// 🔽 IMPORTANTE: ordenar por área (maiores primeiro)
-// evita que um distrito grande tape os pequenos
-districts.sort((a, b) => d3.geoArea(b) - d3.geoArea(a));
-
-
-// desenhar (18 paths)
-const paths = g.selectAll("path")
-  .data(districts)
-  .join("path");
-
-console.log("DOM paths:", paths.size());
-
-paths
-  .attr("class", "district")
-  .attr("d", path)
-  .attr("stroke", "white")
-  .attr("stroke-width", 1)
-  .attr("fill-opacity", 0.9)
-  .attr("fill", d => {
-    const k = d.properties.district_key;
-    const row = valueByKey.get(k);
-    return row && Number.isFinite(row.housing_per_1000)
-      ? color(row.housing_per_1000)
-      : "#1a1f2e";
-  });
-
-  // DEBUG: quantos paths distintos existem mesmo?
-const dStrings = paths.nodes().map(n => n.getAttribute("d") || "");
-const uniqueD = new Set(dStrings);
-console.log("DEBUG unique d count:", uniqueD.size);
-console.log("DEBUG first 2 d samples:", dStrings[0]?.slice(0,80), dStrings[1]?.slice(0,80));
-
-
-paths.append("title")
-  .text(d => {
-    const k = d.properties.district_key;
-    const row = valueByKey.get(k);
-    return row
-      ? `${d.properties.district_name}\nHabitações/1000 hab.: ${fmtNumber1(row.housing_per_1000)}`
-      : d.properties.district_name;
-  });
-
-
-  }
-
-  
+  outlineLayer.selectAll("path")
+    .data(districts)
+    .join("path")
+    .attr("d", path)
+    .attr("fill", "none")
+    .attr("stroke", "#ffffff")
+    .attr("stroke-width", 1.4)
+    .attr("stroke-opacity", 0.9)
+    .style("pointer-events", "none");
+}
