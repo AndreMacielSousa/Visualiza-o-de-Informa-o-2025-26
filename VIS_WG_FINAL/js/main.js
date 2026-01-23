@@ -16,7 +16,7 @@ let selectedMetric;
 
 
 // para já, distrito default (vamos ligar ao clique no mapa depois)
-let selectedDistrict = "Portugal";
+let selectedDistrict = "Lisboa";
 
 function asFeatureCollection(maybeTopoOrGeo){
   if (maybeTopoOrGeo && maybeTopoOrGeo.type === "Topology" && maybeTopoOrGeo.objects) {
@@ -106,7 +106,7 @@ Promise.all([
   updateLine({
     dataByYear,
     years,
-    metric: selectedMetric,
+    metric: selectedMetric, 
     districtName: selectedDistrict
   });
 
