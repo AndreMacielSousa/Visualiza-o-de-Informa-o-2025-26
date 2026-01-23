@@ -163,3 +163,5 @@ function renderLegend(scale, metric) {
       .text(`${formatValue(metric, from)} - ${formatValue(metric, to)}`);
   });
 }
+
+export { initMap, updateMap };

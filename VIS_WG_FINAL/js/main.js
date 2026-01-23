@@ -1,5 +1,8 @@
 // main.js
 
+import { initMap, updateMap } from "./map.js";
+
+
 // Caminhos dos ficheiros de dados (ajuste caso necessário)
 const DATA_CSV = "metricas_derivadas_habitacao_populacao_1940_2021.csv";
 const MAP_TOPOJSON = "portugal-distritos-ilhas.topojson";  // ficheiro TopoJSON do mapa de Portugal (Continente + Ilhas)
@@ -31,7 +34,7 @@ Promise.all([
       .attr("value", d => d)
       .text(d => metricLabels[d] || d);
 
-  // Definir ano e métrica iniciais (por exemplo, último ano e População)
+  // Definir ano e métrica iniciais (por exemplo, últ\o ano e População)
   const initialYear = years[years.length - 1];      // ano mais recente
   const initialMetric = "Populacao";                // métrica padrão inicial
 
