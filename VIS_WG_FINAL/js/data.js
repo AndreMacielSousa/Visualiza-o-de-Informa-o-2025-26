@@ -2,11 +2,9 @@ import { metricLabels } from "./utils.js";
 
 export const FILES = {
   csv: "data/housing_population_long.csv",
-  map: "data/districts.topo.json"
+  map: "data/georef-portugal-distrito-millesime.geojson"
 };
 
-// CSV esperado:
-// district_name, year, population, housing, housing_per_1000, housing_yoy_pct, population_yoy_pct, delta_growth
 export function processData(rows) {
   const dataByYear = {};
   const ys = new Set();
@@ -47,10 +45,36 @@ export function asFeatureCollection(raw) {
   throw new Error("Mapa: esperado Topology ou FeatureCollection");
 }
 
-// Se houver múltiplos anos em properties.year, escolhe o maior
+// Filtra para manter apenas a geometria mais recente de cada distrito
 export function pickLatestYearFeatures(fc) {
-  const withYear = fc.features.filter(f => f?.properties && f.properties.year != null);
-  if (!withYear.length) return fc;
-  const maxYear = d3.max(withYear, f => +f.properties.year);
-  return { type: "FeatureCollection", features: withYear.filter(f => +f.properties.year === maxYear) };
+  if (!fc || !fc.features) return fc;
+
+  // Tenta detetar qual é a propriedade que guarda o ano ou data
+  const sample = fc.features.find(f => f.properties);
+  let yearKey = "year";
+  
+  // Fallbacks comuns em ficheiros Opendatasoft/GeoJSON
+  if (sample && sample.properties) {
+    if ("year" in sample.properties) yearKey = "year";
+    else if ("millesime" in sample.properties) yearKey = "millesime";
+    else if ("op_millesime" in sample.properties) yearKey = "op_millesime";
+    else if ("annee" in sample.properties) yearKey = "annee";
+  }
+
+  // Se não encontrar propriedade de ano, retorna tudo (pode causar sobreposição, mas é o fallback)
+  const withYear = fc.features.filter(f => f.properties && f.properties[yearKey] != null);
+  
+  if (!withYear.length) {
+    console.warn("Aviso: Não foi possível filtrar o mapa por ano. A usar todas as geometrias.");
+    return fc;
+  }
+
+  // Converte para número e encontra o máximo (ano mais recente)
+  const maxYear = d3.max(withYear, f => parseInt(f.properties[yearKey], 10));
+  console.log(`Mapa: A filtrar pelo ano mais recente detetado: ${maxYear} (propriedade: ${yearKey})`);
+
+  return { 
+    type: "FeatureCollection", 
+    features: withYear.filter(f => parseInt(f.properties[yearKey], 10) === maxYear) 
+  };
 }
