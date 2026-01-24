@@ -6,7 +6,7 @@
 - js/ (ES modules)
 - data/
   - housing_population_long.csv
-  - districts.topo.json
+  - georef-portugal-distrito-millesime.geojson
 
 ## Implementado (responde aos desafios anteriores)
 - Mapa coroplético com hover + clique (seleção de distrito).
