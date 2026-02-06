@@ -99,13 +99,13 @@ async function main() {
   }
 
   // --- Métricas ---
-  metricSelect.innerHTML = "";
-  metrics.forEach(m => {
-    const opt = document.createElement("option");
-    opt.value = m;
-    opt.textContent = m;
-    metricSelect.appendChild(opt);
-  });
+metrics.forEach(m => {
+  const opt = document.createElement("option");
+  opt.value = m;
+  opt.textContent = metricLabels[m] || m;
+  metricSelect.appendChild(opt);
+});
+
 
   currentMetric = metrics[0];
   metricSelect.value = currentMetric;
