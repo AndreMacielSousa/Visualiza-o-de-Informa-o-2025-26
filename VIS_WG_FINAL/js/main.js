@@ -4,7 +4,6 @@ import { initLine, updateLine } from "./line.js";
 import { initScatter, updateScatter } from "./scatter.js";
 import { metricLabels } from "./utils.js";
 
-
 // --- DOM ---
 const metricSelect = document.getElementById("metricSelect");
 const yearSlider = document.getElementById("yearSlider");
@@ -74,13 +73,8 @@ function resetAll() {
   selectedDistrict = null;
   brushRange = null;
 
-  // volta ao último ano com dados
   currentYear = years[years.length - 1];
   syncSliderToYear(currentYear);
-
-  // mantém a métrica selecionada (ou volta à primeira, se quiseres)
-  // currentMetric = metrics[0];
-  // metricSelect.value = currentMetric;
 
   applyState();
 }
@@ -91,21 +85,26 @@ async function main() {
   dataByYear = loaded.dataByYear;
   years = loaded.years;
   districts = loaded.districts;
-  metrics = loaded.metrics;
+
+  // ✅ métricas sempre pelas KEYS conhecidas (e labels vêm de metricLabels)
+  metrics = loaded.metrics; // Object.keys(metricLabels) no data.js
 
   if (!years.length) {
     console.error("Sem anos disponíveis.");
     return;
   }
 
-  // --- Métricas ---
-metrics.forEach(m => {
-  const opt = document.createElement("option");
-  opt.value = m;
-  opt.textContent = metricLabels[m] || m;
-  metricSelect.appendChild(opt);
-});
+  // --- Métricas (PT-PT) ---
+  metricSelect.innerHTML = "";
+  metrics.forEach((m) => {
+    const opt = document.createElement("option");
+    opt.value = m;
 
+    // ✅ força o texto humano (PT-PT) no dropdown
+    opt.textContent = metricLabels[m] || m;
+
+    metricSelect.appendChild(opt);
+  });
 
   currentMetric = metrics[0];
   metricSelect.value = currentMetric;
@@ -138,7 +137,6 @@ metrics.forEach(m => {
     applyState();
   });
 
-  // slider “encaixa” sempre num ano real
   yearSlider.addEventListener("input", () => {
     currentYear = yearFromSliderValue(Number(yearSlider.value));
     setYearLabel(currentYear);
@@ -153,7 +151,6 @@ metrics.forEach(m => {
 
   resetBtn.addEventListener("click", resetAll);
 
-  // primeira render
   applyState();
 }
 
