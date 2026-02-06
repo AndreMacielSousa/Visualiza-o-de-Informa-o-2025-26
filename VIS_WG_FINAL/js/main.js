@@ -2,6 +2,8 @@ import { loadAllData } from "./data.js";
 import { initMap, updateMap } from "./map.js";
 import { initLine, updateLine } from "./line.js";
 import { initScatter, updateScatter } from "./scatter.js";
+import { metricLabels } from "./utils.js";
+
 
 // --- DOM ---
 const metricSelect = document.getElementById("metricSelect");
