@@ -1,97 +1,169 @@
-import { FILES, processData, asFeatureCollection, pickLatestYearFeatures } from "./data.js";
-import { metricLabels } from "./utils.js";
+import { loadAllData } from "./data.js";
 import { initMap, updateMap } from "./map.js";
 import { initLine, updateLine } from "./line.js";
 import { initScatter, updateScatter } from "./scatter.js";
+import { metrics } from "./metrics.js";
 
-let years, metrics, districts, dataByYear, fc;
+// --- ESTADO ---
+let featureCollection, districts, dataByYear;
+let currentMetric = null;
+let currentYear = null;
+let selectedDistrict = null;
+let brushedRange = null; // [y0,y1] ou null
 
-let state = {
-  metric: "housing_per_1000",
-  year: 2021,
-  brush: null,
-  selectedDistrict: null
-};
+// --- DOM ---
+const metricSelect = document.getElementById("metricSelect");
+const yearSlider = document.getElementById("yearSlider");
+const yearLabel = document.getElementById("yearLabel");
+const resetBtn = document.getElementById("resetBtn");
 
-function render() {
-  updateMap({ year: state.year, metric: state.metric, selectedDistrict: state.selectedDistrict });
+// --- ANOS DISPONÍVEIS (com dados) ---
+let availableYears = [];   // ex: [1940, 1950, 1960, 1981, ...]
+let yearIndexMap = new Map(); // ano -> index
+let sliderMin = 0;
+let sliderMax = 0;
 
-  const d = state.selectedDistrict || districts[0];
-  updateLine({ dataByYear, years, metric: state.metric, district: d, brushRange: state.brush });
-
-  updateScatter({
-    dataByYear, years, districts, metric: state.metric,
-    brushRange: state.brush,
-    selectedDistrict: state.selectedDistrict,
-    onSelectDistrict: (x) => { state.selectedDistrict = x; render(); }
-  });
+function setYearLabel(y) {
+  yearLabel.textContent = y;
 }
 
-Promise.all([d3.csv(FILES.csv), d3.json(FILES.map)])
-  .then(([csvRows, mapRaw]) => {
-    const p = processData(csvRows);
-    dataByYear = p.dataByYear;
-    years = p.years;
-    districts = p.districts;
-    metrics = p.metrics;
+// Snap helper: recebe um "valor contínuo" e devolve o ano real mais próximo
+function nearestAvailableYear(val) {
+  // val é índice (0..N-1)
+  const idx = Math.max(sliderMin, Math.min(sliderMax, Math.round(val)));
+  return availableYears[idx];
+}
 
-    fc = pickLatestYearFeatures(asFeatureCollection(mapRaw));
+function syncSliderToYear(year) {
+  const idx = yearIndexMap.get(year);
+  if (idx == null) return;
+  yearSlider.value = String(idx);
+  setYearLabel(year);
+}
 
-    state.year = years[years.length - 1];
-    state.brush = [years[0], years[years.length - 1]];
+function applyState() {
+  updateMap({ year: currentYear, metric: currentMetric, selectedDistrict });
+  updateLine({ metric: currentMetric, selectedDistrict, brushedRange });
+  updateScatter({ metric: currentMetric, selectedDistrict, brushedRange });
+}
 
-    // UI
-    const metricSelect = d3.select("#metricSelect");
-    metricSelect.selectAll("option")
-      .data(metrics)
-      .join("option")
-      .attr("value", d => d)
-      .text(d => metricLabels[d] || d);
-    metricSelect.property("value", state.metric);
+function clearAll() {
+  selectedDistrict = null;
+  brushedRange = null;
+  // volta ao último ano disponível por defeito
+  currentYear = availableYears[availableYears.length - 1];
+  syncSliderToYear(currentYear);
+  applyState();
+}
 
-    const yearSlider = d3.select("#yearSlider");
-    yearSlider
-      .attr("min", years[0])
-      .attr("max", years[years.length - 1])
-      .property("value", state.year);
-    d3.select("#yearLabel").text(state.year);
+function onSelectDistrict(d) {
+  selectedDistrict = d; // pode ser null
+  applyState();
+}
 
-    metricSelect.on("change", (ev) => { state.metric = ev.target.value; render(); });
-    yearSlider.on("input", (ev) => {
-      state.year = +ev.target.value;
-      d3.select("#yearLabel").text(state.year);
-      render();
-    });
+function onBrush(range) {
+  // range: null ou [anoInicial, anoFinal]
+  brushedRange = range;
+  applyState();
+}
 
-    d3.select("#resetBtn").on("click", () => {
-      state.metric = "housing_per_1000";
-      state.year = years[years.length - 1];
-      state.brush = [years[0], years[years.length - 1]];
-      state.selectedDistrict = null;
+async function main() {
+  // --- LOAD ---
+  const loaded = await loadAllData();
+  featureCollection = loaded.featureCollection;
+  districts = loaded.districts;
+  dataByYear = loaded.dataByYear;
 
-      metricSelect.property("value", state.metric);
-      yearSlider.property("value", state.year);
-      d3.select("#yearLabel").text(state.year);
+  // --- AVAILABLE YEARS ---
+  // dataByYear é tipicamente um objeto { "1940": {...}, "1950": {...}, ... }
+  availableYears = Object.keys(dataByYear)
+    .map(Number)
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
 
-      render();
-    });
+  if (availableYears.length === 0) {
+    console.error("Sem anos disponíveis em dataByYear.");
+    return;
+  }
 
-    // Viz init
-    initMap({
-      featureCollection: fc,
-      csvDistricts: districts,
-      csvDataByYear: dataByYear,
-      onSelectDistrict: (d) => { state.selectedDistrict = d; render(); }
-    });
+  yearIndexMap = new Map(availableYears.map((y, i) => [y, i]));
+  sliderMin = 0;
+  sliderMax = availableYears.length - 1;
 
-    initLine({
-      onBrushChange: (r) => { state.brush = r; render(); }
-    });
+  // configurar slider para trabalhar por ÍNDICE, não por ano
+  yearSlider.min = String(sliderMin);
+  yearSlider.max = String(sliderMax);
+  yearSlider.step = "1";
 
-    initScatter({
-      onSelectDistrict: (d) => { state.selectedDistrict = d; render(); }
-    });
+  // --- METRICS ---
+  // mantém a vossa lista (metrics.js) ou fallback para keys
+  const metricList = Array.isArray(metrics) && metrics.length
+    ? metrics
+    : Object.keys(availableYears.length ? (dataByYear[String(availableYears[0])] || {}) : {});
 
-    render();
-  })
-  .catch(err => console.error("Erro ao carregar:", err));
+  metricSelect.innerHTML = "";
+  metricList.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m;
+    metricSelect.appendChild(opt);
+  });
+
+  currentMetric = metricList[0];
+  metricSelect.value = currentMetric;
+
+  // ano default = último com dados
+  currentYear = availableYears[availableYears.length - 1];
+  syncSliderToYear(currentYear);
+
+  // --- INIT VIZ ---
+  initMap({
+    featureCollection,
+    csvDistricts: districts,
+    csvDataByYear: dataByYear,
+    onSelectDistrict
+  });
+
+  initLine({
+    containerId: "#line-container",
+    districts,
+    dataByYear,
+    metric: currentMetric,
+    onBrush
+  });
+
+  initScatter({
+    containerId: "#scatter-container",
+    districts,
+    dataByYear,
+    metric: currentMetric,
+    onSelectDistrict
+  });
+
+  // --- HANDLERS ---
+  metricSelect.addEventListener("change", () => {
+    currentMetric = metricSelect.value;
+    applyState();
+  });
+
+  // SNAP: sempre que mexe, traduz índice->ano disponível
+  yearSlider.addEventListener("input", () => {
+    currentYear = nearestAvailableYear(Number(yearSlider.value));
+    setYearLabel(currentYear);
+    applyState();
+  });
+
+  // (opcional) garante que ao largar o slider fica “certinho”
+  yearSlider.addEventListener("change", () => {
+    currentYear = nearestAvailableYear(Number(yearSlider.value));
+    syncSliderToYear(currentYear);
+    applyState();
+  });
+
+  resetBtn.addEventListener("click", clearAll);
+
+  // primeira render
+  applyState();
+}
+
+main();
