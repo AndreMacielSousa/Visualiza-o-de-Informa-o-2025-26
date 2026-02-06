@@ -2,10 +2,10 @@ import { metricLabels, formatValue, buildNameResolver } from "./utils.js";
 import { showTooltip, moveTooltip, hideTooltip } from "./tooltip.js";
 import { renderLegend } from "./legend.js";
 
-let svg, gMain, gAz, gMad;
-let pathMain, pathAz, pathMad;
-let projMain, projAz, projMad;
-let fc, dataByYear, resolver;
+let svg, fc, dataByYear, resolver;
+
+// Grupos por região
+let gMain, gAz, gMad;
 
 function geoName(f) {
   return f?.properties?.dis_name
@@ -17,12 +17,13 @@ function geoName(f) {
     || "";
 }
 
+// --- CORREÇÃO ROBUSTA DE GEOMETRIA ---
+// Verifica se o D3 acha que o polígono é o "globo inteiro" (Area > 2*PI) e inverte anéis.
 function fixInvertedGeometry(featureCollection) {
   if (!featureCollection?.features) return 0;
 
   let fixedCount = 0;
 
-  // Corrige casos em que o D3 interpreta a geometria como “globo inteiro”
   featureCollection.features.forEach(f => {
     const geom = f.geometry;
     if (!geom) return;
@@ -55,24 +56,29 @@ function regionFeatureCollections(featureCollection) {
   return { fcMain, fcAz, fcMad };
 }
 
-function drawRegion({
-  group,
-  regionFc,
-  projection,
-  path,
-  sortByArea = true,
-  onSelectDistrict
-}) {
-  const feats = sortByArea
-    ? [...regionFc.features].sort((a, b) => d3.geoArea(b) - d3.geoArea(a))
-    : [...regionFc.features];
+function drawInsetFrame(layer, box, label) {
+  layer.append("rect")
+    .attr("x", box.x)
+    .attr("y", box.y)
+    .attr("width", box.w)
+    .attr("height", box.h)
+    .attr("rx", 14)
+    .attr("ry", 14)
+    .attr("fill", "rgba(255,255,255,0.03)")
+    .attr("stroke", "rgba(255,255,255,0.12)")
+    .attr("stroke-width", 1);
 
-  group.selectAll("path")
-    .data(feats, d => geoName(d))
-    .join("path")
-    .attr("class", "district")
-    .attr("d", path)
-    .attr("fill", "rgba(255,255,255,.10)")
+  layer.append("text")
+    .attr("x", box.x + 10)
+    .attr("y", box.y + 18)
+    .attr("fill", "rgba(255,255,255,0.85)")
+    .attr("font-size", 12)
+    .attr("font-weight", 700)
+    .text(label);
+}
+
+function bindDistrictEvents(selection, onSelectDistrict) {
+  selection
     .on("mouseover", (event, d) => {
       const name = geoName(d);
       showTooltip(`<strong>${name}</strong>`);
@@ -86,38 +92,14 @@ function drawRegion({
     });
 }
 
-function drawInsetFrame(group, box, label) {
-  // Fundo “caixa”
-  group.append("rect")
-    .attr("x", box.x)
-    .attr("y", box.y)
-    .attr("width", box.w)
-    .attr("height", box.h)
-    .attr("rx", 12)
-    .attr("ry", 12)
-    .attr("fill", "rgba(255,255,255,0.03)")
-    .attr("stroke", "rgba(255,255,255,0.18)")
-    .attr("stroke-width", 1);
-
-  // Título da caixa
-  group.append("text")
-    .attr("x", box.x + 10)
-    .attr("y", box.y + 18)
-    .attr("fill", "rgba(255,255,255,0.85)")
-    .attr("font-size", 12)
-    .attr("font-weight", 700)
-    .text(label);
-}
-
 export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSelectDistrict }) {
   if (!featureCollection?.features) return;
 
   fc = featureCollection;
 
-  // Correção robusta de geometria (mantém a vossa lógica)
   const fixedCount = fixInvertedGeometry(fc);
   if (fixedCount > 0) {
-    console.log(`Mapa: Corrigidos ${fixedCount} distritos com geometria invertida.`);
+    console.log(`Mapa: Corrigidos ${fixedCount} distritos que estavam com geometria invertida.`);
   }
 
   dataByYear = csvDataByYear;
@@ -131,116 +113,130 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
 
   svg = container.append("svg").attr("viewBox", `0 0 ${w} ${h}`);
 
-  // 3 grupos: continente (base), e insets (por cima)
+  // Layers (continente por baixo, caixas por cima)
   gMain = svg.append("g").attr("class", "layer-main");
   gAz = svg.append("g").attr("class", "layer-azores");
   gMad = svg.append("g").attr("class", "layer-madeira");
 
   const { fcMain, fcAz, fcMad } = regionFeatureCollections(fc);
 
-  // Caixas dos insets (em coordenadas do viewBox)
-  // Ajusta estes valores se quiseres maior/menor.
-  const pad = 10;
+  // ---- LAYOUT (como o rascunho) ----
+  const pad = 12;
+
+  // coluna esquerda (caixas das ilhas)
+  const leftColW = Math.round(w * 0.33);
 
   const azBox = {
-    w: Math.round(w * 0.30),
-    h: Math.round(h * 0.24),
     x: pad,
-    y: h - Math.round(h * 0.24) - pad
+    y: pad,
+    w: leftColW - pad * 2,
+    h: Math.round(h * 0.42)
   };
 
   const madBox = {
-    w: Math.round(w * 0.24),
-    h: Math.round(h * 0.20),
-    x: w - Math.round(w * 0.24) - pad,
-    y: h - Math.round(h * 0.20) - pad
+    x: pad,
+    y: azBox.y + azBox.h + pad,
+    w: leftColW - pad * 2,
+    h: h - (azBox.y + azBox.h + pad) - pad
   };
 
-  // Projeções separadas (aqui está a chave para a escala diferente)
-  projMain = d3.geoConicConformal()
+  // continente à direita (caixa grande)
+  const mainBox = {
+    x: leftColW + pad,
+    y: pad,
+    w: w - (leftColW + pad * 2),
+    h: h - pad * 2
+  };
+
+  // ---- Continente (fit à caixa da direita) ----
+  const projMain = d3.geoConicConformal()
     .parallels([38, 42])
     .rotate([8, 0])
-    .fitSize([w, h], fcMain);
+    .fitSize([mainBox.w, mainBox.h], fcMain);
 
-  pathMain = d3.geoPath(projMain);
+  const pathMain = d3.geoPath(projMain);
 
-  // Açores: fit ao tamanho da caixa (com margem interior)
-  const azInner = [azBox.w - 16, azBox.h - 26]; // margem para título
-  projAz = d3.geoConicConformal()
-    .parallels([38, 42])
-    .rotate([8, 0])
-    .fitSize(azInner, fcAz);
+  // moldura do continente
+  gMain.append("rect")
+    .attr("x", mainBox.x)
+    .attr("y", mainBox.y)
+    .attr("width", mainBox.w)
+    .attr("height", mainBox.h)
+    .attr("rx", 14)
+    .attr("ry", 14)
+    .attr("fill", "rgba(255,255,255,0.03)")
+    .attr("stroke", "rgba(255,255,255,0.12)")
+    .attr("stroke-width", 1);
 
-  pathAz = d3.geoPath(projAz);
+  const gMainMap = gMain.append("g")
+    .attr("transform", `translate(${mainBox.x},${mainBox.y})`);
 
-  // Madeira: fit ao tamanho da caixa (com margem interior)
-  const madInner = [madBox.w - 16, madBox.h - 26];
-  projMad = d3.geoConicConformal()
-    .parallels([38, 42])
-    .rotate([8, 0])
-    .fitSize(madInner, fcMad);
+  // Ordena para desenhar pequenos por cima dos grandes
+  const featsMain = [...fcMain.features].sort((a, b) => d3.geoArea(b) - d3.geoArea(a));
 
-  pathMad = d3.geoPath(projMad);
+  const mainPaths = gMainMap.selectAll("path")
+    .data(featsMain, d => geoName(d))
+    .join("path")
+    .attr("class", "district")
+    .attr("d", pathMain)
+    .attr("fill", "rgba(255,255,255,.10)")
+    .attr("stroke", "rgba(0,0,0,0.3)")
+    .attr("stroke-width", 0.5);
 
-  // Desenha continente
-  drawRegion({
-    group: gMain,
-    regionFc: fcMain,
-    projection: projMain,
-    path: pathMain,
-    onSelectDistrict
-  });
+  bindDistrictEvents(mainPaths, onSelectDistrict);
 
-  // Desenha “caixa” Açores + paths traduzidos para dentro da caixa
+  // ---- Açores (fit à caixa superior esquerda) ----
   if (fcAz.features.length) {
     drawInsetFrame(gAz, azBox, "Açores");
+
+    const azInner = [azBox.w - 16, azBox.h - 28]; // margem interior
+    const projAz = d3.geoConicConformal()
+      .parallels([38, 42])
+      .rotate([8, 0])
+      .fitSize(azInner, fcAz);
+
+    const pathAz = d3.geoPath(projAz);
 
     const gAzMap = gAz.append("g")
       .attr("transform", `translate(${azBox.x + 8},${azBox.y + 22})`);
 
-    gAzMap.selectAll("path")
+    const azPaths = gAzMap.selectAll("path")
       .data(fcAz.features, d => geoName(d))
       .join("path")
       .attr("class", "district")
       .attr("d", pathAz)
       .attr("fill", "rgba(255,255,255,.10)")
-      .on("mouseover", (event, d) => {
-        const name = geoName(d);
-        showTooltip(`<strong>${name}</strong>`);
-        moveTooltip(event.pageX, event.pageY);
-      })
-      .on("mousemove", (event) => moveTooltip(event.pageX, event.pageY))
-      .on("mouseout", () => hideTooltip())
-      .on("click", (event, d) => {
-        onSelectDistrict(resolver.resolve(geoName(d)));
-        event.stopPropagation();
-      });
+      .attr("stroke", "rgba(0,0,0,0.3)")
+      .attr("stroke-width", 0.5);
+
+    bindDistrictEvents(azPaths, onSelectDistrict);
   }
 
-  // Desenha “caixa” Madeira + paths traduzidos para dentro da caixa
+  // ---- Madeira (fit à caixa inferior esquerda) ----
   if (fcMad.features.length) {
     drawInsetFrame(gMad, madBox, "Madeira");
+
+    const madInner = [madBox.w - 16, madBox.h - 28];
+    const projMad = d3.geoConicConformal()
+      .parallels([38, 42])
+      .rotate([8, 0])
+      .fitSize(madInner, fcMad);
+
+    const pathMad = d3.geoPath(projMad);
 
     const gMadMap = gMad.append("g")
       .attr("transform", `translate(${madBox.x + 8},${madBox.y + 22})`);
 
-    gMadMap.selectAll("path")
+    const madPaths = gMadMap.selectAll("path")
       .data(fcMad.features, d => geoName(d))
       .join("path")
       .attr("class", "district")
       .attr("d", pathMad)
       .attr("fill", "rgba(255,255,255,.10)")
-      .on("mouseover", (event, d) => {
-        const name = geoName(d);
-        showTooltip(`<strong>${name}</strong>`);
-        moveTooltip(event.pageX, event.pageY);
-      })
-      .on("mousemove", (event) => moveTooltip(event.pageX, event.pageY))
-      .on("mouseout", () => hideTooltip())
-      .on("click", (event, d) => {
-        onSelectDistrict(resolver.resolve(geoName(d)));
-        event.stopPropagation();
-      });
+      .attr("stroke", "rgba(0,0,0,0.3)")
+      .attr("stroke-width", 0.5);
+
+    bindDistrictEvents(madPaths, onSelectDistrict);
   }
 
   // Clique fora limpa seleção
@@ -252,7 +248,7 @@ export function updateMap({ year, metric, selectedDistrict }) {
 
   const yd = dataByYear[year] || {};
 
-  // escala de cores com base nos valores existentes
+  // escala baseada nos valores existentes
   const vals = fc.features.map(f => {
     const d = resolver.resolve(geoName(f));
     return yd?.[d]?.[metric];
@@ -279,7 +275,7 @@ export function updateMap({ year, metric, selectedDistrict }) {
       return isSel ? 2 : 0.5;
     });
 
-  // tooltip com valor + ano
+  // tooltip com valor + ano (re-bind para dados frescos)
   svg.selectAll("path.district")
     .on("mouseover", (event, d) => {
       const name = geoName(d);
