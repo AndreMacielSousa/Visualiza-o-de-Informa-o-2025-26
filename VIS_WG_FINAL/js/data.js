@@ -49,11 +49,9 @@ export function asFeatureCollection(raw) {
 export function pickLatestYearFeatures(fc) {
   if (!fc || !fc.features) return fc;
 
-  // Tenta detetar qual é a propriedade que guarda o ano ou data
   const sample = fc.features.find(f => f.properties);
   let yearKey = "year";
-  
-  // Fallbacks comuns em ficheiros Opendatasoft/GeoJSON
+
   if (sample && sample.properties) {
     if ("year" in sample.properties) yearKey = "year";
     else if ("millesime" in sample.properties) yearKey = "millesime";
@@ -61,20 +59,33 @@ export function pickLatestYearFeatures(fc) {
     else if ("annee" in sample.properties) yearKey = "annee";
   }
 
-  // Se não encontrar propriedade de ano, retorna tudo (pode causar sobreposição, mas é o fallback)
   const withYear = fc.features.filter(f => f.properties && f.properties[yearKey] != null);
-  
+
   if (!withYear.length) {
     console.warn("Aviso: Não foi possível filtrar o mapa por ano. A usar todas as geometrias.");
     return fc;
   }
 
-  // Converte para número e encontra o máximo (ano mais recente)
   const maxYear = d3.max(withYear, f => parseInt(f.properties[yearKey], 10));
   console.log(`Mapa: A filtrar pelo ano mais recente detetado: ${maxYear} (propriedade: ${yearKey})`);
 
-  return { 
-    type: "FeatureCollection", 
-    features: withYear.filter(f => parseInt(f.properties[yearKey], 10) === maxYear) 
+  return {
+    type: "FeatureCollection",
+    features: withYear.filter(f => parseInt(f.properties[yearKey], 10) === maxYear)
   };
+}
+
+// ✅ NOVO: loader único usado pelo main.js
+export async function loadAllData() {
+  const [rows, rawMap] = await Promise.all([
+    d3.csv(FILES.csv),
+    d3.json(FILES.map)
+  ]);
+
+  const { dataByYear, years, districts, metrics } = processData(rows);
+
+  const fc = asFeatureCollection(rawMap);
+  const featureCollection = pickLatestYearFeatures(fc);
+
+  return { featureCollection, dataByYear, years, districts, metrics };
 }
