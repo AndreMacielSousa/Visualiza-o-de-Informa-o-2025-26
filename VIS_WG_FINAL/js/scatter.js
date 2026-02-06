@@ -1,8 +1,10 @@
 import { metricLabels, formatValue } from "./utils.js";
 import { showTooltip, moveTooltip, hideTooltip } from "./tooltip.js";
 
-let svg, g, iw, ih, x, y, xA, yA, grid, dots;
-const m = { t: 18, r: 14, b: 44, l: 56 };
+let svg, g, iw, ih, x, y, xA, yA, dots;
+let xLabel, yLabel;
+
+const m = { t: 18, r: 18, b: 52, l: 78 }; // ✅ mais margem à esquerda
 
 export function initScatter({ onSelectDistrict }) {
   const c = d3.select("#scatter-container");
@@ -20,74 +22,82 @@ export function initScatter({ onSelectDistrict }) {
   x = d3.scaleLinear().range([0, iw]);
   y = d3.scaleLinear().range([ih, 0]);
 
-  grid = g.append("g").attr("class", "gridline");
   xA = g.append("g").attr("class", "axis").attr("transform", `translate(0,${ih})`);
   yA = g.append("g").attr("class", "axis");
 
+  xLabel = g.append("text")
+    .attr("class", "axis-label")
+    .attr("x", iw / 2)
+    .attr("y", ih + 42)
+    .attr("text-anchor", "middle");
+
+  yLabel = g.append("text")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -ih / 2)
+    .attr("y", -56)              // ✅ mais para fora
+    .attr("text-anchor", "middle");
+
   dots = g.append("g");
-
-  svg.on("click", () => onSelectDistrict(null));
 }
 
-function meanFinite(a) {
-  const f = a.filter(Number.isFinite);
-  return f.length ? d3.mean(f) : NaN;
-}
+export function updateScatter({
+  dataByYear,
+  years,
+  districts,
+  metric,
+  brushRange,
+  selectedDistrict,
+  onSelectDistrict
+}) {
+  // Mantém o teu comportamento atual: último ano
+  const year = years[years.length - 1];
 
-export function updateScatter({ dataByYear, years, districts, metric, brushRange, selectedDistrict, onSelectDistrict }) {
-  const A = brushRange?.[0] ?? years[0];
-  const B = brushRange?.[1] ?? years[years.length - 1];
+  const data = districts
+    .map(d => {
+      const r = dataByYear[year]?.[d];
+      return r ? { district: d, x: r.population, y: r[metric] } : null;
+    })
+    .filter(d => Number.isFinite(d?.x) && Number.isFinite(d?.y));
 
-  const pts = districts.map(d => {
-    const xs = [], ys = [];
-    for (const yr of years) {
-      if (yr < A || yr > B) continue;
-      const row = dataByYear[yr]?.[d];
-      if (!row) continue;
-      xs.push(row[metric]);
-      ys.push(row.population);
-    }
-    return { district: d, x: meanFinite(xs), y: meanFinite(ys) };
-  }).filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+  if (!data.length) return;
 
-  if (!pts.length) {
-    dots.selectAll("*").remove();
-    return;
-  }
-
-  x.domain(d3.extent(pts, d => d.x)).nice();
-  y.domain(d3.extent(pts, d => d.y)).nice();
+  x.domain(d3.extent(data, d => d.x)).nice();
+  y.domain(d3.extent(data, d => d.y)).nice();
 
   xA.call(d3.axisBottom(x).ticks(6));
   yA.call(d3.axisLeft(y).ticks(6));
-  grid.call(d3.axisLeft(y).ticks(6).tickSize(-iw).tickFormat(""));
 
-  const u = dots.selectAll("circle").data(pts, d => d.district);
+  // ✅ Labels
+  xLabel.text("População");
+  yLabel.text(metricLabels[metric] || metric);
+
+  const u = dots.selectAll("circle").data(data, d => d.district);
 
   u.join(
     e => e.append("circle")
+      .attr("r", 5)
       .attr("class", "scatter-dot")
-      .attr("r", 5.2)
-      .attr("cx", d => x(d.x))
-      .attr("cy", d => y(d.y))
       .on("mouseover", (ev, d) => {
         showTooltip(
           `<strong>${d.district}</strong><br>` +
-          `${metricLabels[metric] || metric}: <strong>${formatValue(metric, d.x)}</strong><br>` +
-          `População: <strong>${formatValue("population", d.y)}</strong><br>` +
-          `<span style="color:rgba(255,255,255,.7)">Intervalo: ${A}–${B}</span>`
+          `População: ${formatValue("population", d.x)}<br>` +
+          `${metricLabels[metric] || metric}: ${formatValue(metric, d.y)}`
         );
         moveTooltip(ev.pageX, ev.pageY);
       })
-      .on("mousemove", (ev) => moveTooltip(ev.pageX, ev.pageY))
-      .on("mouseout", () => hideTooltip())
-      .on("click", (ev, d) => { onSelectDistrict(d.district); ev.stopPropagation(); }),
+      .on("mousemove", ev => moveTooltip(ev.pageX, ev.pageY))
+      .on("mouseout", hideTooltip)
+      .on("click", (ev, d) => {
+        onSelectDistrict(d.district);
+        ev.stopPropagation();
+      }),
     u => u,
     xit => xit.remove()
+  )
+  .attr("cx", d => x(d.x))
+  .attr("cy", d => y(d.y))
+  .attr("opacity", d =>
+    (selectedDistrict && d.district !== selectedDistrict) ? 0.25 : 1
   );
-
-  dots.selectAll("circle")
-    .attr("cx", d => x(d.x))
-    .attr("cy", d => y(d.y))
-    .classed("is-selected", d => selectedDistrict && d.district === selectedDistrict);
 }

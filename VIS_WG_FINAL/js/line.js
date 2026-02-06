@@ -2,7 +2,9 @@ import { metricLabels, formatValue } from "./utils.js";
 import { showTooltip, moveTooltip, hideTooltip } from "./tooltip.js";
 
 let svg, g, iw, ih, x, y, xA, yA, grid, line, dots, brushG;
-const m = { t: 18, r: 14, b: 38, l: 56 };
+let xLabel, yLabel;
+
+const m = { t: 18, r: 18, b: 52, l: 78 }; // ✅ mais margem à esquerda
 
 export function initLine({ onBrushChange }) {
   const c = d3.select("#line-container");
@@ -24,6 +26,21 @@ export function initLine({ onBrushChange }) {
   xA = g.append("g").attr("class", "axis").attr("transform", `translate(0,${ih})`);
   yA = g.append("g").attr("class", "axis");
 
+  // Axis labels
+  xLabel = g.append("text")
+    .attr("class", "axis-label")
+    .attr("x", iw / 2)
+    .attr("y", ih + 42)
+    .attr("text-anchor", "middle")
+    .text("Ano");
+
+  yLabel = g.append("text")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -ih / 2)
+    .attr("y", -56)              // ✅ mais para fora -> não sobrepõe ticks
+    .attr("text-anchor", "middle");
+
   line = g.append("path").attr("class", "line");
   dots = g.append("g");
   brushG = g.append("g").attr("class", "brush");
@@ -31,26 +48,33 @@ export function initLine({ onBrushChange }) {
   const brush = d3.brushX()
     .extent([[0, 0], [iw, ih]])
     .on("end", (ev) => {
-      if (!ev.selection) return;
+      if (!ev.selection) {
+        onBrushChange(null);
+        return;
+      }
       const [x0, x1] = ev.selection;
-      const a = Math.round(x.invert(x0));
-      const b = Math.round(x.invert(x1));
-      onBrushChange([Math.min(a, b), Math.max(a, b)]);
+      onBrushChange([Math.round(x.invert(x0)), Math.round(x.invert(x1))]);
     });
 
   brushG.call(brush);
 }
 
-export function updateLine({ dataByYear, years, metric, district, brushRange }) {
-  const s = years
-    .map(yr => ({ year: yr, value: dataByYear[yr]?.[district]?.[metric] }))
-    .filter(d => Number.isFinite(d.value));
+function meanForYear(dataByYear, year, metric) {
+  const vals = Object.values(dataByYear[year] || {})
+    .map(d => d?.[metric])
+    .filter(Number.isFinite);
+  return vals.length ? d3.mean(vals) : NaN;
+}
 
-  if (!s.length) {
-    line.attr("d", null);
-    dots.selectAll("*").remove();
-    return;
-  }
+export function updateLine({ dataByYear, years, metric, district, brushRange }) {
+  const s = years.map(yr => ({
+    year: yr,
+    value: district
+      ? dataByYear[yr]?.[district]?.[metric]
+      : meanForYear(dataByYear, yr, metric)
+  })).filter(d => Number.isFinite(d.value));
+
+  if (!s.length) return;
 
   x.domain(d3.extent(s, d => d.year));
   const ext = d3.extent(s, d => d.value);
@@ -61,34 +85,37 @@ export function updateLine({ dataByYear, years, metric, district, brushRange }) 
   yA.call(d3.axisLeft(y).ticks(6));
   grid.call(d3.axisLeft(y).ticks(6).tickSize(-iw).tickFormat(""));
 
-  const l = d3.line().x(d => x(d.year)).y(d => y(d.value));
+  // ✅ label Y conforme métrica
+  yLabel.text(metricLabels[metric] || metric);
+
+  const l = d3.line()
+    .x(d => x(d.year))
+    .y(d => y(d.value));
+
   line.datum(s).attr("d", l);
 
-  const u = dots.selectAll("circle").data(s, d => d.year);
+  const seriesLabel = district || "Média nacional";
 
+  const u = dots.selectAll("circle").data(s, d => d.year);
   u.join(
     e => e.append("circle")
-      .attr("class", "dot")
       .attr("r", 3.6)
-      .attr("cx", d => x(d.year))
-      .attr("cy", d => y(d.value))
       .on("mouseover", (ev, d) => {
         showTooltip(
-          `<strong>${d.year}</strong><br>` +
+          `<strong>${seriesLabel}</strong><br>` +
+          `Ano: ${d.year}<br>` +
           `${metricLabels[metric] || metric}: <strong>${formatValue(metric, d.value)}</strong>`
         );
         moveTooltip(ev.pageX, ev.pageY);
       })
-      .on("mousemove", (ev) => moveTooltip(ev.pageX, ev.pageY))
-      .on("mouseout", () => hideTooltip()),
+      .on("mousemove", ev => moveTooltip(ev.pageX, ev.pageY))
+      .on("mouseout", hideTooltip),
     u => u,
     xit => xit.remove()
+  )
+  .attr("cx", d => x(d.year))
+  .attr("cy", d => y(d.value))
+  .attr("opacity", d =>
+    (brushRange && (d.year < brushRange[0] || d.year > brushRange[1])) ? 0.25 : 1
   );
-
-  dots.selectAll("circle")
-    .attr("cx", d => x(d.year))
-    .attr("cy", d => y(d.value))
-    .attr("opacity", d =>
-      (brushRange && (d.year < brushRange[0] || d.year > brushRange[1])) ? 0.25 : 1
-    );
 }
