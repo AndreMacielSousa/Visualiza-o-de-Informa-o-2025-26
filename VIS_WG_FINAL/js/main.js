@@ -1,3 +1,4 @@
+import { initTheme } from "./theme.js";
 import { loadAllData } from "./data.js";
 import { initMap, updateMap } from "./map.js";
 import { initLine, updateLine } from "./line.js";
@@ -153,5 +154,5 @@ async function main() {
 
   applyState();
 }
-
+initTheme();
 main();

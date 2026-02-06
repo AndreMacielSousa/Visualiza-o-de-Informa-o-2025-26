@@ -21,21 +21,21 @@
 
     <div class="controls">
       <label>
-        Métrica
+        <span>Métrica</span>
         <select id="metricSelect"></select>
       </label>
 
       <label>
-        Ano <span id="yearLabel"></span>
+        <span>Ano</span> <span id="yearLabel"></span>
         <input id="yearSlider" type="range" min="1940" max="2021" step="1" value="2021" />
       </label>
 
+      <button id="themeBtn" type="button" title="Alternar modo claro/escuro">Tema</button>
       <button id="resetBtn" type="button">Reset</button>
     </div>
   </header>
 
   <main class="grid">
-    <!-- MAPA (em cima, largura total) -->
     <section class="card span2">
       <h2>Mapa (coroplético)</h2>
       <p>Hover para detalhes. Clique para selecionar distrito. Clique fora para limpar.</p>
@@ -43,14 +43,12 @@
       <div id="legend-container" class="legend"></div>
     </section>
 
-    <!-- SÉRIE TEMPORAL (em baixo, esquerda) -->
     <section class="card">
       <h2>Série temporal</h2>
       <p>Brush para escolher intervalo.</p>
       <div id="line-container" class="viz h520"></div>
     </section>
 
-    <!-- SCATTER (em baixo, direita) -->
     <section class="card">
       <h2>Scatter</h2>
       <p>Média no intervalo selecionado. Clique num ponto para selecionar distrito.</p>
