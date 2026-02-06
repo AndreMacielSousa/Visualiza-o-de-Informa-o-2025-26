@@ -3,10 +3,43 @@ body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-ser
 .title{font-weight:800;font-size:18px}
 .subtitle{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px}
 
-.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
-.controls label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(255,255,255,.80)}
-.controls label:has(#yearSlider){flex-direction:row;align-items:center;gap:10px}
-#yearLabel{min-width:42px;text-align:right;font-weight:700;color:rgba(255,255,255,.95)}
+/* ---------------- CONTROLS ---------------- */
+.controls{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+/* label base */
+.controls label{
+  display:flex;
+  align-items:center;
+  gap:6px;                /* aproxima texto do controlo */
+  font-size:12px;
+  color:rgba(255,255,255,.80);
+  white-space:nowrap;
+}
+
+/* adiciona ":" automaticamente */
+.controls label > span::after{
+  content: ":";
+  margin-left:2px;
+}
+
+/* label do Ano (texto + valor + slider na mesma linha) */
+.controls label:has(#yearSlider){
+  gap:6px;
+}
+
+/* valor do ano */
+#yearLabel{
+  min-width:38px;
+  text-align:right;
+  font-weight:700;
+  color:rgba(255,255,255,.95);
+  margin-right:4px;       /* aproxima do slider */
+}
 
 select,input,button{
   background:rgba(255,255,255,.10);
@@ -20,6 +53,7 @@ select{color:#eef2ff}
 select option{background:#0b1020;color:#eef2ff}
 select:focus,input:focus,button:focus{outline:2px solid rgba(255,255,255,.28);outline-offset:2px}
 
+/* ---------------- GRID ---------------- */
 .grid{display:grid;gap:14px;padding:16px;grid-template-columns:1fr 1fr}
 @media(max-width:1100px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}}
 .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px}
@@ -29,21 +63,64 @@ select:focus,input:focus,button:focus{outline:2px solid rgba(255,255,255,.28);ou
 .viz{width:100%;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
 .h520{height:520px}.h280{height:280px}
 .viz svg{width:100%;height:100%;display:block}
+
+/* ---------------- TOOLTIP ---------------- */
 .tooltip{position:absolute;pointer-events:none;padding:10px 12px;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.18);border-radius:10px;font-size:12px;line-height:1.35;max-width:320px}
-.district{cursor:pointer;stroke:rgba(255,255,255,.6);stroke-width:1.1}
-.district.is-selected{stroke:rgba(255,255,255,.95);stroke-width:2.2}
+
+/* ---------------- AXES ---------------- */
 .axis text{fill:rgba(255,255,255,.75);font-size:11px}
 .axis path,.axis line{stroke:rgba(255,255,255,.15)}
 .gridline line{stroke:rgba(255,255,255,.08)}
 .gridline path{stroke:none}
-.line{fill:none;stroke:rgba(255,255,255,.92);stroke-width:2.2}
-.scatter-dot{cursor:pointer;opacity:.9;stroke:rgba(0,0,0,.35);stroke-width:1}
-.scatter-dot.is-selected{opacity:1;stroke:rgba(255,255,255,.9);stroke-width:2}
-.legend{margin-top:10px;font-size:12px;color:rgba(255,255,255,.8)}
-
-/* ✅ Axis labels com a MESMA cor/tamanho dos ticks */
 .axis-label{
   fill: rgba(255,255,255,.75);
   font-size: 11px;
   font-weight: 600;
+}
+
+.legend{margin-top:10px;font-size:12px;color:rgba(255,255,255,.8)}
+
+/* ---------------- CORES ---------------- */
+:root{
+  --accent-blue: #4da3ff;
+}
+
+/* Série temporal */
+.line{
+  fill:none;
+  stroke: var(--accent-blue);
+  stroke-width:2.2;
+}
+.dot{
+  fill: var(--accent-blue);
+  stroke: rgba(0,0,0,0.35);
+  stroke-width: 1;
+}
+
+/* Scatter */
+.scatter-dot{
+  cursor:pointer;
+  opacity:.95;
+  fill: var(--accent-blue);
+  stroke: rgba(0,0,0,0.35);
+  stroke-width: 1;
+}
+.scatter-dot.is-selected{
+  opacity:1;
+  stroke: rgba(255,255,255,.9);
+  stroke-width:2;
+}
+
+/* ---------------- MAPA ---------------- */
+.district{
+  cursor:pointer;
+  stroke: rgba(0,0,0,0.45);
+  stroke-width: 0.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.district.is-selected{
+  stroke: rgba(255,255,255,.95);
+  stroke-width: 2.2;
 }

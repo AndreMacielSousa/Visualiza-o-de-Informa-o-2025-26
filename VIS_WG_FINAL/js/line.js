@@ -4,7 +4,7 @@ import { showTooltip, moveTooltip, hideTooltip } from "./tooltip.js";
 let svg, g, iw, ih, x, y, xA, yA, grid, line, dots, brushG;
 let xLabel, yLabel;
 
-const m = { t: 18, r: 18, b: 52, l: 78 }; // ✅ mais margem à esquerda
+const m = { t: 18, r: 18, b: 52, l: 78 };
 
 export function initLine({ onBrushChange }) {
   const c = d3.select("#line-container");
@@ -38,7 +38,7 @@ export function initLine({ onBrushChange }) {
     .attr("class", "axis-label")
     .attr("transform", "rotate(-90)")
     .attr("x", -ih / 2)
-    .attr("y", -56)              // ✅ mais para fora -> não sobrepõe ticks
+    .attr("y", -56)
     .attr("text-anchor", "middle");
 
   line = g.append("path").attr("class", "line");
@@ -53,7 +53,9 @@ export function initLine({ onBrushChange }) {
         return;
       }
       const [x0, x1] = ev.selection;
-      onBrushChange([Math.round(x.invert(x0)), Math.round(x.invert(x1))]);
+      const a = Math.round(x.invert(x0));
+      const b = Math.round(x.invert(x1));
+      onBrushChange([Math.min(a, b), Math.max(a, b)]);
     });
 
   brushG.call(brush);
@@ -74,7 +76,11 @@ export function updateLine({ dataByYear, years, metric, district, brushRange }) 
       : meanForYear(dataByYear, yr, metric)
   })).filter(d => Number.isFinite(d.value));
 
-  if (!s.length) return;
+  if (!s.length) {
+    line.attr("d", null);
+    dots.selectAll("*").remove();
+    return;
+  }
 
   x.domain(d3.extent(s, d => d.year));
   const ext = d3.extent(s, d => d.value);
@@ -85,7 +91,6 @@ export function updateLine({ dataByYear, years, metric, district, brushRange }) 
   yA.call(d3.axisLeft(y).ticks(6));
   grid.call(d3.axisLeft(y).ticks(6).tickSize(-iw).tickFormat(""));
 
-  // ✅ label Y conforme métrica
   yLabel.text(metricLabels[metric] || metric);
 
   const l = d3.line()
@@ -99,11 +104,12 @@ export function updateLine({ dataByYear, years, metric, district, brushRange }) 
   const u = dots.selectAll("circle").data(s, d => d.year);
   u.join(
     e => e.append("circle")
+      .attr("class", "dot")
       .attr("r", 3.6)
       .on("mouseover", (ev, d) => {
         showTooltip(
           `<strong>${seriesLabel}</strong><br>` +
-          `Ano: ${d.year}<br>` +
+          `Ano: <strong>${d.year}</strong><br>` +
           `${metricLabels[metric] || metric}: <strong>${formatValue(metric, d.value)}</strong>`
         );
         moveTooltip(ev.pageX, ev.pageY);

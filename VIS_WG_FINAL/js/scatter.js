@@ -4,7 +4,7 @@ import { showTooltip, moveTooltip, hideTooltip } from "./tooltip.js";
 let svg, g, iw, ih, x, y, xA, yA, dots;
 let xLabel, yLabel;
 
-const m = { t: 18, r: 18, b: 52, l: 78 }; // ✅ mais margem à esquerda
+const m = { t: 18, r: 18, b: 52, l: 78 };
 
 export function initScatter({ onSelectDistrict }) {
   const c = d3.select("#scatter-container");
@@ -35,7 +35,7 @@ export function initScatter({ onSelectDistrict }) {
     .attr("class", "axis-label")
     .attr("transform", "rotate(-90)")
     .attr("x", -ih / 2)
-    .attr("y", -56)              // ✅ mais para fora
+    .attr("y", -56)
     .attr("text-anchor", "middle");
 
   dots = g.append("g");
@@ -50,7 +50,6 @@ export function updateScatter({
   selectedDistrict,
   onSelectDistrict
 }) {
-  // Mantém o teu comportamento atual: último ano
   const year = years[years.length - 1];
 
   const data = districts
@@ -68,7 +67,6 @@ export function updateScatter({
   xA.call(d3.axisBottom(x).ticks(6));
   yA.call(d3.axisLeft(y).ticks(6));
 
-  // ✅ Labels
   xLabel.text("População");
   yLabel.text(metricLabels[metric] || metric);
 
