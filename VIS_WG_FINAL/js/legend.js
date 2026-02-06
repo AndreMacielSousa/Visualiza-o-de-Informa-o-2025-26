@@ -6,7 +6,8 @@ export function renderLegend(scale, metric) {
 
   host.append("div")
     .text(metricLabels[metric] || metric)
-    .style("font-weight", "700");
+    .style("font-weight", "700")
+    .style("color", "var(--fg)");
 
   const row = host.append("div")
     .style("display", "flex")
@@ -16,6 +17,7 @@ export function renderLegend(scale, metric) {
 
   scale.range().forEach(c => {
     const [a, b] = scale.invertExtent(c);
+
     const item = row.append("div")
       .style("display", "flex")
       .style("gap", "6px")
@@ -27,11 +29,13 @@ export function renderLegend(scale, metric) {
       .style("height", "12px")
       .style("border-radius", "4px")
       .style("background", c)
-      .style("border", "1px solid rgba(255,255,255,.12)");
+      // ✅ borda também respeita o tema
+      .style("border", "1px solid var(--axisStroke)");
 
     item.append("span")
       .style("font-size", "11px")
-      .style("color", "rgba(255,255,255,.75)")
+      // ✅ texto respeita o tema
+      .style("color", "var(--muted)")
       .text(`${formatValue(metric, a)}–${formatValue(metric, b)}`);
   });
 }
