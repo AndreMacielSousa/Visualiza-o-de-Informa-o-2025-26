@@ -1,71 +1,104 @@
 <!doctype html>
 <html lang="pt-PT">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Habitação e População (1940–2021)</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Habitação e População (1940–2021)</title>
 
-  <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
 
-  <!-- D3 + TopoJSON (globais) -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/topojson@3"></script>
-</head>
+    <!-- D3 + TopoJSON (globais) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+  </head>
 
-<body>
-  <header class="topbar">
-    <div>
-      <div class="title">Habitação e População em Portugal (1940–2021)</div>
-      <div class="subtitle">Dashboard interativo (inclui Açores e Madeira).</div>
-    </div>
+  <body>
+    <header class="topbar">
+      <div>
+        <div class="title">Habitação e População em Portugal (1940–2021)</div>
+        <div class="subtitle">
+          Dashboard interativo (inclui Açores e Madeira).
+        </div>
+      </div>
 
-    <div class="controls">
-      <label title="Escolha a métrica a visualizar.">
-        Métrica
-        <select id="metricSelect" title="Escolha a métrica a visualizar."></select>
-      </label>
+      <div class="controls">
+        <label title="Escolha a métrica a visualizar.">
+          Métrica
+          <select
+            id="metricSelect"
+            title="Escolha a métrica a visualizar."
+          ></select>
+        </label>
 
-      <label title="Arraste para escolher o ano (apenas anos com dados).">
-        Ano <span id="yearLabel"></span>
-        <input id="yearSlider" type="range" min="1940" max="2021" step="1" value="2021"
-               title="Arraste para escolher o ano (apenas anos com dados)." />
-      </label>
+        <label title="Arraste para escolher o ano (apenas anos com dados).">
+          Ano <span id="yearLabel"></span>
+          <input
+            id="yearSlider"
+            type="range"
+            min="1940"
+            max="2021"
+            step="1"
+            value="2021"
+            title="Arraste para escolher o ano (apenas anos com dados)."
+          />
+        </label>
 
-      <label title="Altera a cor principal dos gráficos e do mapa.">
-        Cor
-        <input id="accentColor" type="color" value="#4da3ff"
-               title="Altera a cor principal dos gráficos e do mapa." />
-      </label>
+        <label title="Altera a cor principal dos gráficos e do mapa.">
+          Cor
+          <input
+            id="accentColor"
+            type="color"
+            value="#4da3ff"
+            title="Altera a cor principal dos gráficos e do mapa."
+          />
+        </label>
 
-      <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
-      <button id="resetBtn" type="button"
-              title="Repor valores originais (métrica, ano, cor, tema, brush e seleção).">Reset</button>
-    </div>
-  </header>
+        <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">
+          Tema
+        </button>
+        <button
+          id="resetBtn"
+          type="button"
+          title="Repor valores originais (métrica, ano, cor, tema, brush e seleção)."
+        >
+          Reset
+        </button>
+      </div>
+    </header>
 
-  <main class="grid">
-    <section class="card span2">
-      <h2>Mapa (coroplético)</h2>
-      <p>Hover para detalhes. Clique para selecionar distrito. Clique fora para limpar.</p>
-      <div id="map-container" class="viz h520"></div>
-      <div id="legend-container" class="legend"></div>
-    </section>
+    <main class="grid">
+      <section class="card span2">
+        <h2>Mapa (coroplético)</h2>
+        <p>
+          Hover para detalhes. Clique para selecionar distrito. Clique fora para
+          limpar.
+        </p>
+        <div id="map-container" class="viz h520"></div>
+        <div id="legend-container" class="legend"></div>
+        <div class="map-note">
+          Nota: Açores e Madeira apresentados fora de escala para melhorar a
+          legibilidade.
+        </div>
+      </section>
 
-    <section class="card">
-      <h2>Série temporal</h2>
-      <p>Brush para escolher intervalo.</p>
-      <div id="line-container" class="viz h520"></div>
-    </section>
+      <section class="card">
+        <h2>Série temporal</h2>
+        <p>Brush para escolher intervalo.</p>
+        <div id="line-container" class="viz h520"></div>
+      </section>
 
-    <section class="card">
-      <h2>Scatter</h2>
-      <p>Média no intervalo selecionado. Clique num ponto para selecionar distrito.</p>
-      <div id="scatter-container" class="viz h520"></div>
-    </section>
-  </main>
+      <section class="card">
+        <h2>Scatter</h2>
+        <p>
+          Média no intervalo selecionado. Clique num ponto para selecionar
+          distrito.
+        </p>
+        <div id="scatter-container" class="viz h520"></div>
+      </section>
+    </main>
 
-  <div id="tooltip" class="tooltip" style="opacity:0;"></div>
+    <div id="tooltip" class="tooltip" style="opacity: 0"></div>
 
-  <script type="module" src="js/main.js"></script>
-</body>
+    <script type="module" src="js/main.js"></script>
+  </body>
 </html>
