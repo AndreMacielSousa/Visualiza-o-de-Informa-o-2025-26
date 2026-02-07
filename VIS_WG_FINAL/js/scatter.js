@@ -71,6 +71,7 @@ export function updateScatter({
 }) {
   const yrs = yearsInRange(years, brushRange);
 
+  // dados do scatter (valores EXACTOS usados no ponto)
   const data = districts
     .map((d) => {
       let px, py, context;
@@ -87,12 +88,7 @@ export function updateScatter({
 
       if (!Number.isFinite(px) || !Number.isFinite(py)) return null;
 
-      return {
-        district: d,
-        x: px,
-        y: py,
-        context,
-      };
+      return { district: d, x: px, y: py, context };
     })
     .filter(Boolean);
 
@@ -104,48 +100,55 @@ export function updateScatter({
   xA.call(d3.axisBottom(x).ticks(6));
   yA.call(d3.axisLeft(y).ticks(6));
 
+  const yName = metricLabels[metric] || metric;
+
   // Labels coerentes
   if (yrs && yrs.length) {
     xLabel.text("População (média no intervalo)");
-    yLabel.text(`${metricLabels[metric] || metric} (média no intervalo)`);
+    yLabel.text(`${yName} (média no intervalo)`);
   } else {
     xLabel.text(`População (${currentYear})`);
-    yLabel.text(`${metricLabels[metric] || metric} (${currentYear})`);
+    yLabel.text(`${yName} (${currentYear})`);
   }
 
-  const yName = metricLabels[metric] || metric; // ✅ label correta da métrica
-
+  // --- JOIN ---
   const u = dots.selectAll("circle").data(data, (d) => d.district);
 
-  u.join(
-    (e) =>
-      e
+  const merged = u.join(
+    (enter) =>
+      enter
         .append("circle")
         .attr("r", 5)
-        .attr("class", "scatter-dot")
-        .on("mouseover", (ev, d) => {
-          const ctx =
-            d.context.type === "range"
-              ? `Intervalo: <strong>${d.context.lo}–${d.context.hi}</strong><br>`
-              : `Ano: <strong>${d.context.year}</strong><br>`;
+        .attr("class", "scatter-dot"),
+    (update) => update,
+    (exit) => exit.remove()
+  );
 
-          showTooltip(
-            `<strong>${d.district}</strong><br>` +
-              ctx +
-              `População: <strong>${formatValue("population", d.x)}</strong><br>` +
-              `${yName}: <strong>${formatValue(metric, d.y)}</strong>` // ✅ aqui estava o problema
-          );
-          moveTooltip(ev.pageX, ev.pageY);
-        })
-        .on("mousemove", (ev) => moveTooltip(ev.pageX, ev.pageY))
-        .on("mouseout", hideTooltip)
-        .on("click", (ev, d) => {
-          onSelectDistrict(d.district);
-          ev.stopPropagation();
-        }),
-    (u) => u,
-    (xit) => xit.remove()
-  )
+  // ✅ IMPORTANTE: handlers no MERGED (enter + update)
+  merged
+    .on("mouseover", (ev, d) => {
+      const ctx =
+        d.context.type === "range"
+          ? `Intervalo: <strong>${d.context.lo}–${d.context.hi}</strong><br>`
+          : `Ano: <strong>${d.context.year}</strong><br>`;
+
+      showTooltip(
+        `<strong>${d.district}</strong><br>` +
+          ctx +
+          `População: <strong>${formatValue("population", d.x)}</strong><br>` +
+          `${yName}: <strong>${formatValue(metric, d.y)}</strong>`
+      );
+      moveTooltip(ev.pageX, ev.pageY);
+    })
+    .on("mousemove", (ev) => moveTooltip(ev.pageX, ev.pageY))
+    .on("mouseout", hideTooltip)
+    .on("click", (ev, d) => {
+      onSelectDistrict(d.district);
+      ev.stopPropagation();
+    });
+
+  // posições/estilo
+  merged
     .attr("cx", (d) => x(d.x))
     .attr("cy", (d) => y(d.y))
     .attr("opacity", (d) =>
