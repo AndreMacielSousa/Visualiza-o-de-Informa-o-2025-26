@@ -1,130 +1,298 @@
 /* ---------- THEMES (variáveis) ---------- */
-:root{
-  --bg:#0b1020;
-  --fg:#eef2ff;
-  --muted:rgba(255,255,255,.75);
-  --muted2:rgba(255,255,255,.70);
-  --panel:rgba(255,255,255,.04);
-  --border:rgba(255,255,255,.08);
-  --border2:rgba(255,255,255,.18);
-  --controlBg:rgba(255,255,255,.10);
-  --controlBorder:rgba(255,255,255,.18);
-  --vizBg:rgba(255,255,255,.03);
-  --vizBorder:rgba(255,255,255,.06);
-  --tooltipBg:rgba(0,0,0,.78);
-  --tooltipBorder:rgba(255,255,255,.18);
-  --axisStroke:rgba(255,255,255,.15);
-  --gridStroke:rgba(255,255,255,.08);
+:root {
+  --bg: #0b1020;
+  --fg: #eef2ff;
+  --muted: rgba(255, 255, 255, 0.75);
+  --muted2: rgba(255, 255, 255, 0.7);
+  --panel: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --border2: rgba(255, 255, 255, 0.18);
+  --controlBg: rgba(255, 255, 255, 0.1);
+  --controlBorder: rgba(255, 255, 255, 0.18);
+  --vizBg: rgba(255, 255, 255, 0.03);
+  --vizBorder: rgba(255, 255, 255, 0.06);
+  --tooltipBg: rgba(0, 0, 0, 0.78);
+  --tooltipBorder: rgba(255, 255, 255, 0.18);
+  --axisStroke: rgba(255, 255, 255, 0.15);
+  --gridStroke: rgba(255, 255, 255, 0.08);
 
-  --accent-blue:#4da3ff;
-  --districtStroke:rgba(0,0,0,0.45);
+  --accent-blue: #4da3ff;
+  --districtStroke: rgba(0, 0, 0, 0.45);
 
   /* ✅ caixas do mapa (escuro) */
-  --mapFrameFill: rgba(0,0,0,0.18);
-  --mapFrameStroke: rgba(255,255,255,0.18);
-  --mapInsetTitle: rgba(255,255,255,0.90);
-  --mapMissingFill: rgba(255,255,255,.08);
-
+  --mapFrameFill: rgba(0, 0, 0, 0.18);
+  --mapFrameStroke: rgba(255, 255, 255, 0.18);
+  --mapInsetTitle: rgba(255, 255, 255, 0.9);
+  --mapMissingFill: rgba(255, 255, 255, 0.08);
 }
 
-html[data-theme="light"]{
-  --bg:#f6f7fb;
-  --fg:#0b1020;
-  --muted:rgba(0,0,0,.75);
-  --muted2:rgba(0,0,0,.65);
-  --panel:#ffffff;
-  --border:rgba(0,0,0,.10);
-  --border2:rgba(0,0,0,.18);
-  --controlBg:rgba(0,0,0,.04);
-  --controlBorder:rgba(0,0,0,.18);
-  --vizBg:rgba(0,0,0,.02);
-  --vizBorder:rgba(0,0,0,.10);
-  --tooltipBg:rgba(20,20,20,.92);
-  --tooltipBorder:rgba(255,255,255,.12);
-  --axisStroke:rgba(0,0,0,.18);
-  --gridStroke:rgba(0,0,0,.08);
+html[data-theme="light"] {
+  --bg: #f6f7fb;
+  --fg: #0b1020;
+  --muted: rgba(0, 0, 0, 0.75);
+  --muted2: rgba(0, 0, 0, 0.65);
+  --panel: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --border2: rgba(0, 0, 0, 0.18);
+  --controlBg: rgba(0, 0, 0, 0.04);
+  --controlBorder: rgba(0, 0, 0, 0.18);
+  --vizBg: rgba(0, 0, 0, 0.02);
+  --vizBorder: rgba(0, 0, 0, 0.1);
+  --tooltipBg: rgba(20, 20, 20, 0.92);
+  --tooltipBorder: rgba(255, 255, 255, 0.12);
+  --axisStroke: rgba(0, 0, 0, 0.18);
+  --gridStroke: rgba(0, 0, 0, 0.08);
 
-  --accent-blue:#2563eb;
-  --districtStroke:rgba(0,0,0,0.35);
+  --accent-blue: #2563eb;
+  --districtStroke: rgba(0, 0, 0, 0.35);
 
   /* ✅ caixas do mapa (claro) — mais visíveis */
-  --mapFrameFill: rgba(0,0,0,0.06);
-  --mapFrameStroke: rgba(0,0,0,0.22);
-  --mapInsetTitle: rgba(0,0,0,0.78);
-  --mapMissingFill: rgba(0,0,0,.06);
+  --mapFrameFill: rgba(0, 0, 0, 0.06);
+  --mapFrameStroke: rgba(0, 0, 0, 0.22);
+  --mapInsetTitle: rgba(0, 0, 0, 0.78);
+  --mapMissingFill: rgba(0, 0, 0, 0.06);
 }
 
 /* ---------- BASE ---------- */
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
-.topbar{display:flex;gap:12px;justify-content:space-between;align-items:flex-end;padding:16px;border-bottom:1px solid var(--border)}
-.title{font-weight:800;font-size:18px}
-.subtitle{font-size:12px;color:var(--muted2);margin-top:4px}
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+.topbar {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.title {
+  font-weight: 800;
+  font-size: 18px;
+}
+.subtitle {
+  font-size: 12px;
+  color: var(--muted2);
+  margin-top: 4px;
+}
 
 /* ---------- CONTROLS ---------- */
-.controls{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.controls label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}
-.controls label > span::after{content: ":";margin-left:2px}
-#yearLabel{min-width:38px;text-align:right;font-weight:700;color:var(--fg);margin-right:4px}
-
-select,input,button{
-  background:var(--controlBg);
-  border:1px solid var(--controlBorder);
-  color:var(--fg);
-  border-radius:10px;
-  padding:8px 10px
+.controls {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
 }
-button{cursor:pointer;font-weight:700}
-select option{background:var(--bg);color:var(--fg)}
-select:focus,input:focus,button:focus{outline:2px solid rgba(127,127,127,.35);outline-offset:2px}
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.controls label > span::after {
+  content: ":";
+  margin-left: 2px;
+}
+#yearLabel {
+  min-width: 38px;
+  text-align: right;
+  font-weight: 700;
+  color: var(--fg);
+  margin-right: 4px;
+}
+
+select,
+input,
+button {
+  background: var(--controlBg);
+  border: 1px solid var(--controlBorder);
+  color: var(--fg);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+button {
+  cursor: pointer;
+  font-weight: 700;
+}
+select option {
+  background: var(--bg);
+  color: var(--fg);
+}
+select:focus,
+input:focus,
+button:focus {
+  outline: 2px solid rgba(127, 127, 127, 0.35);
+  outline-offset: 2px;
+}
 
 /* ---------- GRID/CARDS ---------- */
-.grid{display:grid;gap:14px;padding:16px;grid-template-columns:1fr 1fr}
-@media(max-width:1100px){.grid{grid-template-columns:1fr}.span2{grid-column:auto}}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:14px}
-.card h2{margin:0 0 6px;font-size:13px}
-.card p{margin:0 0 10px;font-size:12px;color:var(--muted2)}
-.span2{grid-column:1 / span 2}
-.viz{width:100%;border-radius:14px;overflow:hidden;background:var(--vizBg);border:1px solid var(--vizBorder)}
-.h520{height:520px}.h280{height:280px}
-.viz svg{width:100%;height:100%;display:block}
+.grid {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .span2 {
+    grid-column: auto;
+  }
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+}
+.card h2 {
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+.card p {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--muted2);
+}
+.span2 {
+  grid-column: 1 / span 2;
+}
+.viz {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--vizBg);
+  border: 1px solid var(--vizBorder);
+}
+.h520 {
+  height: 520px;
+}
+.h280 {
+  height: 280px;
+}
+.viz svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
 /* ---------- TOOLTIP ---------- */
-.tooltip{position:absolute;pointer-events:none;padding:10px 12px;background:var(--tooltipBg);border:1px solid var(--tooltipBorder);border-radius:10px;font-size:12px;line-height:1.35;max-width:320px}
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  padding: 10px 12px;
+  background: var(--tooltipBg);
+  border: 1px solid var(--tooltipBorder);
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.35;
+  max-width: 320px;
+}
 
 /* ---------- AXES ---------- */
-.axis text{fill:var(--muted);font-size:11px}
-.axis path,.axis line{stroke:var(--axisStroke)}
-.gridline line{stroke:var(--gridStroke)}
-.gridline path{stroke:none}
-.axis-label{fill:var(--muted);font-size:11px;font-weight:600}
-.legend{margin-top:10px;font-size:12px;color:var(--muted)}
+.axis text {
+  fill: var(--muted);
+  font-size: 11px;
+}
+.axis path,
+.axis line {
+  stroke: var(--axisStroke);
+}
+.gridline line {
+  stroke: var(--gridStroke);
+}
+.gridline path {
+  stroke: none;
+}
+.axis-label {
+  fill: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.legend {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
 
 /* ---------- SERIES ---------- */
-.line{fill:none;stroke:var(--accent-blue);stroke-width:2.2}
-.dot{fill:var(--accent-blue);stroke:rgba(0,0,0,0.35);stroke-width:1}
-.scatter-dot{cursor:pointer;opacity:.95;fill:var(--accent-blue);stroke:rgba(0,0,0,0.35);stroke-width:1}
-.scatter-dot.is-selected{opacity:1;stroke:rgba(255,255,255,.9);stroke-width:2}
+.line {
+  fill: none;
+  stroke: var(--accent-blue);
+  stroke-width: 2.2;
+}
+.dot {
+  fill: var(--accent-blue);
+  stroke: rgba(0, 0, 0, 0.35);
+  stroke-width: 1;
+}
+.scatter-dot {
+  cursor: pointer;
+  opacity: 0.95;
+  fill: var(--accent-blue);
+  stroke: rgba(0, 0, 0, 0.35);
+  stroke-width: 1;
+}
+.scatter-dot.is-selected {
+  opacity: 1;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2;
+}
 
 /* ---------- MAP ---------- */
-.district{
-  cursor:pointer;
+.district {
+  cursor: pointer;
   stroke: var(--districtStroke);
   stroke-width: 0.7;
   stroke-linejoin: round;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
 }
-.district.is-selected{stroke: rgba(255,255,255,.95);stroke-width:2.2}
+.district.is-selected {
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 2.2;
+}
 
 /* ✅ Caixas/insets do mapa (continente + Açores + Madeira) */
-.map-frame{
+.map-frame {
   fill: var(--mapFrameFill);
   stroke: var(--mapFrameStroke);
   stroke-width: 1.2;
 }
 
-.map-inset-title{
+.map-inset-title {
   fill: var(--mapInsetTitle);
   font-size: 12px;
   font-weight: 700;
+}
+
+/* ✅ Tooltip sempre com estilo "escuro" (legível em ambos os temas) */
+.tooltip {
+  background: rgba(0, 0, 0, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.tooltip strong {
+  color: rgba(255, 255, 255, 0.98);
+}
+
+.tooltip span {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ✅ Forçar o ano no tooltip a branco (sempre legível) */
+.tooltip span {
+  color: rgba(255, 255, 255, 0.92) !important;
 }
