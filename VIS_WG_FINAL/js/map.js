@@ -17,8 +17,15 @@ function geoName(f) {
     || "";
 }
 
+/* ✅ NOVO: filtra polígonos minúsculos (para o fitSize não ser “puxado” por ilhéus) */
+function filterByMinArea(fc, minArea = 5e-4) {
+  return {
+    type: "FeatureCollection",
+    features: (fc?.features || []).filter(f => d3.geoArea(f) >= minArea)
+  };
+}
+
 // --- CORREÇÃO ROBUSTA DE GEOMETRIA ---
-// Verifica se o D3 acha que o polígono é o "globo inteiro" (Area > 2*PI) e inverte anéis.
 function fixInvertedGeometry(featureCollection) {
   if (!featureCollection?.features) return 0;
 
@@ -56,7 +63,6 @@ function regionFeatureCollections(featureCollection) {
   return { fcMain, fcAz, fcMad };
 }
 
-/* ✅ Agora: moldura/título usam classes e CSS variables (tema claro/escuro) */
 function drawInsetFrame(layer, box, label) {
   layer.append("rect")
     .attr("class", "map-frame")
@@ -153,7 +159,7 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
 
   const pathMain = d3.geoPath(projMain);
 
-  // ✅ moldura do continente com class (tema)
+  // moldura do continente com class (tema)
   gMain.append("rect")
     .attr("class", "map-frame")
     .attr("x", mainBox.x)
@@ -166,7 +172,6 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
   const gMainMap = gMain.append("g")
     .attr("transform", `translate(${mainBox.x},${mainBox.y})`);
 
-  // Ordena para desenhar pequenos por cima dos grandes
   const featsMain = [...fcMain.features].sort((a, b) => d3.geoArea(b) - d3.geoArea(a));
 
   const mainPaths = gMainMap.selectAll("path")
@@ -174,19 +179,17 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
     .join("path")
     .attr("class", "district")
     .attr("d", pathMain)
-    // ✅ fill inicial: variável (tema)
     .attr("fill", "var(--mapMissingFill)")
-    // stroke de base vem do CSS (.district), mas aqui mantemos o teu para já
     .attr("stroke", "rgba(0,0,0,0.3)")
     .attr("stroke-width", 0.5);
 
   bindDistrictEvents(mainPaths, onSelectDistrict);
 
-  // ---- Açores (fit à caixa superior esquerda) ----
+  // ---- Açores ----
   if (fcAz.features.length) {
     drawInsetFrame(gAz, azBox, "Açores");
 
-    const azInner = [azBox.w - 16, azBox.h - 28]; // margem interior
+    const azInner = [azBox.w - 16, azBox.h - 28];
     const projAz = d3.geoConicConformal()
       .parallels([38, 42])
       .rotate([8, 0])
@@ -209,21 +212,27 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
     bindDistrictEvents(azPaths, onSelectDistrict);
   }
 
-  // ---- Madeira (fit à caixa inferior esquerda) ----
+  // ---- Madeira (CENTRAR) ----
   if (fcMad.features.length) {
     drawInsetFrame(gMad, madBox, "Madeira");
 
     const madInner = [madBox.w - 16, madBox.h - 28];
+
+    // ✅ usar apenas polígonos “grandes” para calcular o fit
+    const fcMadFit = filterByMinArea(fcMad, 1e-4);
+    const fitTarget = fcMadFit.features.length ? fcMadFit : fcMad;
+
     const projMad = d3.geoConicConformal()
       .parallels([38, 42])
       .rotate([8, 0])
-      .fitSize(madInner, fcMad);
+      .fitSize(madInner, fitTarget);
 
     const pathMad = d3.geoPath(projMad);
 
     const gMadMap = gMad.append("g")
       .attr("transform", `translate(${madBox.x + 8},${madBox.y + 22})`);
 
+    // ⚠️ desenha tudo (inclui ilhéus), mas com projeção centrada
     const madPaths = gMadMap.selectAll("path")
       .data(fcMad.features, d => geoName(d))
       .join("path")
@@ -236,7 +245,6 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
     bindDistrictEvents(madPaths, onSelectDistrict);
   }
 
-  // Clique fora limpa seleção
   svg.on("click", () => onSelectDistrict(null));
 }
 
@@ -245,7 +253,6 @@ export function updateMap({ year, metric, selectedDistrict }) {
 
   const yd = dataByYear[year] || {};
 
-  // escala baseada nos valores existentes
   const vals = fc.features.map(f => {
     const d = resolver.resolve(geoName(f));
     return yd?.[d]?.[metric];
@@ -255,7 +262,6 @@ export function updateMap({ year, metric, selectedDistrict }) {
     .domain(vals.length ? [d3.min(vals), d3.max(vals)] : [0, 1])
     .range(d3.schemeBlues[7]);
 
-  // aplica a TODOS os distritos (continente + insets)
   svg.selectAll("path.district")
     .transition().duration(400)
     .attr("fill", d => {
@@ -272,7 +278,6 @@ export function updateMap({ year, metric, selectedDistrict }) {
       return isSel ? 2 : 0.5;
     });
 
-  // tooltip com valor + ano (re-bind para dados frescos)
   svg.selectAll("path.district")
     .on("mouseover", (event, d) => {
       const name = geoName(d);
