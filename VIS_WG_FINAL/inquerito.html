@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inquérito • Habitação e População (1940–2021)</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="navOverlay" class="nav-overlay" aria-hidden="true"></div>
+  <aside id="navDrawer" class="nav-drawer" aria-label="Menu">
+    <div class="nav-head">
+      <div class="nav-title">Menu</div>
+      <button id="navClose" type="button" title="Fechar menu">✕</button>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" data-page="index.html">Início</a>
+      <a href="introducao.html" data-page="introducao.html">Introdução</a>
+      <a href="instrucoes.html" data-page="instrucoes.html">Instruções</a>
+      <a href="inquerito.html" data-page="inquerito.html">Inquérito</a>
+      <a href="autores.html" data-page="autores.html">Autores</a>
+      <a href="uc.html" data-page="uc.html">UC</a>
+    </nav>
+    <div class="nav-foot">Habitação e População (1940–2021) • Visualização de Informação</div>
+  </aside>
+
+  <header class="topbar">
+    <div class="brand">
+      <button id="menuBtn" type="button" title="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div>
+        <div class="title">Inquérito</div>
+        <div class="subtitle">Avaliação de usabilidade e utilidade do dashboard.</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card span2">
+      <h2>Questionário embebido</h2>
+      <p>
+        Substituir o URL do iframe pelo link de incorporação (“embed”) do inquérito.
+      </p>
+
+      <div class="viz" style="height: 70vh; border: 1px solid var(--vizBorder); border-radius: 14px; overflow: hidden;">
+        <iframe
+          title="Inquérito de avaliação"
+          src="SUA_URL_DE_EMBED_AQUI"
+          style="width:100%; height:100%; border:0;"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        ></iframe>
+      </div>
+
+      <h3>Plataformas recomendadas (com embed)</h3>
+      <ul>
+        <li><strong>Google Forms</strong> — simples, gratuito e permite embed por iframe.</li>
+        <li><strong>Microsoft Forms</strong> — fácil e com embed (bom se usas Office).</li>
+        <li><strong>Typeform</strong> — UX muito boa, mas limitações no plano grátis.</li>
+        <li><strong>Jotform</strong> — flexível, bom embed e templates.</li>
+        <li><strong>LimeSurvey</strong> — opção “académica” (self-hosted ou cloud), ótimo controlo de dados.</li>
+      </ul>
+
+      <p style="color:var(--muted2); font-size:12px;">
+        Nota: considerar incluir consentimento informado, anonimização e duração estimada.
+      </p>
+    </section>
+  </main>
+
+  <script type="module" src="js/page.js"></script>
+</body>
+</html>

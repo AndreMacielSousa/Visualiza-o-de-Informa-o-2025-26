@@ -2,15 +2,13 @@ const KEY = "vis_accent_color";
 export const DEFAULT_ACCENT = "#4da3ff";
 
 export function initAccentColor(onChange) {
+  // ✅ aplica sempre (mesmo se não existir input)
+  const saved = localStorage.getItem(KEY) || DEFAULT_ACCENT;
+  applyAccent(saved);
+
   const input = document.getElementById("accentColor");
   if (!input) return;
 
-  const saved = localStorage.getItem(KEY) || DEFAULT_ACCENT;
-
-  // aplica ao CSS
-  applyAccent(saved);
-
-  // sincroniza o picker
   input.value = normalizeHex(saved);
 
   input.addEventListener("input", () => {

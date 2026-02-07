@@ -1,4 +1,5 @@
 import { initTheme, resetTheme } from "./theme.js";
+import { initNav } from "./nav.js";
 import { loadAllData } from "./data.js";
 import { initMap, updateMap } from "./map.js";
 import { initLine, updateLine, clearBrush } from "./line.js";
@@ -71,27 +72,21 @@ function onSelectDistrict(d) {
 }
 
 function onBrushChange(range) {
-  brushRange = range; // null ou [lo, hi]
+  brushRange = range;
   applyState();
 }
 
-// ✅ Reset TOTAL (métrica + ano + cor + tema + brush + seleção)
 function resetAll() {
-  // seleção/interação
   selectedDistrict = null;
   brushRange = null;
 
-  // métricas/ano: voltar ao original
   currentMetric = metrics[0];
   metricSelect.value = currentMetric;
 
   currentYear = years[years.length - 1];
   syncSliderToYear(currentYear);
 
-  // limpar brush visível
   clearBrush();
-
-  // repor cor e tema (e limpar preferências guardadas)
   resetAccentColor();
   resetTheme();
 
@@ -100,6 +95,7 @@ function resetAll() {
 
 async function main() {
   initTheme();
+  initNav();
 
   const loaded = await loadAllData();
   featureCollection = loaded.featureCollection;
@@ -125,7 +121,7 @@ async function main() {
   currentMetric = metrics[0];
   metricSelect.value = currentMetric;
 
-  // Slider: apenas anos com dados (snap por índice)
+  // Slider por índice (anos com dados)
   yearIndexMap = new Map(years.map((y, i) => [y, i]));
   yearSlider.min = "0";
   yearSlider.max = String(years.length - 1);
@@ -145,12 +141,8 @@ async function main() {
   initLine({ onBrushChange });
   initScatter({ onSelectDistrict });
 
-  // Picker de cor (re-render para atualizar mapa/legenda)
-  initAccentColor(() => {
-    applyState();
-  });
+  initAccentColor(() => applyState());
 
-  // Handlers
   metricSelect.addEventListener("change", () => {
     currentMetric = metricSelect.value;
     applyState();

@@ -13,11 +13,53 @@
   </head>
 
   <body>
+    <!-- NAV -->
+    <div id="navOverlay" class="nav-overlay" aria-hidden="true"></div>
+
+    <aside id="navDrawer" class="nav-drawer" aria-label="Menu">
+      <div class="nav-head">
+        <div class="nav-title">Menu</div>
+        <button id="navClose" type="button" title="Fechar menu">✕</button>
+      </div>
+
+      <nav class="nav-links">
+        <a href="index.html" data-page="index.html">Início</a>
+        <a href="introducao.html" data-page="introducao.html">Introdução</a>
+        <a href="instrucoes.html" data-page="instrucoes.html">Instruções</a>
+        <a href="inquerito.html" data-page="inquerito.html">Inquérito</a>
+        <a href="autores.html" data-page="autores.html">Autores</a>
+        <a href="uc.html" data-page="uc.html">UC</a>
+      </nav>
+
+      <div class="nav-foot">
+        Habitação e População (1940–2021) • Visualização de Informação
+      </div>
+    </aside>
+
     <header class="topbar">
-      <div>
-        <div class="title">Habitação e População em Portugal (1940–2021)</div>
-        <div class="subtitle">
-          Dashboard interativo (inclui Açores e Madeira).
+      <div class="brand">
+        <button
+          id="menuBtn"
+          type="button"
+          title="Abrir menu"
+          aria-expanded="false"
+          aria-controls="navDrawer"
+        >
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M4 6h16M4 12h16M4 18h16"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+
+        <div>
+          <div class="title">Habitação e População em Portugal (1940–2021)</div>
+          <div class="subtitle">
+            Dashboard interativo (inclui Açores e Madeira).
+          </div>
         </div>
       </div>
 
@@ -35,9 +77,6 @@
           <input
             id="yearSlider"
             type="range"
-            min="1940"
-            max="2021"
-            step="1"
             value="2021"
             title="Arraste para escolher o ano (apenas anos com dados)."
           />

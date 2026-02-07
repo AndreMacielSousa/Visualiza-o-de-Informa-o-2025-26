@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Autores • Habitação e População (1940–2021)</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="navOverlay" class="nav-overlay" aria-hidden="true"></div>
+  <aside id="navDrawer" class="nav-drawer" aria-label="Menu">
+    <div class="nav-head">
+      <div class="nav-title">Menu</div>
+      <button id="navClose" type="button" title="Fechar menu">✕</button>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" data-page="index.html">Início</a>
+      <a href="introducao.html" data-page="introducao.html">Introdução</a>
+      <a href="instrucoes.html" data-page="instrucoes.html">Instruções</a>
+      <a href="inquerito.html" data-page="inquerito.html">Inquérito</a>
+      <a href="autores.html" data-page="autores.html">Autores</a>
+      <a href="uc.html" data-page="uc.html">UC</a>
+    </nav>
+    <div class="nav-foot">Habitação e População (1940–2021) • Visualização de Informação</div>
+  </aside>
+
+  <header class="topbar">
+    <div class="brand">
+      <button id="menuBtn" type="button" title="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div>
+        <div class="title">Autores</div>
+        <div class="subtitle">Equipa do projeto.</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card span2">
+      <h2>Equipa</h2>
+      <ul>
+        <li><strong>André Sousa</strong> — coordenação, integração e implementação D3.</li>
+        <li><strong>Pedro Correia</strong> — análise de dados e validação.</li>
+        <li><strong>Miguel Correia</strong> — apoio à narrativa e documentação.</li>
+      </ul>
+
+    </section>
+  </main>
+
+  <script type="module" src="js/page.js"></script>
+</body>
+</html>
