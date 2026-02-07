@@ -4,6 +4,7 @@ import { initMap, updateMap } from "./map.js";
 import { initLine, updateLine } from "./line.js";
 import { initScatter, updateScatter } from "./scatter.js";
 import { metricLabels } from "./utils.js";
+import { initAccentColor } from "./color.js";
 
 // --- DOM ---
 const metricSelect = document.getElementById("metricSelect");
@@ -155,4 +156,10 @@ async function main() {
   applyState();
 }
 initTheme();
+
+initAccentColor(() => {
+  // re-render do estado atual quando a cor muda (para atualizar o mapa/legenda)
+  applyState();
+});
+
 main();
