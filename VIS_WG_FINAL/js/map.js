@@ -146,7 +146,7 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
 
   const fixedCount = fixInvertedGeometry(fc);
   if (fixedCount > 0) {
-    console.log(`Mapa: Corrigidos ${fixedCount} distritos que estavam com geometria invertida.`);
+   // console.log(`Mapa: Corrigidos ${fixedCount} distritos que estavam com geometria invertida.`);
   }
 
   dataByYear = csvDataByYear;
