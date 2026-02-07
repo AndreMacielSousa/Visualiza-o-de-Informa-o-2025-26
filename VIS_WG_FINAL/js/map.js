@@ -56,24 +56,21 @@ function regionFeatureCollections(featureCollection) {
   return { fcMain, fcAz, fcMad };
 }
 
+/* ✅ Agora: moldura/título usam classes e CSS variables (tema claro/escuro) */
 function drawInsetFrame(layer, box, label) {
   layer.append("rect")
+    .attr("class", "map-frame")
     .attr("x", box.x)
     .attr("y", box.y)
     .attr("width", box.w)
     .attr("height", box.h)
     .attr("rx", 14)
-    .attr("ry", 14)
-    .attr("fill", "rgba(255,255,255,0.03)")
-    .attr("stroke", "rgba(255,255,255,0.12)")
-    .attr("stroke-width", 1);
+    .attr("ry", 14);
 
   layer.append("text")
+    .attr("class", "map-inset-title")
     .attr("x", box.x + 10)
     .attr("y", box.y + 18)
-    .attr("fill", "rgba(255,255,255,0.85)")
-    .attr("font-size", 12)
-    .attr("font-weight", 700)
     .text(label);
 }
 
@@ -156,17 +153,15 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
 
   const pathMain = d3.geoPath(projMain);
 
-  // moldura do continente
+  // ✅ moldura do continente com class (tema)
   gMain.append("rect")
+    .attr("class", "map-frame")
     .attr("x", mainBox.x)
     .attr("y", mainBox.y)
     .attr("width", mainBox.w)
     .attr("height", mainBox.h)
     .attr("rx", 14)
-    .attr("ry", 14)
-    .attr("fill", "rgba(255,255,255,0.03)")
-    .attr("stroke", "rgba(255,255,255,0.12)")
-    .attr("stroke-width", 1);
+    .attr("ry", 14);
 
   const gMainMap = gMain.append("g")
     .attr("transform", `translate(${mainBox.x},${mainBox.y})`);
@@ -179,7 +174,9 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
     .join("path")
     .attr("class", "district")
     .attr("d", pathMain)
-    .attr("fill", "rgba(255,255,255,.10)")
+    // ✅ fill inicial: variável (tema)
+    .attr("fill", "var(--mapMissingFill)")
+    // stroke de base vem do CSS (.district), mas aqui mantemos o teu para já
     .attr("stroke", "rgba(0,0,0,0.3)")
     .attr("stroke-width", 0.5);
 
@@ -205,7 +202,7 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
       .join("path")
       .attr("class", "district")
       .attr("d", pathAz)
-      .attr("fill", "rgba(255,255,255,.10)")
+      .attr("fill", "var(--mapMissingFill)")
       .attr("stroke", "rgba(0,0,0,0.3)")
       .attr("stroke-width", 0.5);
 
@@ -232,7 +229,7 @@ export function initMap({ featureCollection, csvDistricts, csvDataByYear, onSele
       .join("path")
       .attr("class", "district")
       .attr("d", pathMad)
-      .attr("fill", "rgba(255,255,255,.10)")
+      .attr("fill", "var(--mapMissingFill)")
       .attr("stroke", "rgba(0,0,0,0.3)")
       .attr("stroke-width", 0.5);
 
@@ -264,7 +261,7 @@ export function updateMap({ year, metric, selectedDistrict }) {
     .attr("fill", d => {
       const key = resolver.resolve(geoName(d));
       const v = yd?.[key]?.[metric];
-      return Number.isFinite(v) ? scale(v) : "rgba(255,255,255,.05)";
+      return Number.isFinite(v) ? scale(v) : "var(--mapMissingFill)";
     })
     .attr("stroke", d => {
       const isSel = selectedDistrict && resolver.resolve(geoName(d)) === selectedDistrict;
@@ -285,7 +282,7 @@ export function updateMap({ year, metric, selectedDistrict }) {
       showTooltip(
         `<strong>${name}</strong><br>` +
         `${metricLabels[metric] || metric}: <strong>${formatValue(metric, v)}</strong><br>` +
-        `<span style="color:rgba(255,255,255,.7)">Ano: ${year}</span>`
+        `<span style="color:var(--muted)">Ano: ${year}</span>`
       );
       moveTooltip(event.pageX, event.pageY);
     })

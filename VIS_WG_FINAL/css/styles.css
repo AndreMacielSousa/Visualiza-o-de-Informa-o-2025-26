@@ -18,6 +18,13 @@
 
   --accent-blue:#4da3ff;
   --districtStroke:rgba(0,0,0,0.45);
+
+  /* ✅ caixas do mapa (escuro) */
+  --mapFrameFill: rgba(0,0,0,0.18);
+  --mapFrameStroke: rgba(255,255,255,0.18);
+  --mapInsetTitle: rgba(255,255,255,0.90);
+  --mapMissingFill: rgba(255,255,255,.08);
+
 }
 
 html[data-theme="light"]{
@@ -39,6 +46,12 @@ html[data-theme="light"]{
 
   --accent-blue:#2563eb;
   --districtStroke:rgba(0,0,0,0.35);
+
+  /* ✅ caixas do mapa (claro) — mais visíveis */
+  --mapFrameFill: rgba(0,0,0,0.06);
+  --mapFrameStroke: rgba(0,0,0,0.22);
+  --mapInsetTitle: rgba(0,0,0,0.78);
+  --mapMissingFill: rgba(0,0,0,.06);
 }
 
 /* ---------- BASE ---------- */
@@ -102,3 +115,16 @@ select:focus,input:focus,button:focus{outline:2px solid rgba(127,127,127,.35);ou
   vector-effect: non-scaling-stroke;
 }
 .district.is-selected{stroke: rgba(255,255,255,.95);stroke-width:2.2}
+
+/* ✅ Caixas/insets do mapa (continente + Açores + Madeira) */
+.map-frame{
+  fill: var(--mapFrameFill);
+  stroke: var(--mapFrameStroke);
+  stroke-width: 1.2;
+}
+
+.map-inset-title{
+  fill: var(--mapInsetTitle);
+  font-size: 12px;
+  font-weight: 700;
+}
