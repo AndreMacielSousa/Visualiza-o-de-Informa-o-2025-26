@@ -46,6 +46,19 @@ export function initScatter({ onSelectDistrict }) {
   dots = g.append("g");
 }
 
+function yearsInRange(years, brushRange) {
+  if (!brushRange) return [years[years.length - 1]]; // default: último ano (mantém o comportamento antigo)
+  const [lo, hi] = brushRange;
+  return years.filter((y) => y >= lo && y <= hi);
+}
+
+function meanOverYears(dataByYear, district, yearsList, field) {
+  const vals = yearsList
+    .map((yr) => dataByYear[yr]?.[district]?.[field])
+    .filter(Number.isFinite);
+  return vals.length ? d3.mean(vals) : NaN;
+}
+
 export function updateScatter({
   dataByYear,
   years,
@@ -55,14 +68,16 @@ export function updateScatter({
   selectedDistrict,
   onSelectDistrict,
 }) {
-  const year = years[years.length - 1];
+  const yrs = yearsInRange(years, brushRange);
 
   const data = districts
     .map((d) => {
-      const r = dataByYear[year]?.[d];
-      return r ? { district: d, x: r.population, y: r[metric] } : null;
+      const mx = meanOverYears(dataByYear, d, yrs, "population");
+      const my = meanOverYears(dataByYear, d, yrs, metric);
+      if (!Number.isFinite(mx) || !Number.isFinite(my)) return null;
+      return { district: d, x: mx, y: my };
     })
-    .filter((d) => Number.isFinite(d?.x) && Number.isFinite(d?.y));
+    .filter(Boolean);
 
   if (!data.length) return;
 
@@ -72,8 +87,9 @@ export function updateScatter({
   xA.call(d3.axisBottom(x).ticks(6));
   yA.call(d3.axisLeft(y).ticks(6));
 
-  xLabel.text("População");
-  yLabel.text(metricLabels[metric] || metric);
+  // ✅ Labels coerentes com o intervalo
+  xLabel.text(brushRange ? "População (média no intervalo)" : "População (último ano)");
+  yLabel.text((metricLabels[metric] || metric) + (brushRange ? " (média no intervalo)" : " (último ano)"));
 
   const u = dots.selectAll("circle").data(data, (d) => d.district);
 
@@ -84,10 +100,15 @@ export function updateScatter({
         .attr("r", 5)
         .attr("class", "scatter-dot")
         .on("mouseover", (ev, d) => {
+          const intervaloTxt = brushRange
+            ? `Intervalo: <strong>${brushRange[0]}–${brushRange[1]}</strong><br>`
+            : "";
+
           showTooltip(
             `<strong>${d.district}</strong><br>` +
+              intervaloTxt +
               `População: ${formatValue("population", d.x)}<br>` +
-              `${metricLabels[metric] || metric}: ${formatValue(metric, d.y)}`,
+              `${metricLabels[metric] || metric}: ${formatValue(metric, d.y)}`
           );
           moveTooltip(ev.pageX, ev.pageY);
         })
@@ -98,11 +119,11 @@ export function updateScatter({
           ev.stopPropagation();
         }),
     (u) => u,
-    (xit) => xit.remove(),
+    (xit) => xit.remove()
   )
     .attr("cx", (d) => x(d.x))
     .attr("cy", (d) => y(d.y))
     .attr("opacity", (d) =>
-      selectedDistrict && d.district !== selectedDistrict ? 0.25 : 1,
+      selectedDistrict && d.district !== selectedDistrict ? 0.25 : 1
     );
 }

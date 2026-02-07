@@ -304,3 +304,25 @@ button:focus {
 .tooltip span {
   color: rgba(255, 255, 255, 0.92) !important;
 }
+
+/* ---------- BRUSH (série temporal) ---------- */
+.brush .selection{
+  fill: rgba(77, 163, 255, 0.22);
+  stroke: rgba(77, 163, 255, 0.65);
+  stroke-width: 1.2;
+}
+
+.brush .handle{
+  fill: rgba(77, 163, 255, 0.45);
+  stroke: rgba(255, 255, 255, 0.35);
+}
+
+.brush .overlay{
+  cursor: crosshair;
+}
+
+.brush-info{
+  fill: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  font-weight: 700;
+}

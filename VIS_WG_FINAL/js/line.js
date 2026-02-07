@@ -2,7 +2,7 @@ import { metricLabels, formatValue } from "./utils.js";
 import { showTooltip, moveTooltip, hideTooltip } from "./tooltip.js";
 
 let svg, g, iw, ih, x, y, xA, yA, grid, line, dots, brushG;
-let xLabel, yLabel;
+let xLabel, yLabel, brushInfo;
 
 const m = { t: 18, r: 18, b: 52, l: 78 };
 
@@ -46,6 +46,15 @@ export function initLine({ onBrushChange }) {
     .attr("y", -56)
     .attr("text-anchor", "middle");
 
+  // ✅ feedback do brush (visível enquanto arrastas)
+  brushInfo = g
+    .append("text")
+    .attr("class", "brush-info")
+    .attr("x", iw)
+    .attr("y", -2)
+    .attr("text-anchor", "end")
+    .text("");
+
   line = g.append("path").attr("class", "line");
   dots = g.append("g");
   brushG = g.append("g").attr("class", "brush");
@@ -56,15 +65,34 @@ export function initLine({ onBrushChange }) {
       [0, 0],
       [iw, ih],
     ])
+    // ✅ durante o arrasto: mostra intervalo (sem re-render global)
+    .on("brush", (ev) => {
+      if (!ev.selection) {
+        brushInfo.text("");
+        return;
+      }
+      const [x0, x1] = ev.selection;
+      const a = Math.round(x.invert(x0));
+      const b = Math.round(x.invert(x1));
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+      brushInfo.text(`Intervalo: ${lo}–${hi}`);
+    })
+    // ✅ ao largar: aplica o intervalo ao estado global
     .on("end", (ev) => {
       if (!ev.selection) {
+        brushInfo.text("");
         onBrushChange(null);
         return;
       }
       const [x0, x1] = ev.selection;
       const a = Math.round(x.invert(x0));
       const b = Math.round(x.invert(x1));
-      onBrushChange([Math.min(a, b), Math.max(a, b)]);
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+
+      brushInfo.text(`Intervalo: ${lo}–${hi}`);
+      onBrushChange([lo, hi]);
     });
 
   brushG.call(brush);
@@ -77,13 +105,7 @@ function meanForYear(dataByYear, year, metric) {
   return vals.length ? d3.mean(vals) : NaN;
 }
 
-export function updateLine({
-  dataByYear,
-  years,
-  metric,
-  district,
-  brushRange,
-}) {
+export function updateLine({ dataByYear, years, metric, district, brushRange }) {
   const s = years
     .map((yr) => ({
       year: yr,
@@ -96,6 +118,7 @@ export function updateLine({
   if (!s.length) {
     line.attr("d", null);
     dots.selectAll("*").remove();
+    if (brushInfo) brushInfo.text("");
     return;
   }
 
@@ -130,20 +153,23 @@ export function updateLine({
           showTooltip(
             `<strong>${seriesLabel}</strong><br>` +
               `Ano: <strong>${d.year}</strong><br>` +
-              `${metricLabels[metric] || metric}: <strong>${formatValue(metric, d.value)}</strong>`,
+              `${metricLabels[metric] || metric}: <strong>${formatValue(metric, d.value)}</strong>`
           );
           moveTooltip(ev.pageX, ev.pageY);
         })
         .on("mousemove", (ev) => moveTooltip(ev.pageX, ev.pageY))
         .on("mouseout", hideTooltip),
     (u) => u,
-    (xit) => xit.remove(),
+    (xit) => xit.remove()
   )
     .attr("cx", (d) => x(d.year))
     .attr("cy", (d) => y(d.value))
     .attr("opacity", (d) =>
-      brushRange && (d.year < brushRange[0] || d.year > brushRange[1])
-        ? 0.25
-        : 1,
+      brushRange && (d.year < brushRange[0] || d.year > brushRange[1]) ? 0.25 : 1
     );
+
+  // ✅ se já houver brushRange vindo do estado, mostra a info
+  if (brushInfo) {
+    brushInfo.text(brushRange ? `Intervalo: ${brushRange[0]}–${brushRange[1]}` : "");
+  }
 }
