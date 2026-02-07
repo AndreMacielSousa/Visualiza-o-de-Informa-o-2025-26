@@ -1,4 +1,5 @@
 const KEY = "vis_theme"; // "dark" | "light"
+export const DEFAULT_THEME = "dark";
 
 export function initTheme() {
   const saved = localStorage.getItem(KEY);
@@ -6,21 +7,32 @@ export function initTheme() {
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: light)").matches;
 
-  const theme = saved || (prefersLight ? "light" : "dark");
-  applyTheme(theme);
+  const theme = saved || (prefersLight ? "light" : DEFAULT_THEME);
+  setTheme(theme, false);
 
   const btn = document.getElementById("themeBtn");
   if (btn) {
     btn.addEventListener("click", () => {
       const current =
-        document.documentElement.getAttribute("data-theme") || "dark";
+        document.documentElement.getAttribute("data-theme") || DEFAULT_THEME;
       const next = current === "dark" ? "light" : "dark";
-      applyTheme(next);
-      localStorage.setItem(KEY, next);
+      setTheme(next, true);
     });
   }
 }
 
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
+export function getTheme() {
+  return document.documentElement.getAttribute("data-theme") || DEFAULT_THEME;
+}
+
+export function setTheme(theme, persist = true) {
+  const t = theme === "light" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  if (persist) localStorage.setItem(KEY, t);
+  return t;
+}
+
+export function resetTheme() {
+  localStorage.removeItem(KEY);
+  return setTheme(DEFAULT_THEME, false);
 }

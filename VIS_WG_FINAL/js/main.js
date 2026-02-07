@@ -1,10 +1,10 @@
-import { initTheme } from "./theme.js";
+import { initTheme, resetTheme } from "./theme.js";
 import { loadAllData } from "./data.js";
 import { initMap, updateMap } from "./map.js";
-import { initLine, updateLine } from "./line.js";
+import { initLine, updateLine, clearBrush } from "./line.js";
 import { initScatter, updateScatter } from "./scatter.js";
 import { metricLabels } from "./utils.js";
-import { initAccentColor } from "./color.js";
+import { initAccentColor, resetAccentColor } from "./color.js";
 
 // --- DOM ---
 const metricSelect = document.getElementById("metricSelect");
@@ -59,7 +59,7 @@ function applyState() {
     districts,
     metric: currentMetric,
     brushRange,
-    currentYear, // ✅ NOVO (para alinhar pontos + tooltip com o ano selecionado)
+    currentYear,
     selectedDistrict,
     onSelectDistrict,
   });
@@ -75,12 +75,25 @@ function onBrushChange(range) {
   applyState();
 }
 
+// ✅ Reset TOTAL (métrica + ano + cor + tema + brush + seleção)
 function resetAll() {
+  // seleção/interação
   selectedDistrict = null;
   brushRange = null;
 
+  // métricas/ano: voltar ao original
+  currentMetric = metrics[0];
+  metricSelect.value = currentMetric;
+
   currentYear = years[years.length - 1];
   syncSliderToYear(currentYear);
+
+  // limpar brush visível
+  clearBrush();
+
+  // repor cor e tema (e limpar preferências guardadas)
+  resetAccentColor();
+  resetTheme();
 
   applyState();
 }

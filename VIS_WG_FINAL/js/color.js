@@ -1,11 +1,11 @@
 const KEY = "vis_accent_color";
-const DEFAULT = "#4da3ff";
+export const DEFAULT_ACCENT = "#4da3ff";
 
 export function initAccentColor(onChange) {
   const input = document.getElementById("accentColor");
   if (!input) return;
 
-  const saved = localStorage.getItem(KEY) || DEFAULT;
+  const saved = localStorage.getItem(KEY) || DEFAULT_ACCENT;
 
   // aplica ao CSS
   applyAccent(saved);
@@ -14,18 +14,34 @@ export function initAccentColor(onChange) {
   input.value = normalizeHex(saved);
 
   input.addEventListener("input", () => {
-    const c = normalizeHex(input.value || DEFAULT);
-    applyAccent(c);
-    localStorage.setItem(KEY, c);
+    const c = normalizeHex(input.value || DEFAULT_ACCENT);
+    setAccentColor(c, true);
     if (typeof onChange === "function") onChange(c);
   });
 }
 
 export function getAccentColor() {
-  // lê a variável CSS atual
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue("--accent-blue")
-    .trim() || DEFAULT;
+  return (
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--accent-blue")
+      .trim() || DEFAULT_ACCENT
+  );
+}
+
+export function setAccentColor(hex, persist = true) {
+  const c = normalizeHex(hex);
+  applyAccent(c);
+
+  const input = document.getElementById("accentColor");
+  if (input) input.value = c;
+
+  if (persist) localStorage.setItem(KEY, c);
+  return c;
+}
+
+export function resetAccentColor() {
+  localStorage.removeItem(KEY);
+  return setAccentColor(DEFAULT_ACCENT, false);
 }
 
 function applyAccent(hex) {
@@ -34,5 +50,5 @@ function applyAccent(hex) {
 
 function normalizeHex(v) {
   const s = (v || "").trim();
-  return /^#([0-9a-f]{6})$/i.test(s) ? s : DEFAULT;
+  return /^#([0-9a-f]{6})$/i.test(s) ? s : DEFAULT_ACCENT;
 }

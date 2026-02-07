@@ -20,23 +20,26 @@
     </div>
 
     <div class="controls">
-      <label>
-        <span>Métrica</span>
-        <select id="metricSelect"></select>
+      <label title="Escolha a métrica a visualizar.">
+        Métrica
+        <select id="metricSelect" title="Escolha a métrica a visualizar."></select>
       </label>
 
-      <label>
-        <span>Ano</span> <span id="yearLabel"></span>
-        <input id="yearSlider" type="range" min="1940" max="2021" step="1" value="2021" />
+      <label title="Arraste para escolher o ano (apenas anos com dados).">
+        Ano <span id="yearLabel"></span>
+        <input id="yearSlider" type="range" min="1940" max="2021" step="1" value="2021"
+               title="Arraste para escolher o ano (apenas anos com dados)." />
       </label>
 
-      <label>
-        <span>Cor</span>
-        <input id="accentColor" type="color" value="#4da3ff" />
+      <label title="Altera a cor principal dos gráficos e do mapa.">
+        Cor
+        <input id="accentColor" type="color" value="#4da3ff"
+               title="Altera a cor principal dos gráficos e do mapa." />
       </label>
 
-      <button id="themeBtn" type="button" title="Alternar modo claro/escuro">Tema</button>
-      <button id="resetBtn" type="button">Reset</button>
+      <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
+      <button id="resetBtn" type="button"
+              title="Repor valores originais (métrica, ano, cor, tema, brush e seleção).">Reset</button>
     </div>
   </header>
 
