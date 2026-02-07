@@ -17,9 +17,9 @@ let featureCollection, dataByYear, years, districts, metrics;
 let currentMetric = null;
 let currentYear = null;
 let selectedDistrict = null;
-let brushRange = null; // [y0,y1] ou null
+let brushRange = null;
 
-// --- Slider por índice (anos com dados) ---
+// Slider por índice (anos com dados)
 let yearIndexMap = new Map();
 
 function setYearLabel(y) {
@@ -38,9 +38,12 @@ function yearFromSliderValue(val) {
   return years[idx];
 }
 
-// --- Atualizações coordenadas ---
 function applyState() {
-  updateMap({ year: currentYear, metric: currentMetric, selectedDistrict });
+  updateMap({
+    year: currentYear,
+    metric: currentMetric,
+    selectedDistrict,
+  });
 
   updateLine({
     dataByYear,
@@ -56,18 +59,19 @@ function applyState() {
     districts,
     metric: currentMetric,
     brushRange,
+    currentYear, // ✅ NOVO (para alinhar pontos + tooltip com o ano selecionado)
     selectedDistrict,
     onSelectDistrict,
   });
 }
 
 function onSelectDistrict(d) {
-  selectedDistrict = d; // pode ser null
+  selectedDistrict = d;
   applyState();
 }
 
 function onBrushChange(range) {
-  brushRange = range; // null ou [y0,y1]
+  brushRange = range; // null ou [lo, hi]
   applyState();
 }
 
@@ -82,38 +86,34 @@ function resetAll() {
 }
 
 async function main() {
+  initTheme();
+
   const loaded = await loadAllData();
   featureCollection = loaded.featureCollection;
   dataByYear = loaded.dataByYear;
   years = loaded.years;
   districts = loaded.districts;
-
-  // ✅ métricas sempre pelas KEYS conhecidas (e labels vêm de metricLabels)
-  metrics = loaded.metrics; // Object.keys(metricLabels) no data.js
+  metrics = loaded.metrics;
 
   if (!years.length) {
     console.error("Sem anos disponíveis.");
     return;
   }
 
-  // --- Métricas (PT-PT) ---
+  // Métricas (PT-PT)
   metricSelect.innerHTML = "";
   metrics.forEach((m) => {
     const opt = document.createElement("option");
     opt.value = m;
-
-    // ✅ força o texto humano (PT-PT) no dropdown
     opt.textContent = metricLabels[m] || m;
-
     metricSelect.appendChild(opt);
   });
 
   currentMetric = metrics[0];
   metricSelect.value = currentMetric;
 
-  // --- Slider: apenas anos com dados (snap por índice) ---
+  // Slider: apenas anos com dados (snap por índice)
   yearIndexMap = new Map(years.map((y, i) => [y, i]));
-
   yearSlider.min = "0";
   yearSlider.max = String(years.length - 1);
   yearSlider.step = "1";
@@ -121,7 +121,7 @@ async function main() {
   currentYear = years[years.length - 1];
   syncSliderToYear(currentYear);
 
-  // --- Init viz (compatível com os teus módulos) ---
+  // Init viz
   initMap({
     featureCollection,
     csvDistricts: districts,
@@ -130,10 +130,14 @@ async function main() {
   });
 
   initLine({ onBrushChange });
-
   initScatter({ onSelectDistrict });
 
-  // --- Handlers ---
+  // Picker de cor (re-render para atualizar mapa/legenda)
+  initAccentColor(() => {
+    applyState();
+  });
+
+  // Handlers
   metricSelect.addEventListener("change", () => {
     currentMetric = metricSelect.value;
     applyState();
@@ -155,11 +159,5 @@ async function main() {
 
   applyState();
 }
-initTheme();
-
-initAccentColor(() => {
-  // re-render do estado atual quando a cor muda (para atualizar o mapa/legenda)
-  applyState();
-});
 
 main();

@@ -47,9 +47,9 @@ export function initScatter({ onSelectDistrict }) {
 }
 
 function yearsInRange(years, brushRange) {
-  if (!brushRange) return [years[years.length - 1]]; // default: último ano (mantém o comportamento antigo)
+  if (!brushRange) return null;
   const [lo, hi] = brushRange;
-  return years.filter((y) => y >= lo && y <= hi);
+  return years.filter((yr) => yr >= lo && yr <= hi);
 }
 
 function meanOverYears(dataByYear, district, yearsList, field) {
@@ -65,17 +65,36 @@ export function updateScatter({
   districts,
   metric,
   brushRange,
+  currentYear,
   selectedDistrict,
   onSelectDistrict,
 }) {
+  // lista de anos caso exista brush
   const yrs = yearsInRange(years, brushRange);
 
+  // ✅ dados do scatter: GUARDA contexto para tooltip (ano/intervalo) + valores exatos do ponto
   const data = districts
     .map((d) => {
-      const mx = meanOverYears(dataByYear, d, yrs, "population");
-      const my = meanOverYears(dataByYear, d, yrs, metric);
-      if (!Number.isFinite(mx) || !Number.isFinite(my)) return null;
-      return { district: d, x: mx, y: my };
+      let px, py, context;
+
+      if (yrs && yrs.length) {
+        px = meanOverYears(dataByYear, d, yrs, "population");
+        py = meanOverYears(dataByYear, d, yrs, metric);
+        context = { type: "range", lo: brushRange[0], hi: brushRange[1] };
+      } else {
+        px = dataByYear[currentYear]?.[d]?.population;
+        py = dataByYear[currentYear]?.[d]?.[metric];
+        context = { type: "year", year: currentYear };
+      }
+
+      if (!Number.isFinite(px) || !Number.isFinite(py)) return null;
+
+      return {
+        district: d,
+        x: px,
+        y: py,
+        context, // <- isto garante tooltip fiável
+      };
     })
     .filter(Boolean);
 
@@ -87,9 +106,14 @@ export function updateScatter({
   xA.call(d3.axisBottom(x).ticks(6));
   yA.call(d3.axisLeft(y).ticks(6));
 
-  // ✅ Labels coerentes com o intervalo
-  xLabel.text(brushRange ? "População (média no intervalo)" : "População (último ano)");
-  yLabel.text((metricLabels[metric] || metric) + (brushRange ? " (média no intervalo)" : " (último ano)"));
+  // ✅ labels coerentes com o modo
+  if (yrs && yrs.length) {
+    xLabel.text("População (média no intervalo)");
+    yLabel.text(`${metricLabels[metric] || metric} (média no intervalo)`);
+  } else {
+    xLabel.text(`População (${currentYear})`);
+    yLabel.text(`${metricLabels[metric] || metric} (${currentYear})`);
+  }
 
   const u = dots.selectAll("circle").data(data, (d) => d.district);
 
@@ -100,15 +124,17 @@ export function updateScatter({
         .attr("r", 5)
         .attr("class", "scatter-dot")
         .on("mouseover", (ev, d) => {
-          const intervaloTxt = brushRange
-            ? `Intervalo: <strong>${brushRange[0]}–${brushRange[1]}</strong><br>`
-            : "";
+          const ctx =
+            d.context.type === "range"
+              ? `Intervalo: <strong>${d.context.lo}–${d.context.hi}</strong><br>`
+              : `Ano: <strong>${d.context.year}</strong><br>`;
 
+          // ✅ tooltip usa EXACTAMENTE d.x e d.y (os valores desenhados)
           showTooltip(
             `<strong>${d.district}</strong><br>` +
-              intervaloTxt +
-              `População: ${formatValue("population", d.x)}<br>` +
-              `${metricLabels[metric] || metric}: ${formatValue(metric, d.y)}`
+              ctx +
+              `População: <strong>${formatValue("population", d.x)}</strong><br>` +
+              `${metricLabels[metric] || metric}: <strong>${formatValue(metric, d.y)}</strong>`
           );
           moveTooltip(ev.pageX, ev.pageY);
         })
