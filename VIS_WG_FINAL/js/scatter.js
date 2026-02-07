@@ -69,10 +69,8 @@ export function updateScatter({
   selectedDistrict,
   onSelectDistrict,
 }) {
-  // lista de anos caso exista brush
   const yrs = yearsInRange(years, brushRange);
 
-  // ✅ dados do scatter: GUARDA contexto para tooltip (ano/intervalo) + valores exatos do ponto
   const data = districts
     .map((d) => {
       let px, py, context;
@@ -93,7 +91,7 @@ export function updateScatter({
         district: d,
         x: px,
         y: py,
-        context, // <- isto garante tooltip fiável
+        context,
       };
     })
     .filter(Boolean);
@@ -106,7 +104,7 @@ export function updateScatter({
   xA.call(d3.axisBottom(x).ticks(6));
   yA.call(d3.axisLeft(y).ticks(6));
 
-  // ✅ labels coerentes com o modo
+  // Labels coerentes
   if (yrs && yrs.length) {
     xLabel.text("População (média no intervalo)");
     yLabel.text(`${metricLabels[metric] || metric} (média no intervalo)`);
@@ -114,6 +112,8 @@ export function updateScatter({
     xLabel.text(`População (${currentYear})`);
     yLabel.text(`${metricLabels[metric] || metric} (${currentYear})`);
   }
+
+  const yName = metricLabels[metric] || metric; // ✅ label correta da métrica
 
   const u = dots.selectAll("circle").data(data, (d) => d.district);
 
@@ -129,12 +129,11 @@ export function updateScatter({
               ? `Intervalo: <strong>${d.context.lo}–${d.context.hi}</strong><br>`
               : `Ano: <strong>${d.context.year}</strong><br>`;
 
-          // ✅ tooltip usa EXACTAMENTE d.x e d.y (os valores desenhados)
           showTooltip(
             `<strong>${d.district}</strong><br>` +
               ctx +
               `População: <strong>${formatValue("population", d.x)}</strong><br>` +
-              `${metricLabels[metric] || metric}: <strong>${formatValue(metric, d.y)}</strong>`
+              `${yName}: <strong>${formatValue(metric, d.y)}</strong>` // ✅ aqui estava o problema
           );
           moveTooltip(ev.pageX, ev.pageY);
         })
