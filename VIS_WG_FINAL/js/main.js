@@ -46,7 +46,7 @@ function applyState() {
     years,
     metric: currentMetric,
     district: selectedDistrict,
-    brushRange
+    brushRange,
   });
 
   updateScatter({
@@ -56,7 +56,7 @@ function applyState() {
     metric: currentMetric,
     brushRange,
     selectedDistrict,
-    onSelectDistrict
+    onSelectDistrict,
   });
 }
 
@@ -125,7 +125,7 @@ async function main() {
     featureCollection,
     csvDistricts: districts,
     csvDataByYear: dataByYear,
-    onSelectDistrict
+    onSelectDistrict,
   });
 
   initLine({ onBrushChange });

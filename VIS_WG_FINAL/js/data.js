@@ -2,7 +2,7 @@ import { metricLabels } from "./utils.js";
 
 export const FILES = {
   csv: "data/housing_population_long.csv",
-  map: "data/georef-portugal-distrito-millesime.geojson"
+  map: "data/georef-portugal-distrito-millesime.geojson",
 };
 
 export function processData(rows) {
@@ -22,9 +22,16 @@ export function processData(rows) {
       population: +r.population,
       housing: +r.housing,
       housing_per_1000: +r.housing_per_1000,
-      housing_yoy_pct: (r.housing_yoy_pct === "" || r.housing_yoy_pct == null) ? NaN : +r.housing_yoy_pct,
-      population_yoy_pct: (r.population_yoy_pct === "" || r.population_yoy_pct == null) ? NaN : +r.population_yoy_pct,
-      delta_growth: (r.delta_growth === "" || r.delta_growth == null) ? NaN : +r.delta_growth
+      housing_yoy_pct:
+        r.housing_yoy_pct === "" || r.housing_yoy_pct == null
+          ? NaN
+          : +r.housing_yoy_pct,
+      population_yoy_pct:
+        r.population_yoy_pct === "" || r.population_yoy_pct == null
+          ? NaN
+          : +r.population_yoy_pct,
+      delta_growth:
+        r.delta_growth === "" || r.delta_growth == null ? NaN : +r.delta_growth,
     };
   }
 
@@ -32,7 +39,7 @@ export function processData(rows) {
     dataByYear,
     years: [...ys].sort((a, b) => a - b),
     districts: [...ds].sort((a, b) => a.localeCompare(b, "pt-PT")),
-    metrics: Object.keys(metricLabels)
+    metrics: Object.keys(metricLabels),
   };
 }
 
@@ -49,7 +56,7 @@ export function asFeatureCollection(raw) {
 export function pickLatestYearFeatures(fc) {
   if (!fc || !fc.features) return fc;
 
-  const sample = fc.features.find(f => f.properties);
+  const sample = fc.features.find((f) => f.properties);
   let yearKey = "year";
 
   if (sample && sample.properties) {
@@ -59,19 +66,25 @@ export function pickLatestYearFeatures(fc) {
     else if ("annee" in sample.properties) yearKey = "annee";
   }
 
-  const withYear = fc.features.filter(f => f.properties && f.properties[yearKey] != null);
+  const withYear = fc.features.filter(
+    (f) => f.properties && f.properties[yearKey] != null,
+  );
 
   if (!withYear.length) {
-    console.warn("Aviso: Não foi possível filtrar o mapa por ano. A usar todas as geometrias.");
+    console.warn(
+      "Aviso: Não foi possível filtrar o mapa por ano. A usar todas as geometrias.",
+    );
     return fc;
   }
 
-  const maxYear = d3.max(withYear, f => parseInt(f.properties[yearKey], 10));
-  console.log(`Mapa: A filtrar pelo ano mais recente detetado: ${maxYear} (propriedade: ${yearKey})`);
+  const maxYear = d3.max(withYear, (f) => parseInt(f.properties[yearKey], 10));
+  //console.log(`Mapa: A filtrar pelo ano mais recente detetado: ${maxYear} (propriedade: ${yearKey})`);
 
   return {
     type: "FeatureCollection",
-    features: withYear.filter(f => parseInt(f.properties[yearKey], 10) === maxYear)
+    features: withYear.filter(
+      (f) => parseInt(f.properties[yearKey], 10) === maxYear,
+    ),
   };
 }
 
@@ -79,7 +92,7 @@ export function pickLatestYearFeatures(fc) {
 export async function loadAllData() {
   const [rows, rawMap] = await Promise.all([
     d3.csv(FILES.csv),
-    d3.json(FILES.map)
+    d3.json(FILES.map),
   ]);
 
   const { dataByYear, years, districts, metrics } = processData(rows);

@@ -1,63 +1,80 @@
 <!doctype html>
 <html lang="pt-PT">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Habitação e População (1940–2021)</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Habitação e População (1940–2021)</title>
 
-  <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
 
-  <!-- D3 + TopoJSON (globais) -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/topojson@3"></script>
-</head>
+    <!-- D3 + TopoJSON (globais) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+  </head>
 
-<body>
-  <header class="topbar">
-    <div>
-      <div class="title">Habitação e População em Portugal (1940–2021)</div>
-      <div class="subtitle">Dashboard interativo (inclui Açores e Madeira).</div>
-    </div>
+  <body>
+    <header class="topbar">
+      <div>
+        <div class="title">Habitação e População em Portugal (1940–2021)</div>
+        <div class="subtitle">
+          Dashboard interativo (inclui Açores e Madeira).
+        </div>
+      </div>
 
-    <div class="controls">
-      <label>
-        <span>Métrica</span>
-        <select id="metricSelect"></select>
-      </label>
+      <div class="controls">
+        <label>
+          <span>Métrica</span>
+          <select id="metricSelect"></select>
+        </label>
 
-      <label>
-        <span>Ano</span> <span id="yearLabel"></span>
-        <input id="yearSlider" type="range" min="1940" max="2021" step="1" value="2021" />
-      </label>
+        <label>
+          <span>Ano</span> <span id="yearLabel"></span>
+          <input
+            id="yearSlider"
+            type="range"
+            min="1940"
+            max="2021"
+            step="1"
+            value="2021"
+          />
+        </label>
 
-      <button id="themeBtn" type="button" title="Alternar modo claro/escuro">Tema</button>
-      <button id="resetBtn" type="button">Reset</button>
-    </div>
-  </header>
+        <button id="themeBtn" type="button" title="Alternar modo claro/escuro">
+          Tema
+        </button>
+        <button id="resetBtn" type="button">Reset</button>
+      </div>
+    </header>
 
-  <main class="grid">
-    <section class="card span2">
-      <h2>Mapa (coroplético)</h2>
-      <p>Hover para detalhes. Clique para selecionar distrito. Clique fora para limpar.</p>
-      <div id="map-container" class="viz h520"></div>
-      <div id="legend-container" class="legend"></div>
-    </section>
+    <main class="grid">
+      <section class="card span2">
+        <h2>Mapa (coroplético)</h2>
+        <p>
+          Hover para detalhes. Clique para selecionar distrito. Clique fora para
+          limpar.
+        </p>
+        <div id="map-container" class="viz h520"></div>
+        <div id="legend-container" class="legend"></div>
+      </section>
 
-    <section class="card">
-      <h2>Série temporal</h2>
-      <p>Brush para escolher intervalo.</p>
-      <div id="line-container" class="viz h520"></div>
-    </section>
+      <section class="card">
+        <h2>Série temporal</h2>
+        <p>Brush para escolher intervalo.</p>
+        <div id="line-container" class="viz h520"></div>
+      </section>
 
-    <section class="card">
-      <h2>Scatter</h2>
-      <p>Média no intervalo selecionado. Clique num ponto para selecionar distrito.</p>
-      <div id="scatter-container" class="viz h520"></div>
-    </section>
-  </main>
+      <section class="card">
+        <h2>Scatter</h2>
+        <p>
+          Média no intervalo selecionado. Clique num ponto para selecionar
+          distrito.
+        </p>
+        <div id="scatter-container" class="viz h520"></div>
+      </section>
+    </main>
 
-  <div id="tooltip" class="tooltip" style="opacity:0;"></div>
+    <div id="tooltip" class="tooltip" style="opacity: 0"></div>
 
-  <script type="module" src="js/main.js"></script>
-</body>
+    <script type="module" src="js/main.js"></script>
+  </body>
 </html>
