@@ -7,12 +7,16 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+
+  <!-- Overlay + Drawer -->
   <div id="navOverlay" class="nav-overlay" aria-hidden="true"></div>
+
   <aside id="navDrawer" class="nav-drawer" aria-label="Menu">
     <div class="nav-head">
       <div class="nav-title">Menu</div>
       <button id="navClose" type="button" title="Fechar menu">✕</button>
     </div>
+
     <nav class="nav-links">
       <a href="index.html" data-page="index.html">Início</a>
       <a href="introducao.html" data-page="introducao.html">Introdução</a>
@@ -21,41 +25,93 @@
       <a href="autores.html" data-page="autores.html">Autores</a>
       <a href="uc.html" data-page="uc.html">UC</a>
     </nav>
-    <div class="nav-foot">Habitação e População (1940–2021) • Visualização de Informação</div>
+
+    <div class="nav-foot">
+      Habitação e População (1940–2021) • Visualização de Informação
+    </div>
   </aside>
 
+  <!-- Topbar -->
   <header class="topbar">
     <div class="brand">
-      <button id="menuBtn" type="button" title="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
+      <button id="menuBtn" type="button" title="Abrir menu"
+              aria-expanded="false" aria-controls="navDrawer">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 6h16M4 12h16M4 18h16"
+                stroke="currentColor" stroke-width="2"
+                stroke-linecap="round"/>
         </svg>
       </button>
+
       <div>
         <div class="title">Inquérito</div>
-        <div class="subtitle">Avaliação de usabilidade e utilidade do dashboard.</div>
+        <div class="subtitle">
+          Avaliação de clareza, usabilidade e narrativa do dashboard.
+        </div>
       </div>
     </div>
+
     <div class="controls">
-      <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
+      <button id="themeBtn" type="button"
+              title="Alternar modo claro/escuro.">Tema</button>
     </div>
   </header>
 
+  <!-- Conteúdo -->
   <main class="grid">
     <section class="card span2">
-      <h2>Questionário</h2>
-      <p>
-        
-      </p>
 
-      <div class="viz" style="height: 70vh; border: 1px solid var(--vizBorder); border-radius: 14px; overflow: hidden;">
+      <div class="hero">
+        <div>
+          <h2 style="margin:0;">Inquérito de avaliação</h2>
+          <p style="margin:6px 0 0; color:var(--muted2);">
+            Ajude-nos a avaliar a clareza, usabilidade e narrativa do dashboard.
+            As respostas são anónimas e demoram cerca de
+            <strong>2–3 minutos</strong>.
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <a class="btn"
+             href="https://docs.google.com/forms/d/e/1FAIpQLSeCzvJe7js-tB12Uxd75H7HoyPVqt0dXqN8TDEt9Ix3LXklUg/viewform"
+             target="_blank" rel="noopener">
+            Inquérito
+          </a>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:14px;">
+        <div class="info-card">
+          <div class="info-title">O que avaliamos</div>
+          <ul class="info-list">
+            <li>Compreensão da mensagem</li>
+            <li>Facilidade de interação</li>
+            <li>Confiança e clareza narrativa</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <div class="info-title">Privacidade</div>
+          <ul class="info-list">
+            <li>Respostas anónimas</li>
+            <li>Sem recolha de e-mail</li>
+            <li>Uso exclusivo para fins académicos</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="viz form-frame" style="margin-top:14px;">
         <iframe
           title="Inquérito de avaliação"
-          src="https://docs.google.com/forms/d/e/1FAIpQLSeCzvJe7js-tB12Uxd75H7HoyPVqt0dXqN8TDEt9Ix3LXklUg/viewform?usp=header"
-          style="width:100%; height:100%; border:0;"
+          src="https://docs.google.com/forms/d/e/1FAIpQLSeCzvJe7js-tB12Uxd75H7HoyPVqt0dXqN8TDEt9Ix3LXklUg/viewform?embedded=true"
           loading="lazy"
-          referrerpolicy="no-referrer"
-        ></iframe>
+          style="width:100%; height:100%; border:0;"
+          referrerpolicy="no-referrer">
+        </iframe>
+      </div>
+
+      <div class="footnote">
+        Se o formulário não carregar aqui, utilize o botão “Inquérito”.
       </div>
 
     </section>
