@@ -18,12 +18,12 @@
     </div>
 
     <nav class="nav-links">
-      <a href="index.html" data-page="index.html">Início</a>
-      <a href="introducao.html" data-page="introducao.html">Introdução</a>
-      <a href="instrucoes.html" data-page="instrucoes.html">Instruções</a>
-      <a href="inquerito.html" data-page="inquerito.html">Inquérito</a>
-      <a href="autores.html" data-page="autores.html">Autores</a>
-      <a href="uc.html" data-page="uc.html">UC</a>
+      <a href="index.html">Início</a>
+      <a href="introducao.html">Introdução</a>
+      <a href="instrucoes.html">Instruções</a>
+      <a href="inquerito.html">Inquérito</a>
+      <a href="autores.html" aria-current="page">Autores</a>
+      <a href="uc.html">UC</a>
     </nav>
 
     <div class="nav-foot">
@@ -34,20 +34,24 @@
   <!-- TOPBAR -->
   <header class="topbar">
     <div class="brand">
-      <button id="menuBtn" type="button" title="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
+      <button id="menuBtn" type="button" title="Abrir menu"
+        aria-expanded="false" aria-controls="navDrawer">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 6h16M4 12h16M4 18h16"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
 
       <div>
         <div class="title">Autores</div>
-        <div class="subtitle">Equipa do projeto e contributos.</div>
+        <div class="subtitle">Equipa do projeto e perfis individuais.</div>
       </div>
     </div>
 
     <div class="controls">
-      <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
+      <button id="themeBtn" type="button" title="Alternar modo claro/escuro">
+        Tema
+      </button>
     </div>
   </header>
 
@@ -56,104 +60,126 @@
     <section class="card span2">
       <h2>Equipa</h2>
       <p style="color:var(--muted); margin-top:6px;">
-        Esta página apresenta os autores do projeto, bem como contactos e ligações profissionais relevantes.
+        Apresentação dos autores, respetivos contributos no projeto e ligações
+        para páginas individuais.
       </p>
 
       <div class="authors">
 
-        <!-- André -->
+        <!-- ANDRÉ -->
         <article class="author-card">
           <div class="author-photo-wrap">
-            <img class="author-photo" src="imgs/Andre.jpg" alt="Fotografia de André Sousa">
+            <div class="avatar-sphere" aria-hidden="true"></div>
+            <img class="author-photo" src="imgs/Andre.jpg" alt="Fotografia de André Maciel Sousa">
           </div>
 
           <div class="author-info">
             <div class="author-head">
-              <h3 class="author-name">André Sousa</h3>
-              <div class="author-role">Coordenação • Integração • Implementação D3</div>
+              <h3 class="author-name">André Maciel Sousa</h3>
+              <div class="author-role">
+                Coordenação • Integração • Implementação D3
+              </div>
             </div>
 
             <div class="author-links">
-              <a href="SEU_SITE_AQUI" target="_blank" rel="noopener">Website</a>
-              <a href="mailto:SEU_EMAIL_AQUI">Email</a>
-              <a href="LINK_CIENCIAVITAE_AQUI" target="_blank" rel="noopener">CIÊNCIAVITAE</a>
+              <a href="https://www.andremaciel.pt" target="_blank" rel="noopener">Website</a>
+              <a href="mailto:sousa@andremaciel.pt">Email</a>
+              <a href="https://www.cienciavitae.pt/portal/6012-D3B5-F967" target="_blank" rel="noopener">CIÊNCIAVITAE</a>
             </div>
 
             <div class="author-meta">
               <div class="meta-row">
                 <span class="meta-label">Missões:</span>
-                <span class="meta-value">Coordenação do trabalho, integração do dashboard e desenvolvimento das visualizações em D3.</span>
+                <span class="meta-value">
+                  Coordenação do trabalho, integração do dashboard e
+                  desenvolvimento das visualizações em D3.
+                </span>
               </div>
               <div class="meta-row">
                 <span class="meta-label">Mensagem:</span>
                 <span class="meta-value">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Procurei garantir coerência entre dados, interação e narrativa visual, mantendo o rigor académico e a legibilidade
+                  do dashboard ao longo das iterações do projeto.
                 </span>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- Pedro -->
+        <!-- PEDRO -->
         <article class="author-card">
           <div class="author-photo-wrap">
+            <div class="avatar-sphere" aria-hidden="true"></div>
             <img class="author-photo" src="imgs/Pedro.png" alt="Fotografia de Pedro Correia">
           </div>
 
           <div class="author-info">
             <div class="author-head">
               <h3 class="author-name">Pedro Correia</h3>
-              <div class="author-role">Análise de dados • Validação</div>
+              <div class="author-role">
+                Análise de dados • Validação
+              </div>
             </div>
 
             <div class="author-links">
-              <a href="SEU_SITE_AQUI" target="_blank" rel="noopener">Website</a>
-              <a href="mailto:SEU_EMAIL_AQUI">Email</a>
-              <a href="LINK_CIENCIAVITAE_AQUI" target="_blank" rel="noopener">CIÊNCIAVITAE</a>
+              <a href="pedro.html">Website</a>
+              <a href="mailto:EMAIL_PEDRO@EXEMPLO.PT">Email</a>
+              <a href="pedro-cv.html">CIÊNCIAVITAE</a>
             </div>
 
             <div class="author-meta">
               <div class="meta-row">
                 <span class="meta-label">Missões:</span>
-                <span class="meta-value">Preparação e validação de dados, apoio na interpretação e verificação de consistência.</span>
+                <span class="meta-value">
+                  Preparação e validação de dados, apoio à interpretação
+                  e verificação de consistência.
+                </span>
               </div>
               <div class="meta-row">
                 <span class="meta-label">Mensagem:</span>
                 <span class="meta-value">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+                  Este projeto reforçou a importância de validar fontes e séries temporais, garantindo consistência
+                  antes de qualquer decisão de representação ou comparação entre distritos.
                 </span>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- Miguel -->
+        <!-- MIGUEL -->
         <article class="author-card">
           <div class="author-photo-wrap">
+            <div class="avatar-sphere" aria-hidden="true"></div>
             <img class="author-photo" src="imgs/Miguel.jpeg" alt="Fotografia de Miguel Correia">
           </div>
 
           <div class="author-info">
             <div class="author-head">
               <h3 class="author-name">Miguel Correia</h3>
-              <div class="author-role">Narrativa • Debugging • Documentação</div>
+              <div class="author-role">
+                Narrativa • Debugging • Documentação
+              </div>
             </div>
 
             <div class="author-links">
-              <a href="SEU_SITE_AQUI" target="_blank" rel="noopener">Website</a>
-              <a href="mailto:SEU_EMAIL_AQUI">Email</a>
-              <a href="LINK_CIENCIAVITAE_AQUI" target="_blank" rel="noopener">CIÊNCIAVITAE</a>
+              <a href="miguel.html">Website</a>
+              <a href="mailto:EMAIL_MIGUEL@EXEMPLO.PT">Email</a>
+              <a href="miguel-cv.html">CIÊNCIAVITAE</a>
             </div>
 
             <div class="author-meta">
               <div class="meta-row">
                 <span class="meta-label">Missões:</span>
-                <span class="meta-value">Apoio à construção narrativa, revisão técnica e documentação do processo.</span>
+                <span class="meta-value">
+                  Apoio à construção narrativa, revisão técnica,
+                  debugging e documentação do processo.
+                </span>
               </div>
               <div class="meta-row">
                 <span class="meta-label">Mensagem:</span>
                 <span class="meta-value">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.
+                  Foquei-me em clarificar a história contada pelos dados e em melhorar a explicação das interações,
+                  para que o utilizador consiga explorar sem ambiguidade e com transparência.
                 </span>
               </div>
             </div>
