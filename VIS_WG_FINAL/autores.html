@@ -6,13 +6,17 @@
   <title>Autores • Habitação e População (1940–2021)</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
+  <!-- NAV -->
   <div id="navOverlay" class="nav-overlay" aria-hidden="true"></div>
+
   <aside id="navDrawer" class="nav-drawer" aria-label="Menu">
     <div class="nav-head">
       <div class="nav-title">Menu</div>
       <button id="navClose" type="button" title="Fechar menu">✕</button>
     </div>
+
     <nav class="nav-links">
       <a href="index.html" data-page="index.html">Início</a>
       <a href="introducao.html" data-page="introducao.html">Introdução</a>
@@ -21,9 +25,13 @@
       <a href="autores.html" data-page="autores.html">Autores</a>
       <a href="uc.html" data-page="uc.html">UC</a>
     </nav>
-    <div class="nav-foot">Habitação e População (1940–2021) • Visualização de Informação</div>
+
+    <div class="nav-foot">
+      Habitação e População (1940–2021) • Visualização de Informação
+    </div>
   </aside>
 
+  <!-- TOPBAR -->
   <header class="topbar">
     <div class="brand">
       <button id="menuBtn" type="button" title="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
@@ -31,25 +39,128 @@
           <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
+
       <div>
         <div class="title">Autores</div>
-        <div class="subtitle">Equipa do projeto.</div>
+        <div class="subtitle">Equipa do projeto e contributos.</div>
       </div>
     </div>
+
     <div class="controls">
       <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
     </div>
   </header>
 
+  <!-- CONTEÚDO -->
   <main class="grid">
     <section class="card span2">
       <h2>Equipa</h2>
-      <ul>
-        <li><strong>André Sousa</strong> — coordenação, integração e implementação D3.</li>
-        <li><strong>Pedro Correia</strong> — análise de dados e validação.</li>
-        <li><strong>Miguel Correia</strong> — apoio à narrativa, debugging e documentação.</li>
-      </ul>
+      <p style="color:var(--muted); margin-top:6px;">
+        Esta página apresenta os autores do projeto, bem como contactos e ligações profissionais relevantes.
+      </p>
 
+      <div class="authors">
+
+        <!-- André -->
+        <article class="author-card">
+          <div class="author-photo-wrap">
+            <img class="author-photo" src="imgs/Andre.jpg" alt="Fotografia de André Sousa">
+          </div>
+
+          <div class="author-info">
+            <div class="author-head">
+              <h3 class="author-name">André Sousa</h3>
+              <div class="author-role">Coordenação • Integração • Implementação D3</div>
+            </div>
+
+            <div class="author-links">
+              <a href="SEU_SITE_AQUI" target="_blank" rel="noopener">Website</a>
+              <a href="mailto:SEU_EMAIL_AQUI">Email</a>
+              <a href="LINK_CIENCIAVITAE_AQUI" target="_blank" rel="noopener">CIÊNCIAVITAE</a>
+            </div>
+
+            <div class="author-meta">
+              <div class="meta-row">
+                <span class="meta-label">Missões:</span>
+                <span class="meta-value">Coordenação do trabalho, integração do dashboard e desenvolvimento das visualizações em D3.</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Mensagem:</span>
+                <span class="meta-value">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Pedro -->
+        <article class="author-card">
+          <div class="author-photo-wrap">
+            <img class="author-photo" src="imgs/Pedro.png" alt="Fotografia de Pedro Correia">
+          </div>
+
+          <div class="author-info">
+            <div class="author-head">
+              <h3 class="author-name">Pedro Correia</h3>
+              <div class="author-role">Análise de dados • Validação</div>
+            </div>
+
+            <div class="author-links">
+              <a href="SEU_SITE_AQUI" target="_blank" rel="noopener">Website</a>
+              <a href="mailto:SEU_EMAIL_AQUI">Email</a>
+              <a href="LINK_CIENCIAVITAE_AQUI" target="_blank" rel="noopener">CIÊNCIAVITAE</a>
+            </div>
+
+            <div class="author-meta">
+              <div class="meta-row">
+                <span class="meta-label">Missões:</span>
+                <span class="meta-value">Preparação e validação de dados, apoio na interpretação e verificação de consistência.</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Mensagem:</span>
+                <span class="meta-value">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Miguel -->
+        <article class="author-card">
+          <div class="author-photo-wrap">
+            <img class="author-photo" src="imgs/Miguel.jpeg" alt="Fotografia de Miguel Correia">
+          </div>
+
+          <div class="author-info">
+            <div class="author-head">
+              <h3 class="author-name">Miguel Correia</h3>
+              <div class="author-role">Narrativa • Debugging • Documentação</div>
+            </div>
+
+            <div class="author-links">
+              <a href="SEU_SITE_AQUI" target="_blank" rel="noopener">Website</a>
+              <a href="mailto:SEU_EMAIL_AQUI">Email</a>
+              <a href="LINK_CIENCIAVITAE_AQUI" target="_blank" rel="noopener">CIÊNCIAVITAE</a>
+            </div>
+
+            <div class="author-meta">
+              <div class="meta-row">
+                <span class="meta-label">Missões:</span>
+                <span class="meta-value">Apoio à construção narrativa, revisão técnica e documentação do processo.</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Mensagem:</span>
+                <span class="meta-value">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
     </section>
   </main>
 
