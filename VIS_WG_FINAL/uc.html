@@ -3,16 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>UC • Habitação e População (1940–2021)</title>
+  <title>UC — Visualização de Informação (2025/2026)</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
+  <!-- NAV -->
   <div id="navOverlay" class="nav-overlay" aria-hidden="true"></div>
+
   <aside id="navDrawer" class="nav-drawer" aria-label="Menu">
     <div class="nav-head">
       <div class="nav-title">Menu</div>
       <button id="navClose" type="button" title="Fechar menu">✕</button>
     </div>
+
     <nav class="nav-links">
       <a href="index.html" data-page="index.html">Início</a>
       <a href="introducao.html" data-page="introducao.html">Introdução</a>
@@ -21,47 +25,218 @@
       <a href="autores.html" data-page="autores.html">Autores</a>
       <a href="uc.html" data-page="uc.html">UC</a>
     </nav>
-    <div class="nav-foot">Habitação e População (1940–2021) • Visualização de Informação</div>
+
+    <div class="nav-foot">
+      Habitação e População (1940–2021) • Visualização de Informação
+    </div>
   </aside>
 
+  <!-- TOPBAR -->
   <header class="topbar">
     <div class="brand">
-      <button id="menuBtn" type="button" title="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
+      <button id="menuBtn" type="button" title="Abrir menu"
+        aria-expanded="false" aria-controls="navDrawer">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 6h16M4 12h16M4 18h16"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
+
       <div>
-        <div class="title">Unidade Curricular</div>
-        <div class="subtitle">Enquadramento do projeto na UC.</div>
+        <div class="title">Visualização de Informação (2025/2026)</div>
+        <div class="subtitle">Unidade Curricular do Mestrado (UAb + UTAD)</div>
       </div>
     </div>
+
     <div class="controls">
-      <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
+      <button id="themeBtn" type="button"
+        title="Alternar modo claro/escuro.">Tema</button>
     </div>
   </header>
 
+  <!-- CONTEÚDO -->
   <main class="grid">
+
+    <!-- Identificação -->
     <section class="card span2">
-      <h2>Visualização de Informação</h2>
+      <h2>Enquadramento da Unidade Curricular</h2>
+
       <p>
-        Esta UC foca a transformação de dados em representações visuais interativas,
-        suportando tarefas de exploração, comparação e comunicação de padrões.
-      </p>
-      <p>
-        No âmbito do projeto final, foi desenvolvido um dashboard com múltiplas vistas coordenadas
-        (mapa, série temporal e scatter), com interações diretas (hover, seleção, brush),
-        e preocupações de acessibilidade (tema claro/escuro, cor ajustável).
+        Esta página apresenta a Unidade Curricular (UC) <strong>Visualização de Informação</strong>
+        (ano letivo <strong>2025/2026</strong>), integrada no
+        <strong>Mestrado em Engenharia Informática e Tecnologia Web (MEIW)</strong>,
+        um mestrado em colaboração entre a
+        <strong>Universidade Aberta (UAb)</strong> e a
+        <strong>Universidade de Trás-os-Montes e Alto Douro (UTAD)</strong>.
+        A UC é lecionada em regime <strong>online</strong>, com forte ênfase no trabalho por projetos
+        e na comunicação assíncrona, suportada pela plataforma Moodle.
+        (ROCHA; PESTANA, 2025/2026)
       </p>
 
-      <h3>Competências evidenciadas</h3>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-top:14px;">
+        <figure style="margin:0;display:flex;align-items:center;gap:10px;">
+          <img src="imgs/uab.png" alt="Logótipo da Universidade Aberta" style="height:44px;width:auto;" />
+          <figcaption style="font-size:12px;opacity:.8;">Universidade Aberta</figcaption>
+        </figure>
+
+        <figure style="margin:0;display:flex;align-items:center;gap:10px;">
+          <img src="imgs/utad.png" alt="Logótipo da Universidade de Trás-os-Montes e Alto Douro" style="height:44px;width:auto;" />
+          <figcaption style="font-size:12px;opacity:.8;">UTAD</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Objetivos -->
+    <section class="card">
+      <h2>Objetivos</h2>
+      <p>
+        A UC tem como objetivo formar o estudante em aspetos avançados de
+        Visualização de Informação (VI), reforçando a capacidade de transformar
+        dados em representações visuais que suportem análise, interpretação e
+        comunicação com rigor.
+        A VI é apresentada como componente fundamental para dar legibilidade a
+        sistemas interativos que lidam com grande volume de dados, permitindo
+        revelar padrões e conhecimento anteriormente não evidente.
+        (ROCHA; PESTANA, 2025/2026)
+      </p>
+      <p>
+        Em termos metodológicos, privilegia-se uma abordagem iterativa de
+        <em>design</em> e validação, alinhada com frameworks de análise e desenho
+        de visualizações, em que se articulam decisões sobre dados/tarefas,
+        codificação visual, interação e validação.
+        (MUNZNER, 2014)
+      </p>
+    </section>
+
+    <!-- Competências -->
+    <section class="card">
+      <h2>Competências a desenvolver</h2>
       <ul>
-        <li>Codificação visual e escolhas de escalas/legendas.</li>
-        <li>Interação e coordenação entre vistas.</li>
-        <li>Tratamento de exceções cartográficas (ilhas fora de escala).</li>
-        <li>Implementação técnica em D3.js e gestão de estado.</li>
+        <li>Reconhecer a importância da VI no desenho e implementação de aplicações interativas para diferentes domínios. (ROCHA; PESTANA, 2025/2026)</li>
+        <li>Conhecer técnicas visuais e de interação e saber quando as aplicar. (ROCHA; PESTANA, 2025/2026)</li>
+        <li>Compreender aspetos de cognição e perceção visual relevantes para comunicação visual eficaz. (ROCHA; PESTANA, 2025/2026)</li>
+        <li>Entender o papel da estética visual no processo comunicacional e na relação com o utilizador. (ROCHA; PESTANA, 2025/2026)</li>
+        <li>Integrar princípios, modelos e técnicas de VI no desenvolvimento de soluções finais. (ROCHA; PESTANA, 2025/2026)</li>
+        <li>Utilizar metodologias adequadas para desenho, implementação e avaliação de soluções de VI. (ROCHA; PESTANA, 2025/2026)</li>
       </ul>
     </section>
+
+    <!-- Conteúdos -->
+    <section class="card span2">
+      <h2>Conteúdos programáticos</h2>
+      <p>
+        O percurso da UC organiza-se por tópicos que cobrem, de forma progressiva,
+        os pilares conceptuais e práticos da VI, culminando num projeto final.
+        (ROCHA; PESTANA, 2025/2026)
+      </p>
+      <ol>
+        <li>Introdução à visualização</li>
+        <li>Dados e tarefas</li>
+        <li>Análise</li>
+        <li>Codificação visual</li>
+        <li>Design e redesenho</li>
+        <li>Estética e perceção visual</li>
+        <li>Metodologia para avaliação da visualização</li>
+        <li>Ferramentas de software para desenvolver a visualização</li>
+        <li>Projeto final</li>
+      </ol>
+    </section>
+
+    <!-- Metodologia & Ambiente -->
+    <section class="card">
+      <h2>Metodologia e ambiente de aprendizagem</h2>
+      <p>
+        As atividades decorrem em regime online, valorizando a comunicação
+        assíncrona e a participação em fóruns. A UC segue o Modelo Pedagógico da
+        UAb para cursos de 2.º/3.º ciclo e é explicitamente orientada por projetos,
+        recomendando um planeamento semanal de trabalho e contacto frequente com
+        o ambiente virtual.
+        (ROCHA; PESTANA, 2025/2026)
+      </p>
+      <p>
+        A avaliação e melhoria das soluções de visualização pode ser enquadrada
+        por cenários e métodos de avaliação (por exemplo, desempenho do utilizador,
+        experiência de uso, comunicação através da visualização), permitindo
+        justificar escolhas e iterar com evidência.
+        (LAM et al., 2011)
+      </p>
+    </section>
+
+    <!-- Recursos -->
+    <section class="card">
+      <h2>Recursos e ferramentas</h2>
+      <p>
+        A UC recorre a artigos científicos e a ferramentas de software para apoiar
+        a aprendizagem e a implementação de soluções, incluindo RAW,
+        Tableau/Power BI, D3.js e Python (com apoio de análise assistida).
+        (ROCHA; PESTANA, 2025/2026)
+      </p>
+      <p>
+        No contexto web, o uso do <strong>D3.js</strong> é particularmente relevante
+        para a transição do estático para o interativo, pela ligação direta entre
+        dados e elementos do DOM/SVG, facilitando desenvolvimento incremental,
+        depuração e interações ricas.
+        (BOSTOCK; OGIEVETSKY; HEER, 2011)
+      </p>
+    </section>
+
+    <!-- Projeto e narrativa -->
+    <section class="card span2">
+      <h2>Relação com este projeto</h2>
+      <p>
+        O projeto final desta UC materializa a aplicação prática dos princípios
+        discutidos ao longo do semestre, incluindo a passagem de protótipos e
+        análises para uma solução interativa, com uma narrativa clara, explícita
+        e não manipuladora. Esta dimensão de narrativa em visualização —
+        equilibrando orientação do autor e exploração do leitor — é um tema
+        central em visualização narrativa.
+        (SEGEL; HEER, 2010)
+      </p>
+      <p>
+        Repositório do projeto (progressão completa do trabalho):<br />
+        <a href="https://github.com/AndreMacielSousa/Visualiza-o-de-Informa-o-2025-26"
+           target="_blank" rel="noreferrer">
+          github.com/AndreMacielSousa/Visualiza-o-de-Informa-o-2025-26
+        </a>
+      </p>
+    </section>
+
+    <!-- Referências -->
+    <section class="card span2">
+      <h2>Referências (ABNT)</h2>
+
+      <div style="line-height:1.55;">
+        <p>
+          BOSTOCK, Michael; OGIEVETSKY, Vadim; HEER, Jeffrey.
+          <strong>D3: Data-Driven Documents</strong>.
+          IEEE Transactions on Visualization and Computer Graphics,
+          v. 17, n. 12, p. 2301–2309, 2011.
+        </p>
+        <p>
+          LAM, Heidi; BERTINI, Enrico; ISENBERG, Petra; PLAISANT, Catherine;
+          CARPENDALE, Sheelagh.
+          <strong>Seven Guiding Scenarios for Information Visualization Evaluation</strong>.
+          Technical Report n. 2011-992-04. University of Calgary, 2011.
+        </p>
+        <p>
+          MUNZNER, Tamara.
+          <strong>Visualization Analysis and Design</strong>.
+          Boca Raton: CRC Press, 2014.
+        </p>
+        <p>
+          ROCHA, Tânia; PESTANA, Pedro Duarte.
+          <strong>Contrato de Aprendizagem — Visualização de Informação 2025–26</strong>.
+          PlataformAbERTA (Moodle Universidade Aberta), 2025/2026.
+        </p>
+        <p>
+          SEGEL, Edward; HEER, Jeffrey.
+          <strong>Narrative Visualization: Telling Stories with Data</strong>.
+          IEEE Transactions on Visualization and Computer Graphics,
+          v. 16, n. 6, p. 1139–1148, 2010.
+        </p>
+      </div>
+    </section>
+
   </main>
 
   <script type="module" src="js/page.js"></script>
