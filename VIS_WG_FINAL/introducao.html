@@ -6,13 +6,17 @@
   <title>Introdução • Habitação e População (1940–2021)</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
+  <!-- NAV -->
   <div id="navOverlay" class="nav-overlay" aria-hidden="true"></div>
+
   <aside id="navDrawer" class="nav-drawer" aria-label="Menu">
     <div class="nav-head">
       <div class="nav-title">Menu</div>
       <button id="navClose" type="button" title="Fechar menu">✕</button>
     </div>
+
     <nav class="nav-links">
       <a href="index.html" data-page="index.html">Início</a>
       <a href="introducao.html" data-page="introducao.html">Introdução</a>
@@ -21,7 +25,10 @@
       <a href="autores.html" data-page="autores.html">Autores</a>
       <a href="uc.html" data-page="uc.html">UC</a>
     </nav>
-    <div class="nav-foot">Habitação e População (1940–2021) • Visualização de Informação</div>
+
+    <div class="nav-foot">
+      Habitação e População (1940–2021) • Visualização de Informação
+    </div>
   </aside>
 
   <header class="topbar">
@@ -31,11 +38,13 @@
           <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
+
       <div>
         <div class="title">Introdução</div>
-        <div class="subtitle">Contexto e objetivos do projeto.</div>
+        <div class="subtitle">Motivação, perguntas e enquadramento académico do trabalho final.</div>
       </div>
     </div>
+
     <div class="controls">
       <button id="themeBtn" type="button" title="Alternar modo claro/escuro.">Tema</button>
     </div>
@@ -43,30 +52,112 @@
 
   <main class="grid">
     <section class="card span2">
-      <h2>Sobre este trabalho</h2>
+      <h2>Enquadramento do projeto</h2>
+
       <p>
-        Este projeto apresenta um dashboard interativo para explorar a relação entre o parque habitacional
-        e a população em Portugal (1940–2021), com análise ao nível distrital e inclusão de Açores e Madeira.
-      </p>
-      <p>
-        O objetivo é apoiar a leitura de padrões espaciais e temporais, permitindo comparar distritos,
-        observar evolução ao longo do tempo e analisar relações entre variáveis através de múltiplas vistas
-        coordenadas (mapa, série temporal e scatter).
+        Este projeto constitui o trabalho final da unidade curricular de <strong>Visualização de Informação</strong>
+        e representa a consolidação de um percurso progressivo de aprendizagem ao longo do semestre.
+        O objetivo é analisar, de forma integrada, a relação entre a evolução do <strong>parque habitacional</strong>
+        e a <strong>dinâmica demográfica</strong> em Portugal, no período 1940–2021, à escala distrital.
+        A opção por um <em>dashboard</em> interativo reflete o entendimento de que a visualização deve apoiar tarefas
+        de exploração, comparação e interpretação, indo além da apresentação de resultados finais (MUNZNER, 2014).
       </p>
 
-      <h3>Principais decisões de design</h3>
+      <p>
+        A construção do trabalho seguiu uma lógica iterativa: primeiro exploratória e comparativa, depois mais orientada
+        a hipóteses, e finalmente centrada na transição do <strong>estático para o dinâmico e interativo</strong>.
+        Esta progressão assume que o valor da visualização não depende apenas do resultado visual, mas do modo como
+        a representação, a interação e o utilizador se articulam para reduzir custos cognitivos e aumentar o valor
+        obtido na análise (VAN WIJK, 2005).
+      </p>
+
+      <h2>Motivação</h2>
+
+      <p>
+        A motivação principal surgiu da necessidade de compreender se o crescimento do parque habitacional acompanhou,
+        ou divergiu, do crescimento da população ao longo de várias décadas. A leitura de valores absolutos pode ser
+        insuficiente para interpretar adequação (ou desfasamentos) entre oferta e procura potencial, sobretudo quando
+        existem assimetrias territoriais marcadas. Assim, a análise foi desenhada para permitir observar padrões
+        espaciais e temporais, e para apoiar comparações entre distritos de forma consistente e transparente
+        (CARD; MACKINLAY; SHNEIDERMAN, 1999).
+      </p>
+
+      <h2>Perguntas de investigação</h2>
+
+      <p>
+        O trabalho é orientado por um conjunto de perguntas, operacionalizadas através de vistas coordenadas:
+      </p>
+
       <ul>
-        <li>Mapa coroplético como vista principal para padrões espaciais.</li>
-        <li>Série temporal para evolução 1940–2021 e seleção de intervalos (brush).</li>
-        <li>Scatter para análise de relação entre população e a métrica selecionada.</li>
-        <li>Açores e Madeira apresentados fora de escala para melhorar legibilidade.</li>
-        <li>Modo claro/escuro e cor de destaque configurável para acessibilidade.</li>
+        <li>
+          <strong>P1.</strong> Em que medida o parque habitacional evoluiu em linha com a população entre 1940 e 2021,
+          e em que períodos se observam divergências mais relevantes?
+        </li>
+        <li>
+          <strong>P2.</strong> Que assimetrias regionais são visíveis quando comparamos distritos, e como variam essas
+          assimetrias ao longo do tempo?
+        </li>
+        <li>
+          <strong>P3.</strong> Existem padrões de associação (ou ausência dela) entre população e a métrica selecionada,
+          quando analisamos um ano específico ou um intervalo temporal?
+        </li>
       </ul>
 
+      <h2>Abordagem e narrativa visual (não manipuladora)</h2>
+
       <p>
-        O dashboard foi desenvolvido com D3.js e dados oficiais (INE / fontes do projeto),
-        privilegiando interação direta e transparência na leitura dos resultados.
+        O <em>dashboard</em> foi concebido para suportar uma narrativa clara e verificável, sem conduzir o utilizador a
+        conclusões pré-definidas. Em vez de “contar uma história fechada”, o sistema fornece mecanismos explícitos de
+        exploração: seleção de métricas e anos, seleção de distrito, e escolha de intervalos temporais por <em>brush</em>.
+        Esta abordagem está alinhada com a ideia de que narrativas visuais podem ser construídas de forma responsável,
+        mantendo evidência, contexto e possibilidade de verificação por parte do utilizador (SEGEL; HEER, 2010).
       </p>
+
+      <p>
+        A escolha de encodings e a organização das vistas seguem princípios de percepção e legibilidade: cor como canal
+        quantitativo (com cuidado para não criar ambiguidades), separação clara entre dados e elementos de interface,
+        e redução de sobrecarga visual. Esta preocupação é suportada por recomendações clássicas sobre percepção em
+        visualização e desenho orientado ao utilizador (HEALEY; ENNS, 2012).
+      </p>
+
+      <h2>Progresso do trabalho e reprodutibilidade</h2>
+
+      <p>
+        Toda a progressão do projeto (exploração, protótipos, iterações e versão final) encontra-se documentada no repositório:
+        <a href="https://github.com/AndreMacielSousa/Visualiza-o-de-Informa-o-2025-26" target="_blank" rel="noopener">
+          GitHub — Visualização de Informação 2025–26
+        </a>.
+        A existência de histórico de commits e versões permite acompanhar decisões e mudanças ao longo do processo, reforçando
+        transparência e reprodutibilidade (BOSTOCK; OGIEVETSKY; HEER, 2011).
+      </p>
+
+      <h2>Referências bibliográficas</h2>
+
+      <ol style="margin-top:10px">
+        <li>
+          BOSTOCK, Michael; OGIEVETSKY, Vadim; HEER, Jeffrey. D3: Data-Driven Documents.
+          <em>IEEE Transactions on Visualization and Computer Graphics</em>, v. 17, n. 12, p. 2301–2309, 2011.
+        </li>
+        <li>
+          CARD, Stuart K.; MACKINLAY, Jock D.; SHNEIDERMAN, Ben (ed.). <em>Readings in Information Visualization:
+          Using Vision to Think</em>. San Francisco: Morgan Kaufmann, 1999.
+        </li>
+        <li>
+          HEALEY, Christopher G.; ENNS, James T. Attention and Visual Memory in Visualization and Computer Graphics.
+          <em>IEEE Transactions on Visualization and Computer Graphics</em>, v. 18, n. 7, p. 1170–1188, 2012.
+        </li>
+        <li>
+          MUNZNER, Tamara. <em>Visualization Analysis and Design</em>. Boca Raton: CRC Press, 2014.
+        </li>
+        <li>
+          SEGEL, Edward; HEER, Jeffrey. Narrative Visualization: Telling Stories with Data.
+          <em>IEEE Transactions on Visualization and Computer Graphics</em>, v. 16, n. 6, p. 1139–1148, 2010.
+        </li>
+        <li>
+          VAN WIJK, Jarke J. The Value of Visualization. In: <em>IEEE Visualization</em>. 2005. p. 79–86.
+        </li>
+      </ol>
+
     </section>
   </main>
 
